@@ -1,5 +1,7 @@
 # C++ Work
 
+Use this file to store large C++ functions that would take up too much space in main file.
+
 ## To Be Completed: 
 
 - [] Establishing what is the total amount of data needed about a molecule
