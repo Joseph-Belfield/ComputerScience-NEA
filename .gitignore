@@ -1,0 +1,4 @@
+# Ignores the saving of certain files and folders
+
+# Compiled python for use as libraries
+__pycache__/            
