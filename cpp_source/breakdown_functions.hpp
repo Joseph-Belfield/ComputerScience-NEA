@@ -19,7 +19,5 @@ int* spine_regex() {
 
 map<int, int> moleculeSpine(string moleculeName) {
 
-    
-
 }
 
