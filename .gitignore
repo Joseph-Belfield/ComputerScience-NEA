@@ -1,8 +1,15 @@
 # Ignores the saving of certain files and folders
 
+# Removes compiler stuff
+*
+!/**/
+!*.*
+
 # Compiled python for use as libraries
 __pycache__/
 
-# Compiler stuff
+# Compiler specific stuff
 *.out
 *.dSYM/
+*.exe
+*.app
