@@ -1,4 +1,4 @@
-# Just use functions from Python Work
+# Just use functions from python_source
 
 import dearpygui.dearpygui as dpg
 

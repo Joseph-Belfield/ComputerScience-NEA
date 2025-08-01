@@ -4,6 +4,7 @@
 #include <string>           // Enables strings.
 
 #include <map>              // Maps act like dicts. Will be used for storing data about elements.
+#include <array>            // Allows use of arrays - fixed-length data structures
 
 #include "element_definitions.h"        // A set of useful #defines. Subs in integer values for element names, etc. 
 
@@ -17,7 +18,9 @@ int* spine_regex() {
     return 0;
 }
 
-map<int, int> moleculeSpine(string moleculeName) {
+map<int, int[5]> moleculeSpine(string moleculeName) {   // The map should contain a unique ID, and then data array.
+
+    map<int, int[5]> atom1 = { {10,[1,11,12,13,14]} }       // unsure of how this works
 
 }
 

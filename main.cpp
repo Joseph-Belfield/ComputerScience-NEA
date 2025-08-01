@@ -1,6 +1,6 @@
 #include <string>  // I need strings I like strings
 #include <iostream>         // 'cout' and such
-using namespace std;        // Makes strings work!
+using namespace std;        // Makes libraries work!
 
 // Includes the file with all the functions. Can just be used as normal.
 #include "./cpp_source/breakdown_functions.hpp"
