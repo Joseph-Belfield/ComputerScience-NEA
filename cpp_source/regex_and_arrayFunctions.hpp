@@ -21,12 +21,6 @@ int *array_maker(int element)
     return array;
 }
 
-// creates a map called elementData
-void map_maker()
-{
-    static map<int, int *> elementData;
-}
-
 void print_matchData(string str, regex reg)
 {
     // stores any matches found in the regex
