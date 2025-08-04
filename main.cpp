@@ -7,7 +7,7 @@
 using namespace std;        // Makes libraries work!
 
 // Includes the file with all the functions. Can just be used as normal.
-// #include "./cpp_source/breakdown_functions.hpp"
+#include "./cpp_source/breakdown_functions.hpp"
 
 // Python will run C++ as executable.
 
@@ -57,6 +57,8 @@ void set_array(int value, int *array)
 
 int main() {
 
+
+    /*
     // Creates an array where each value is 5. array is accessed through pointer to first element of array, result
     int *result = create_array(5);
 
@@ -75,6 +77,12 @@ int main() {
         printf("result[%d] = %d\n", i, result[i]);
 
     }
+    */
+
+
+    string str = "The ape was at the apex of Ape Mountain.";
+    regex reg("(ape[^ ]?)");
+    print_matches(str, reg);
 
     return 0;
 }
