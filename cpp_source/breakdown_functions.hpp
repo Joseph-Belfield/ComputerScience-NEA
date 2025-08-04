@@ -8,9 +8,23 @@
 
 #include "element_definitions.h"        // A set of useful #defines. Subs in integer values for element names, etc. 
 
-using namespace std;        // Do not have to call STD every time! 
+using namespace std;        // Do not have to call std every time! 
 
 
+// creates an array of a certain element, then outputs pointer to array
+int *array_maker(int element)
+{
+    static int array[5] = {element,1,2,3,4};
+
+    return array;
+}
+
+
+// creates a map called elementData
+void map_maker()
+{
+    static map<int, int *> elementData;
+}
 
 
 int* spine_regex() {
@@ -18,9 +32,5 @@ int* spine_regex() {
     return 0;
 }
 
-map<int, int> moleculeSpine(string moleculeName) {   // The map should contain a unique ID, and then data array.
 
-    map<int, int[5]> atom1 = { {10,[1,11,12,13,14]} }       // unsure of how this works
-
-};
 

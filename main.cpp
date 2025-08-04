@@ -34,7 +34,21 @@ int main(int argc, char* argv[])
 
 */
 
+// return type is a pointer to an array
+int *create_array(int value)
+{
+    static int array[5];        // creates an array with the lifetime of the entire program
 
+    // assigns each slot in the array a value 
+    for (int i = 0; i < 5; i++) 
+    {
+        array[i] = value;
+    }
+
+    return array;  // returns a pointer to the first item in the array
+}
+
+// since the function does not return anything, just modifies an already existing array, return type is void
 void set_array(int value, int *array) 
 {
     for (int i = 0; i < 5; i++) 
@@ -43,18 +57,22 @@ void set_array(int value, int *array)
 
 int main() {
 
-    int array[] = {0,1,2,3,4};
+    // Creates an array where each value is 5. array is accessed through pointer to first element of array, result
+    int *result = create_array(5);
 
+    // prints each value in the array in format specified in double brackets
     for (int i = 0; i < 5; i++)
     {
-        cout << array[i] << "\n";
+        // results can be treated as the variable name for the array
+        printf("result[%d] = %d\n", i, result[i]);
     }
 
-    set_array(4, array); 
+    // sets all values in array pointed to by result to 4
+    set_array(4, result); 
 
     for (int i = 0; i < 5; i++)
     {
-        cout << array[i] << "\n";
+        printf("result[%d] = %d\n", i, result[i]);
 
     }
 
