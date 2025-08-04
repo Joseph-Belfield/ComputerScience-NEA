@@ -18,9 +18,9 @@ int* spine_regex() {
     return 0;
 }
 
-map<int, int[5]> moleculeSpine(string moleculeName) {   // The map should contain a unique ID, and then data array.
+map<int, int> moleculeSpine(string moleculeName) {   // The map should contain a unique ID, and then data array.
 
     map<int, int[5]> atom1 = { {10,[1,11,12,13,14]} }       // unsure of how this works
 
-}
+};
 
