@@ -4,7 +4,9 @@ string stem_finder(string moleculeName)
 {
     // initializes match variable and regex variable
     smatch match;
-    regex reg(R"()");
+
+    // searches for all valid names split into (prefix:stem:suffix) - current regex is placeholder
+    regex reg(R"(^((?:-?\d+(?:,\d+)*-)?(?:MULTIPLIER)?(?:PREFIX))*((?:cyclo)?(?:STEM|BENZENE))((?:-?\d+(?:,\d+)*-)?(?:MULTIPLIER)?(?:ALKENE|ALKYNE|SUFFIX)){0,3}$)");
 
     // searches the entire string for a match with regex, then saves matches in match
     regex_match(moleculeName, match, reg);
