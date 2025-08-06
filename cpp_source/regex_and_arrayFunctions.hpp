@@ -16,9 +16,9 @@ using namespace std;        // Do not have to call std every time!
 // creates an array of a certain element, then outputs pointer to array
 int *array_maker(int element)
 {
-    static int array[5] = {element,1,2,3,4};
+    static int atom[5] = {element,1,2,3,4};
 
-    return array;
+    return atom;
 }
 
 void print_matchData(string str, regex reg)
