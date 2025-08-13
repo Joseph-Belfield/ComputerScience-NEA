@@ -1,5 +1,6 @@
 #include <string>  // I need strings I like strings
 #include <iostream>         // 'cout' and such
+#include <map>              // Allows for maps to be used
 
 #include <stdio.h>
 #include <stdlib.h>     // gives malloc (allocating space in memory)
@@ -55,34 +56,12 @@ void set_array(int value, int *array)
         array[i] = value;
 }
 
-int main() {
-
-
-    /*
-    // Creates an array where each value is 5. array is accessed through pointer to first element of array, result
-    int *result = create_array(5);
-
-    // prints each value in the array in format specified in double brackets
-    for (int i = 0; i < 5; i++)
-    {
-        // results can be treated as the variable name for the array
-        printf("result[%d] = %d\n", i, result[i]);
-    }
-
-    // sets all values in array pointed to by result to 4
-    set_array(4, result); 
-
-    for (int i = 0; i < 5; i++)
-    {
-        printf("result[%d] = %d\n", i, result[i]);
-
-    }
-    */
-
-
-    string str = "The ape was at the apex of Ape Mountain.";
-    regex reg("(ape[^ ]?)");
-    print_matches(str, reg);
+int main() 
+{
+    string moleculeName;   // link this to input in python GUI later
+    
+    // create the map
+    map<int , int[]> atomList;
 
     return 0;
 }

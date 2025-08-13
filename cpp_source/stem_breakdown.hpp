@@ -1,8 +1,24 @@
 #include "./prefix-stem-suffix.hpp"
 
-// create the map, then add entries using a recusive array here
 // all entries start with an empty array with 5 slots
 // edit element arrays using void function similar to below:
+
+
+// check how many atoms are needed, then add that many rows to the map in main
+int atomNum_stem(string stem) 
+{
+    smatch match;
+
+    regex reg(R"(regex)");
+
+    int atom_num;       
+
+    return atom_num;
+
+}
+
+
+
 
 /*
 
