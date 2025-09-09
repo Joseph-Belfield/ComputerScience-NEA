@@ -10,3 +10,24 @@ A repo dedicated to the NEA project. A place to collect together code from the p
 
 ## Python GUI
 Found [here.](https://github.com/hoffstadt/DearPyGui) Documentation found [here.](https://dearpygui.readthedocs.io/en/latest/)
+
+# Pivot
+
+Sometimes you can't keep going forward the way you initally thought. This is one of those times. The project is switching to (almost) entirely C++ from now on. OpenGL with be used for modelling. Add links to resources used here so they aren't lost later. 
+
+## Links
+- Installing OpenGL on Mac [here.](https://www.youtube.com/watch?v=7-dL6a5_B3I)
+- OpenGL textbook [here.](https://learnopengl.com)
+
+## To Do 
+- create classes for elements, atoms and molecules
+- abstracted format to represent an instance of an atom and its bonds to other specific atoms
+- model molecule in 2D from atom information
+- interact with molecule in 2D (add/remove atoms, change bonds)
+- create GUI for program
+- model molecule in 3D
+- tokenize IUPAC name into needed data to model
+- create class for functional groups and reactions
+- create database of reaction routes and accessible molecules
+- create AI that finds all possible routes from accessible molecules to designed molecule
+
