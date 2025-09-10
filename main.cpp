@@ -4,7 +4,7 @@ using namespace std;
 
 int main() 
 {
-    Atom helium = Atom()
+    Atom helium = Atom();
     
     return 0;
 }

@@ -34,14 +34,17 @@ public:
     int electrons;
     Atom** bonds;
 
+    // Constructor class. 
     Atom(const Element element) : bonds(new Atom* [element.name]),  // Assigns a pointer to an array of pointers to Atoms for bonds
                                   element(element.name),            // Assigns an enum that represents name/protons of an element
                                   neutrons(element.neutrons),       // Assigns float for default number of neutrons
                                   electrons(element.name) {};       // Assigns int for default of electrons
 
+                                
+    // Calculates difference between protons and electrons (ie: charge)
     int calculateCharge()
     {
-        return this -> element - this -> electrons;
+        return (this -> element) - (this -> electrons);
     }
 
 };
