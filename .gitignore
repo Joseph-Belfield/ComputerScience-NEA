@@ -13,3 +13,7 @@ __pycache__/
 *.dSYM/
 *.exe
 *.app
+
+# run compliled filess
+/app.dSYM
+.DS_Store
