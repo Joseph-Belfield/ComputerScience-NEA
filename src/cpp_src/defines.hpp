@@ -4,7 +4,7 @@ enum Name
     HYDROGEN = 1,
     HELIUM,
     LITHIUM,
-    BERYLLIUM,
+    BERYLLIUM, 
     BORON,
     PHOSPHORUS,
     CARBON,
