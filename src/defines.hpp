@@ -1,3 +1,6 @@
+#include <iostream>
+using namespace std;
+
 // Element enum, ties atomic number and element name. 
 enum Name
 {
@@ -32,7 +35,7 @@ public:
     const Name element;
     float neutrons;
     int electrons;
-    Atom** bonds;
+    Atom** bonds;   // pointer to array of pointers to other atom objects
 
     // Constructor class. 
     Atom(const Element element) : bonds(new Atom* [element.name]),  // Assigns a pointer to an array of pointers to Atoms for bonds
@@ -49,3 +52,15 @@ public:
 
 };
 
+// A class for effectively anything rendered - functional groups will be a subclass
+class Molecule
+{
+public: 
+    const int ID;
+    string name;
+    Atom* root;
+
+    // Constructor class.
+    Molecule()
+
+};
