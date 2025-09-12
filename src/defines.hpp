@@ -97,6 +97,8 @@ public:
 
         for (int i = 0; i < sizeof(*startAtom -> bonds) / sizeof(*(*startAtom -> bonds)); i++)
         {
+            if (isInStack(seenAtoms_stack))
+
             // check if bond is in stack
                 // -> if true: do nothing, go next (gg go next)
                 // -> else if new: recurse
