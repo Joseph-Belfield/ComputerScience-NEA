@@ -56,9 +56,14 @@ public:
 
 // checks if pointer is new and unique, or already present in seen atom stack
 template <typename T> // allows any datatype to be in the stack (T acts as temp variable) so it can be reused
-bool isInStack(stack<T> atom_Stack, T value)
+bool isInStack(stack<T> atom_stack, T value)
 {
+    while !(atom_stack.empty())     // while stack isn't empty
+    {
+        if (atom_stack.pop() == value) {return false;}  // if value matches item from stack, return false (not unique)
+    }
 
+    return true; // if value does not appear, return true (unique!)
 }
 
 // A class for effectively anything rendered - functional groups will be a subclass
@@ -90,11 +95,9 @@ public:
         // add the start atom to be the first entry of stack of seen atoms
         seenAtoms_stack -> push(startAtom);
 
-
-
-        for (Atom* bond)
+        for (int i = 0; i < sizeof(*startAtom -> bonds) / sizeof(*(*startAtom -> bonds)); i++)
         {
-            // check if bond is in array
+            // check if bond is in stack
                 // -> if true: do nothing, go next (gg go next)
                 // -> else if new: recurse
         }
