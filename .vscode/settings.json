@@ -2,6 +2,8 @@
     "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
     "files.associations": {
         "array": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     }
 }
