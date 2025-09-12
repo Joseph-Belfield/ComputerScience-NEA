@@ -3,6 +3,9 @@
 #include <vector>
 using namespace std;
 
+// NOTES
+// variable -> function() is equal to (*varible).function()
+
 // Element enum, ties atomic number and element name. 
 enum Name
 {
@@ -42,11 +45,10 @@ public:
 
     // Constructor class. This assigns the default value of the attributes.
     Atom(const Element element) : bonds(new Atom* [element.name]),  // Assigns a pointer to an array of pointers to Atoms for bonds
-                                  element(element.name),            // Assigns an enum that represents name/protons of an element
-                                  neutrons(element.neutrons),       // Assigns float for default number of neutrons
-                                  electrons(element.name) {};       // Assigns int for default of electrons
-
-                                
+                                    element(element.name),            // Assigns an enum that represents name/protons of an element
+                                    neutrons(element.neutrons),       // Assigns float for default number of neutrons
+                                    electrons(element.name) {};       // Assigns int for default of electrons
+                 
     // Calculates difference between protons and electrons (ie: charge)
     int calculateCharge()
     {
@@ -83,16 +85,28 @@ public:
     // Joins specified atom of this molecule to specified atom of other molecule
     void addMolecule(Molecule* joinedMolecule, Atom* sourceAtomPtr, Atom* destinationAtomPtr)
     {
+        // for each atom in the joining molecule
         for (int i = 0; i < (joinedMolecule -> atoms_vector -> size()); i++)
         {
-
+            // Increases ID's of joined molecule's atoms by number of atoms in current molecule
+            joinedMolecule -> atoms_vector -> at(i) -> atomID = (joinedMolecule -> atoms_vector -> at(i) -> atomID) + (this -> atoms_vector -> size());
         }
+
+        // merging object information
+        this -> atomCounter = this -> atomCounter + joinedMolecule -> atomCounter;
+        this -> atoms_vector -> insert(this -> atoms_vector -> end(), joinedMolecule -> atoms_vector -> begin(), joinedMolecule -> atoms_vector -> end());
+
+        // creates bonds between two specified atoms
+
+            // sourceAtom -> bonds [x] = destinationAtomPtr
+            // destinationAtomPtr -> bonds [y] = destinationAtomPtr
     }
 
     // Adds another bond between two atoms within the same molecule
-    void addBond(unsigned int atomID_1, unsigned int atomID_2)
+    void addBond(Atom* sourceAtomPtr, Atom* destinationAtomPtr)
     {
-
+        // sourceAtomPtr -> bonds [x + 1] = destinationAtomPtr
+        // destinationAtomPtr -> bonds [y + 1] = sourceAtomPtr
     }
 
 };
