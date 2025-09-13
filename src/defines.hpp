@@ -38,10 +38,11 @@ class Atom
 {
 public: 
     int atomID;
-    const Name element;
+    const Name element; 
     float neutrons;
     int electrons;
-    Atom** bonds;   // pointer to array of pointers to other atom objects
+    Atom** bonds = {nullptr};   // pointer to array of pointers to other atom objects - starts as all null pointers
+    int emptyBond = 0;  // next empty value in bond array
 
     // Constructor class. This assigns the default value of the attributes.
     Atom(const Element element) : bonds(new Atom* [element.name]),  // Assigns a pointer to an array of pointers to Atoms for bonds
@@ -96,6 +97,9 @@ public:
         this -> atomCounter = this -> atomCounter + joinedMolecule -> atomCounter;
         this -> atoms_vector -> insert(this -> atoms_vector -> end(), joinedMolecule -> atoms_vector -> begin(), joinedMolecule -> atoms_vector -> end());
 
+        sourceAtomPtr -> bonds -> at(sourceAtomPtr -> emptyBond++) = destinationAtomPtr;
+        destinationAtomPtr -> bonds -> at(destinationAtomPtr -> emptyBond++) = sourceAtomPtr;
+
         // creates bonds between two specified atoms
 
             // sourceAtom -> bonds [x] = destinationAtomPtr
@@ -105,8 +109,8 @@ public:
     // Adds another bond between two atoms within the same molecule
     void addBond(Atom* sourceAtomPtr, Atom* destinationAtomPtr)
     {
-        // sourceAtomPtr -> bonds [x + 1] = destinationAtomPtr
-        // destinationAtomPtr -> bonds [y + 1] = sourceAtomPtr
+        *sourceAtomPtr -> bonds -> at(sourceAtomPtr -> emptyBond++) = destinationAtomPtr;
+        destinationAtomPtr -> bonds -> at(destinationAtomPtr -> emptyBond++) = sourceAtomPtr;
     }
 
 };
