@@ -34,83 +34,68 @@ struct Element
 #define HELIUM Element(Name::HELIUM, 2, 'S')
 
 // Atom class, holds essential details for atoms. 
-class Atom 
-{
-public: 
-    int atomID;
-    const Name element; 
-    float neutrons;
+struct Atom 
+{ 
+    const Name element;
+
+    int neutrons;
     int electrons;
-    Atom** bonds = {nullptr};   // pointer to array of pointers to other atom objects - starts as all null pointers
-    int emptyBond = 0;  // next empty value in bond array
 
-    // Constructor class. This assigns the default value of the attributes.
-    Atom(const Element element) : bonds(new Atom* [element.name]),  // Assigns a pointer to an array of pointers to Atoms for bonds
-                                    element(element.name),            // Assigns an enum that represents name/protons of an element
-                                    neutrons(element.neutrons),       // Assigns float for default number of neutrons
-                                    electrons(element.name) {};       // Assigns int for default of electrons
-                 
-    // Calculates difference between protons and electrons (ie: charge)
-    int calculateCharge()
-    {
-        return (this -> element) - (this -> electrons);
-    }
-
+    vector<Atom*> bonds;   // vector of pointers to atoms
+    Molecule* parent = nullptr;  // pointer to molecule atom is in
 };
 
 // A class for effectively anything rendered - functional groups will be a subclass
 class Molecule
 {
-private:
-    const unsigned int moleculeID;
-    unsigned int nextID = 0;
-    unsigned int atomCounter = 0;
-    vector<Atom*>* atoms_vector;
-
 public: 
+    vector<Atom> atoms;     // vector of atoms in molecule
+
     string name = "";
-    Atom* root = nullptr;
 
-    // Constructor class. This assigns the default value of the attributes.
-    Molecule(const unsigned int moleculeID) : moleculeID(moleculeID) {};
-
-    // Creates a 'molecule' out of 1 atom - only run once per molecule
-    void addAtom(Atom* atom)
+    // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
+    Molecule(Atom firstAtom)
     {
-        atom -> atomID = this -> nextID++;  // sets atom's ID to next availible ID, then increments
-        root = atom;                        // sets root of molecule to atom
-        atomCounter++;                      // Increases the number of atoms in molecule counter by 1
-        atoms_vector -> push_back(atom);    // Add's atom pointer to end of vector of atom pointers
+        firstAtom.parent = this;
+        atoms.push_back(firstAtom);
     }
+};
 
-    // Joins specified atom of this molecule to specified atom of other molecule
-    void addMolecule(Molecule* joinedMolecule, Atom* sourceAtomPtr, Atom* destinationAtomPtr)
+ // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
+void addBond(Atom* atom1, Atom* atom2)
+{
+    if (atom1 -> parent == atom2 -> parent) // if the atoms share a parent (are in the same molecule)
     {
-        // for each atom in the joining molecule
-        for (int i = 0; i < (joinedMolecule -> atoms_vector -> size()); i++)
+        // add an additional bond to each others' bond vectors
+        atom1 -> bonds.push_back(atom2);
+        atom2 -> bonds.push_back(atom1);
+    }
+    else
+    {
+        // holds atom 2's parent molecule so its saved when atom 2 is wiped 
+        Molecule* temp_atom2_parent = atom2 -> parent;
+
+        // for each atom in atom 2's parent molecule
+        for (int i =0; atom2 -> parent -> atoms.size(); i++)
         {
-            // Increases ID's of joined molecule's atoms by number of atoms in current molecule
-            joinedMolecule -> atoms_vector -> at(i) -> atomID = (joinedMolecule -> atoms_vector -> at(i) -> atomID) + (this -> atoms_vector -> size());
+            // change the parent from atom 2' parent molecule to atom 1's parent molecule
+            temp_atom2_parent -> atoms[i].parent = atom1 -> parent;
         }
 
-        // merging object information
-        this -> atomCounter = this -> atomCounter + joinedMolecule -> atomCounter;
-        this -> atoms_vector -> insert(this -> atoms_vector -> end(), joinedMolecule -> atoms_vector -> begin(), joinedMolecule -> atoms_vector -> end());
+        // append vector of atoms from molecule 2 to end of moelcule 1
+        atom1 -> parent -> atoms.insert(atom1 -> parent -> atoms.end(), atom2 -> parent -> atoms.cbegin(), atom2 -> parent -> atoms.cend());
 
-        sourceAtomPtr -> bonds -> at(sourceAtomPtr -> emptyBond++) = destinationAtomPtr;
-        destinationAtomPtr -> bonds -> at(destinationAtomPtr -> emptyBond++) = sourceAtomPtr;
+        // wipes the name of molecule 1 
+        atom1 -> parent -> name = "placeholder";
 
-        // creates bonds between two specified atoms
+        // adds a bond between atom 1 and 2
+        atom1 -> bonds.push_back(atom2);
+        atom2 -> bonds.push_back(atom1);
 
-            // sourceAtom -> bonds [x] = destinationAtomPtr
-            // destinationAtomPtr -> bonds [y] = destinationAtomPtr
+        // frees the memory which held atom 2's parent molecule
+        delete temp_atom2_parent;
+
+        // prevents other parts of the program from accessing cleared memory accidentally by removing tracks
+        temp_atom2_parent = nullptr;
     }
-
-    // Adds another bond between two atoms within the same molecule
-    void addBond(Atom* sourceAtomPtr, Atom* destinationAtomPtr)
-    {
-        *sourceAtomPtr -> bonds -> at(sourceAtomPtr -> emptyBond++) = destinationAtomPtr;
-        destinationAtomPtr -> bonds -> at(destinationAtomPtr -> emptyBond++) = sourceAtomPtr;
-    }
-
-};
+}
