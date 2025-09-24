@@ -61,7 +61,7 @@ public:
     }
 };
 
- // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
+// will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
 void addBond(Atom* atom1, Atom* atom2)
 {
     if (atom1 -> parent == atom2 -> parent) // if the atoms share a parent (are in the same molecule)
@@ -99,3 +99,20 @@ void addBond(Atom* atom1, Atom* atom2)
         temp_atom2_parent = nullptr;
     }
 }
+
+
+// contains information on what is needed for a mechanism
+class Mechanism
+{
+public:
+
+};
+
+// contains information any reaction may need, plus methods for reactions - reactions are made up of mechanisms
+class Reaction
+{
+public: 
+    
+    // virtual allows child classes to be used wherever their parent class is mentioned instead
+    virtual Molecule react(Molecule mol1, Molecule mol2) {} // tells compiler react will be a method in all future subclasses
+};
