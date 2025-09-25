@@ -103,35 +103,42 @@ void addBond(Atom* atom1, Atom* atom2)
 // will remove a bond between two atoms, and if applicable, split a larger molecule into two smaller parts
 Molecule* removeBond(Atom* atom1, Atom* atom2)
 {
-    if (atom1 -> parent == atom2 -> parent) // if the atoms are part of the same molecule 
-    {
-        // maintains if the atom has been found
-        bool foundA = false;
+    // maintains if atom2 has been found in atom1's bonds
+    bool foundA = false;
 
-        // iterates through atom1's bonds - breaks if no bond is found AND if the bond being found isnt set as true
-        for (int i = 0; i < atom1 -> bonds.size() && !foundA; i++)
-        {   
-            // if 
-            if (atom1 -> bonds[i] == atom2)
-            {
-                atom1 -> bonds.erase(atom1 -> bonds.begin() + i);
-                foundA = true;
-            }
-        }
-
-
-        // repeats process above for atom2
-        bool foundB = false;
-
-        for (int i = 0; i < atom2 -> bonds.size() && !foundB; i++)
+    // iterates through atom1's bonds - breaks if no bond is found AND if the bond being found isnt set as true
+    for (int i = 0; i < atom1 -> bonds.size() && !foundA; i++)
+    {   
+        // if atom 2 is found in list bonds
+        if (atom1 -> bonds[i] == atom2)
         {
-            if (atom2 -> bonds[i] == atom1)
-            {
-                atom2 -> bonds.erase(atom2 -> bonds.begin() + i);
-                foundB = true;
-            }
+            // remove atom 2, set found check as true
+            atom1 -> bonds.erase(atom1 -> bonds.begin() + i);
+            foundA = true;
         }
     }
+
+
+    // repeats process above for atom2
+    bool foundB = false;
+
+    for (int i = 0; i < atom2 -> bonds.size() && !foundB; i++)
+    {
+        if (atom2 -> bonds[i] == atom1)
+        {
+            atom2 -> bonds.erase(atom2 -> bonds.begin() + i);
+            foundB = true;
+        }
+    }
+
+    // if second route between atom1 and atom2 (depth first search):
+        // return null;
+    // else if this splits molecule:
+        // create new molecule object, mol2                                 --> create molecule constructor class from pointers
+        // use atom2 as R group to find rest of atoms in new molecule
+        // fill mol2's child vector with these atoms
+        // change their parent molecule to mol2
+
 }
 
 
