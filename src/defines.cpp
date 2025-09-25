@@ -76,13 +76,13 @@ void addBond(Atom* atom1, Atom* atom2)
         Molecule* temp_atom2_parent = atom2 -> parent;
 
         // for each atom in atom 2's parent molecule
-        for (int i =0; atom2 -> parent -> atoms.size(); i++)
+        for (int i = 0; atom2 -> parent -> atoms.size(); i++)
         {
             // change the parent from atom 2' parent molecule to atom 1's parent molecule
             temp_atom2_parent -> atoms[i].parent = atom1 -> parent;
         }
 
-        // append vector of atoms from molecule 2 to end of moelcule 1
+        // append vector of atoms from molecule 2 to end of molecule 1
         atom1 -> parent -> atoms.insert(atom1 -> parent -> atoms.end(), atom2 -> parent -> atoms.cbegin(), atom2 -> parent -> atoms.cend());
 
         // wipes the name of molecule 1 
@@ -97,6 +97,40 @@ void addBond(Atom* atom1, Atom* atom2)
 
         // prevents other parts of the program from accessing cleared memory accidentally by removing tracks
         temp_atom2_parent = nullptr;
+    }
+}
+
+// will remove a bond between two atoms, and if applicable, split a larger molecule into two smaller parts
+Molecule* removeBond(Atom* atom1, Atom* atom2)
+{
+    if (atom1 -> parent == atom2 -> parent) // if the atoms are part of the same molecule 
+    {
+        // maintains if the atom has been found
+        bool foundA = false;
+
+        // iterates through atom1's bonds - breaks if no bond is found AND if the bond being found isnt set as true
+        for (int i = 0; i < atom1 -> bonds.size() && !foundA; i++)
+        {   
+            // if 
+            if (atom1 -> bonds[i] == atom2)
+            {
+                atom1 -> bonds.erase(atom1 -> bonds.begin() + i);
+                foundA = true;
+            }
+        }
+
+
+        // repeats process above for atom2
+        bool foundB = false;
+
+        for (int i = 0; i < atom2 -> bonds.size() && !foundB; i++)
+        {
+            if (atom2 -> bonds[i] == atom1)
+            {
+                atom2 -> bonds.erase(atom2 -> bonds.begin() + i);
+                foundB = true;
+            }
+        }
     }
 }
 
