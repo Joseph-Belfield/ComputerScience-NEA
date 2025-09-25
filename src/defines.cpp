@@ -166,6 +166,10 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         // creates a pointer to a new molecule containing the contents of the molecule off atom2 
         Molecule* molecule2;
 
+        // run findMoleculeTree on atom1 and find new list of atoms for molecule1 - replace
+        // dereference vector of pointers
+        // delete pointers after dereferencing
+
         // create a constructor in the molecule class that can construct from an atom ptr
         // use findMoleculeTree function to find vector of all atoms connceted to atom2 - this is new atom vector of molecule (do i need to change mol)
         // change the parent of these atoms to molecule2
