@@ -105,6 +105,8 @@ vector<Atom*>* findMoleculeTree(Atom* atom1)
 {
     vector<Atom*>* moleculeVector;
 
+    // check recursively through a depth-first search to create a vector containing all of the pointers to atoms in the molecule containing to atom1 (can't just use parent ptr)
+
     return moleculeVector;
 }
 
@@ -163,6 +165,10 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     {
         // creates a pointer to a new molecule containing the contents of the molecule off atom2 
         Molecule* molecule2;
+
+        // create a constructor in the molecule class that can construct from an atom ptr
+        // use findMoleculeTree function to find vector of all atoms connceted to atom2 - this is new atom vector of molecule (do i need to change mol)
+        // change the parent of these atoms to molecule2
 
         return molecule2;
     }
