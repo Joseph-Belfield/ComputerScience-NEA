@@ -100,6 +100,14 @@ void addBond(Atom* atom1, Atom* atom2)
     }
 }
 
+// checks if there is an alternative route between two atoms from their pointers
+vector<Atom*>* findMoleculeTree(Atom* atom1)
+{
+    vector<Atom*>* moleculeVector;
+
+    return moleculeVector;
+}
+
 // will remove a bond between two atoms, and if applicable, split a larger molecule into two smaller parts
 Molecule* removeBond(Atom* atom1, Atom* atom2)
 {
@@ -118,7 +126,6 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         }
     }
 
-
     // repeats process above for atom2
     bool foundB = false;
 
@@ -131,6 +138,35 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         }
     }
 
+    // creates a variable delcaring if the molecule has been split by the bond breaking - defaults to true
+    bool moleculeSplit = true;
+
+    // creates a pointer to a vector of all atoms in the same molecule as atom1 
+    vector<Atom*>* moleculeVector1 = findMoleculeTree(atom1);
+
+    // checks each atoms in the vector of atoms in the molecule atom1 is in
+    for (int i = 0; moleculeVector1 -> size(); i++)
+    {
+        // if one of the atoms is molecule 2, the molecule has not split
+        if (moleculeVector1 -> at(i) == atom2)
+        {
+            moleculeSplit = false;
+        }
+    }
+
+    // if the molecule hasn't split, return a null pointer, as no new molecules were made
+    if (moleculeSplit == false)
+    {
+        return nullptr;
+    } 
+    else    // else return a pointer to a new molecule created off of the atoms connected to atom2 
+    {
+        // creates a pointer to a new molecule containing the contents of the molecule off atom2 
+        Molecule* molecule2;
+
+        return molecule2;
+    }
+    
     // if second route between atom1 and atom2 (depth first search):
         // return null;
     // else if this splits molecule:
