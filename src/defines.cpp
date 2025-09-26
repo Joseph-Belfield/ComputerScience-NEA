@@ -60,6 +60,18 @@ public:
         firstAtom.parent = this;
         atoms.push_back(firstAtom);
     }
+
+    Molecule(vector<Atom*>* atomVector)
+    {
+        for (int i = 0; atomVector -> size(); i++)
+        {
+            (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
+            atoms.push_back(*(*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
+
+            delete (*atomVector)[i];    // deletes the pointer
+            (*atomVector)[i] = nullptr; // sets the pointer to null so it cannot be rereferences
+        }
+    }
 };
 
 // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
