@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <bits/stdc++.h>    // lets me use count!
 using namespace std;
 
 // NOTES
@@ -100,14 +101,36 @@ void addBond(Atom* atom1, Atom* atom2)
     }
 }
 
-// checks if there is an alternative route between two atoms from their pointers
-vector<Atom*>* findMoleculeTree(Atom* atom1)
+// fills vector with pointers to any atom connected to atom1's tree
+void findMoleculeTree(Atom* currentAtom, vector<Atom*>* moleculeVector)
 {
-    vector<Atom*>* moleculeVector;
+    // checks number of times the current atom is in the molecule vector
+    int atomAccounted = count(moleculeVector -> begin(), moleculeVector -> end(), currentAtom);
 
-    // check recursively through a depth-first search to create a vector containing all of the pointers to atoms in the molecule containing to atom1 (can't just use parent ptr)
+    // if the atom isn't found, add the atom - just adds parameter atom at start of function run
+    if (atomAccounted == 0)
+    {
+        moleculeVector -> push_back(currentAtom);
+    }
 
-    return moleculeVector;
+    // if that atom is found more than once, throw an error message
+    else if (atomAccounted >= 2)
+    {
+        cout << "ERROR - atom found twice in molecule string" << "\n";
+        raise(101); // raises error 101 (arbitrary value)
+    }
+
+    // for each atom bonded to current atom
+    for (int i = 0; currentAtom -> bonds.size(); i++)
+    {
+        if (count(moleculeVector -> begin(), moleculeVector -> end(), currentAtom -> bonds[i]) == 0) // if the atom doesn't appear in the molecule list
+        {
+            findMoleculeTree(currentAtom -> bonds[i], moleculeVector);  // recurse the function, passing in the new branch and the molecule list as parameters
+        }
+    }
+    
+
+    return; // if all atoms attatched to an atom have been found, return function
 }
 
 // will remove a bond between two atoms, and if applicable, split a larger molecule into two smaller parts
@@ -143,8 +166,11 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     // creates a variable delcaring if the molecule has been split by the bond breaking - defaults to true
     bool moleculeSplit = true;
 
-    // creates a pointer to a vector of all atoms in the same molecule as atom1 
-    vector<Atom*>* moleculeVector1 = findMoleculeTree(atom1);
+    // creates a pointer to a vector of pointers to all atoms in molecule1 (mol. attatched to atom1)
+    vector<Atom*>* moleculeVector1;
+    
+    // fills moleculeVector1 with all atoms attatched to atom1
+    findMoleculeTree(atom1, moleculeVector1);
 
     // checks each atoms in the vector of atoms in the molecule atom1 is in
     for (int i = 0; moleculeVector1 -> size(); i++)
