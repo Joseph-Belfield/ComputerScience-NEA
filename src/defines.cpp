@@ -68,8 +68,12 @@ public:
             (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
             atoms.push_back(*(*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
 
+            /* 
+            may need to dereference atom pointers later in the program
+
             delete (*atomVector)[i];    // deletes the pointer
             (*atomVector)[i] = nullptr; // sets the pointer to null so it cannot be rereferences
+            */
         }
     }
 };
@@ -141,7 +145,6 @@ void findMoleculeTree(Atom* currentAtom, vector<Atom*>* moleculeVector)
         }
     }
     
-
     return; // if all atoms attatched to an atom have been found, return function
 }
 
@@ -201,8 +204,19 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     } 
     else    // else return a pointer to a new molecule created off of the atoms connected to atom2 
     {
-        // creates a pointer to a new molecule containing the contents of the molecule off atom2 
-        Molecule* molecule2;
+        // needs to change molecule vector to vector of atoms rather than list of atom pointers
+        atom1 -> parent -> atoms = moleculeVector1;
+
+        // creates a new molecule vector for atom2's molecule and fills it
+        vector<Atom*>* moleculeVector2;
+        findMoleculeTree(atom2, moleculeVector2);
+
+        // initializes molecule 2 
+        Molecule molecule2(moleculeVector2);
+
+        // creates pointer to molecule 2
+        Molecule* molecule2_ptr = &molecule2;
+
 
         // run findMoleculeTree on atom1 and find new list of atoms for molecule1 - replace
         // dereference vector of pointers
@@ -212,7 +226,7 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         // use findMoleculeTree function to find vector of all atoms connceted to atom2 - this is new atom vector of molecule (do i need to change mol)
         // change the parent of these atoms to molecule2
 
-        return molecule2;
+        return molecule2_ptr;
     }
     
     // if second route between atom1 and atom2 (depth first search):
