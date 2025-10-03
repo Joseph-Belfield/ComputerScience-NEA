@@ -4,8 +4,9 @@
 #include <cmath>
 using namespace std;
 
-#include <glad.h>  // GLAD must be included first to work
+#include <glad/glad.h>  // GLAD must be included first to work
 #include <GLFW/glfw3.h>
+
 
 // handling window resizing using callback function
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
