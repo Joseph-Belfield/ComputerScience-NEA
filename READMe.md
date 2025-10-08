@@ -11,6 +11,10 @@ A repo dedicated to the NEA project. A place to collect together code from the p
 ## Python GUI
 Found [here.](https://github.com/hoffstadt/DearPyGui) Documentation found [here.](https://dearpygui.readthedocs.io/en/latest/)
 
+
+
+
+
 # Pivot
 
 Sometimes you can't keep going forward the way you initally thought. This is one of those times. The project is switching to (almost) entirely C++ from now on. OpenGL with be used for modelling. Add links to resources used here so they aren't lost later. 
