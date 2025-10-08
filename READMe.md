@@ -15,11 +15,18 @@ Found [here.](https://github.com/hoffstadt/DearPyGui) Documentation found [here.
 
 Sometimes you can't keep going forward the way you initally thought. This is one of those times. The project is switching to (almost) entirely C++ from now on. OpenGL with be used for modelling. Add links to resources used here so they aren't lost later. 
 
-## Links
+# Links
+
+## OpenGL
 - Installing OpenGL on Mac [here.](https://www.youtube.com/watch?v=7-dL6a5_B3I)
 - OpenGL textbook [here.](https://learnopengl.com)
+- GLFW [here.](https://www.glfw.org/)
+- GLAD [here.](https://glad.dav1d.de/)
 
-## To Do 
+## ImGUI
+- ImGUI repository [here.](https://github.com/ocornut/imgui)
+
+# To Do 
 - create classes for elements, atoms and molecules
 - abstracted format to represent an instance of an atom and its bonds to other specific atoms
 - model molecule in 2D from atom information
