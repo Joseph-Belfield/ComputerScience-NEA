@@ -31,3 +31,8 @@ Sometimes you can't keep going forward the way you initally thought. This is one
 - create database of reaction routes and accessible molecules
 - create AI that finds all possible routes from accessible molecules to designed molecule
 
+## Mechanisms
+- OCR A-Level mechanisms, found [here.](https://www.chemistrystudent.com/Revisionsheets/OCRMechanisms.pdf)
+- Grinard mechanism, found [here.](https://www.masterorganicchemistry.com/2015/12/10/reactions-of-grignard-reagents/)
+- Diels-Alder cycloaddition, found [here.](https://www.masterorganicchemistry.com/2017/08/30/the-diels-alder-reaction/) Research [Huckle's Rule.](https://en.wikipedia.org/wiki/H%C3%BCckel%27s_rule)
+- Keto-enol tautomerism, found [here.](https://www.masterorganicchemistry.com/2022/06/21/keto-enol-tautomerism-key-points/)
