@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/josephbelfield/Code/ComputerScience-NEA/build/cmake_install.cmake",
+		"/Users/josephbelfield/Code/ComputerScience-NEA/build/dependencies/glfw/cmake_install.cmake",
+		"/Users/josephbelfield/Code/ComputerScience-NEA/build/dependencies/glfw/src/cmake_install.cmake",
+		"/Users/josephbelfield/Code/ComputerScience-NEA/build/dependencies/glfw/docs/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

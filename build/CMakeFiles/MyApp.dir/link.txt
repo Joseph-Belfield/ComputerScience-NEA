@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/MyApp.dir/src/main.cpp.o -o MyApp  dependencies/glfw/src/libglfw3.a libglad.a -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo -framework CoreFoundation -framework QuartzCore
