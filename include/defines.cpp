@@ -245,6 +245,14 @@ class Mechanism
 {
 public:
 
+// electrophilic addition
+// electrophilic substitution
+// nucleophilic addition
+// nucleophilic substitution
+// halogination
+// nitratiom
+// 
+
 };
 
 // contains information any reaction may need, plus methods for reactions - reactions are made up of mechanisms
