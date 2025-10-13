@@ -154,7 +154,7 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     // maintains if atom2 has been found in atom1's bonds
     bool foundA = false;
 
-    // iterates through atom1's bonds - breaks if no bond is found AND if the bond being found isnt set as true
+    // iterates through atom1's bonds until it finds atom2, then removes that bond
     for (int i = 0; i < atom1 -> bonds.size() && !foundA; i++)
     {   
         // if atom 2 is found in list bonds
