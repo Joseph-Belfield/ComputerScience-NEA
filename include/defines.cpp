@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stack>
 #include <vector>
-#include <bits>    // lets me use count!
 using namespace std;
 
 // NOTES
@@ -129,11 +128,25 @@ void addBond(Atom* atom1, Atom* atom2)
     }
 }
 
+int atomSearch(vector<Atom*>* atoms, Atom* targetAtom)
+{
+    int count = 0;
+    for (int i = 0; i < atoms -> size(); i++)
+    {
+        if (atoms -> at(i) == targetAtom)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
 // fills vector with pointers to any atom connected to atom1's tree
 void findMoleculeTree(Atom* currentAtom, vector<Atom*>* moleculeVector)
 {
     // checks number of times the current atom is in the molecule vector
-    int atomAccountedFor = count(moleculeVector -> begin(), moleculeVector -> end(), currentAtom);
+    int atomAccountedFor = atomSearch(moleculeVector, currentAtom);
 
     // if the atom isn't found, add the atom - just adds parameter atom at start of function run
     if (atomAccountedFor == 0)
@@ -145,13 +158,12 @@ void findMoleculeTree(Atom* currentAtom, vector<Atom*>* moleculeVector)
     else if (atomAccountedFor >= 2)
     {
         cout << "ERROR - atom found twice in molecule string" << "\n";
-        raise(101); // raises error 101 (arbitrary value)
     }
 
     // for each atom bonded to current atom
     for (int i = 0; currentAtom -> bonds.size(); i++)
     {
-        if (count(moleculeVector -> begin(), moleculeVector -> end(), currentAtom -> bonds[i]) == 0) // if the atom doesn't appear in the molecule list
+        if (atomSearch(moleculeVector, currentAtom -> bonds[i]) == 0) // if the atom doesn't appear in the molecule list
         {
             findMoleculeTree(currentAtom -> bonds[i], moleculeVector);  // recurse the function, passing in the new branch and the molecule list as parameters
         }
@@ -234,15 +246,6 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
 
         return &molecule2;
     }
-    
-    // if second route between atom1 and atom2 (depth first search):
-        // return null;
-    // else if this splits molecule:
-        // create new molecule object, mol2                                 --> create molecule constructor class from pointers
-        // use atom2 as R group to find rest of atoms in new molecule
-        // fill mol2's child vector with these atoms
-        // change their parent molecule to mol2
-
 }
 
 /*
@@ -253,7 +256,13 @@ FUNCTIONAL GROUP SEARCHES
 
 vector<Atom*>* carbonChains(Molecule* molecule)
 {
+    vector<Atom*> foundAtoms;
 
+    // finds carbons in the molecule's list of atoms
+    for (int i = 0; i < molecule -> atoms -> size(); i++)
+    {
+        
+    }
 }
 
 /*
