@@ -55,7 +55,7 @@ struct Atom
 class Molecule
 {
 public: 
-    vector<Atom> atoms;     // vector of atoms in molecule
+    vector<Atom*> atoms;     // vector of pointers to atoms in molecule
 
     string name = "";
 
@@ -63,7 +63,7 @@ public:
     Molecule(Atom firstAtom)
     {
         firstAtom.parent = this;
-        atoms.push_back(firstAtom);
+        atoms.push_back(&firstAtom);
     }
 
     Molecule(vector<Atom*>* atomVector)
@@ -71,7 +71,7 @@ public:
         for (int i = 0; atomVector -> size(); i++)
         {
             (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
-            atoms.push_back(*(*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
+            atoms.push_back((*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
 
             /* 
             may need to dereference atom pointers later in the program
@@ -107,7 +107,7 @@ void addBond(Atom* atom1, Atom* atom2)
         for (int i = 0; atom2 -> parent -> atoms.size(); i++)
         {
             // change the parent from atom 2' parent molecule to atom 1's parent molecule
-            temp_atom2_parent -> atoms[i].parent = atom1 -> parent;
+            temp_atom2_parent -> atoms.at(i) -> parent = atom1 -> parent;
         }
 
         // append vector of atoms from molecule 2 to end of molecule 1
@@ -229,7 +229,11 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     else    // else return a pointer to a new molecule created off of the atoms connected to atom2 
     {
         // sets atom1's parent molecule's atom vector as the on found for atom1 post bond breaking
+<<<<<<< HEAD
         atom1 -> parent -> atoms = molecule1_atomVector;
+=======
+        atom1 -> parent -> atoms = *molecule1_atomVector;
+>>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
 
         // creates a new molecule vector for atom2's molecule and fills it
         vector<Atom*>* molecule2_atomVector;
@@ -239,9 +243,15 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         Molecule molecule2(molecule2_atomVector);
 
         // for all atoms in molecule, set molecule2 as their parent
+<<<<<<< HEAD
         for (int i = 0; i < molecule2 -> atoms -> size(); i++)
         {
             molecule2 -> atoms -> at(i) -> parent = &molecule2;
+=======
+        for (int i = 0; i < molecule2.atoms.size(); i++)
+        {
+            molecule2.atoms.at(i) -> parent = &molecule2;
+>>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
         }
 
         return &molecule2;
@@ -256,12 +266,40 @@ FUNCTIONAL GROUP SEARCHES
 
 vector<Atom*>* carbonChains(Molecule* molecule)
 {
+<<<<<<< HEAD
     vector<Atom*> foundAtoms;
 
     // finds carbons in the molecule's list of atoms
     for (int i = 0; i < molecule -> atoms -> size(); i++)
     {
         
+=======
+    vector<Atom*> foundCarbons;
+
+    // finds carbons in the molecule's list of atoms
+    for (int i = 0; i < molecule -> atoms.size(); i++)
+    {
+        if(molecule -> atoms.at(i) -> element == CARBON)
+        {
+            // checks if carbon has already been found
+            bool found = false;
+            for (int j = 0; j < foundCarbons.size(); j++)
+            {
+                if (molecule -> atoms.at(i) == foundCarbons.at(j))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+            {
+                break;
+            }
+
+            // else start searching for carbon chain connected to found carbon
+            
+        }
+>>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
     }
 }
 
