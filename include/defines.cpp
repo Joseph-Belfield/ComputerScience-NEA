@@ -85,7 +85,7 @@ public:
 
 /*
 =========================================================================
-MOLECULE QUALITY OF LIFE FUNCTIONS
+MOLECULE FUNCTIONS
 =========================================================================
 */
 
@@ -254,69 +254,15 @@ FUNCTIONAL GROUP SEARCHES
 =========================================================================
 */
 
-vector<vector<Atom*>*>* carbonChains
-(Molecule* molecule, vector<vector<Atom*>*>* allChains)
-{
-    // current carbon is the most recently added carbon of the most recently added carbon chain
-    Atom* previousCarbon = allChains -> at(-1) -> at(-1);
 
-    // finds if the latest carbon is bonded to any other carbons
-    bool endChain = true;
-    vector<Atom*> potentialCarbonBranches;
-    for (int k = 0; k < previousCarbon -> bonds.size(); k++)
-    {
-        bool carbonFoundPrevious = false;
-        if (previousCarbon -> bonds.at(k) -> element == CARBON)
-        {
-            // if attatched to another carbon, states this carbon isn't the end of the chain and sets it as current carbon
-            endChain = false;
-            Atom* currentCarbon = previousCarbon -> bonds.at(k);
-
-            // finds if that carbon has been found before
-            for (int i = 0; i < allChains -> size(); i++)
-            {
-                for (int j = 0; j < allChains -> at(i) -> size(); j++)
-                {
-                    if (allChains -> at(i) -> at(j) == currentCarbon)
-                    {
-                        carbonFoundPrevious = true;
-                    }
-                }
-            } 
-        }
-
-        // if bonded atom k is a carbon that has not been found before, add it to the list of potential carbon routes
-        if (!carbonFoundPrevious)
-        {
-            potentialCarbonBranches.push_back(previousCarbon -> bonds.at(k));
-        }
-    }
-
-
-}
 
 /*
 =========================================================================
-MECHANISM & REACTION CLASSES
+REACTION CLASSES
 =========================================================================
 */
 
-// contains information on what is needed for a mechanism
-class Mechanism
-{
-public:
-
-// electrophilic addition
-// electrophilic substitution
-// nucleophilic addition
-// nucleophilic substitution
-// halogination
-// nitratiom
-// 
-
-};
-
-// contains information any reaction may need, plus methods for reactions - reactions are made up of mechanisms
+// contains information any reaction may need, plus methods for reactions
 class Reaction
 {
 public: 
