@@ -229,11 +229,7 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     else    // else return a pointer to a new molecule created off of the atoms connected to atom2 
     {
         // sets atom1's parent molecule's atom vector as the on found for atom1 post bond breaking
-<<<<<<< HEAD
-        atom1 -> parent -> atoms = molecule1_atomVector;
-=======
         atom1 -> parent -> atoms = *molecule1_atomVector;
->>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
 
         // creates a new molecule vector for atom2's molecule and fills it
         vector<Atom*>* molecule2_atomVector;
@@ -243,15 +239,9 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
         Molecule molecule2(molecule2_atomVector);
 
         // for all atoms in molecule, set molecule2 as their parent
-<<<<<<< HEAD
-        for (int i = 0; i < molecule2 -> atoms -> size(); i++)
-        {
-            molecule2 -> atoms -> at(i) -> parent = &molecule2;
-=======
         for (int i = 0; i < molecule2.atoms.size(); i++)
         {
             molecule2.atoms.at(i) -> parent = &molecule2;
->>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
         }
 
         return &molecule2;
@@ -264,43 +254,45 @@ FUNCTIONAL GROUP SEARCHES
 =========================================================================
 */
 
-vector<Atom*>* carbonChains(Molecule* molecule)
+vector<vector<Atom*>*>* carbonChains
+(Molecule* molecule, vector<vector<Atom*>*>* allChains)
 {
-<<<<<<< HEAD
-    vector<Atom*> foundAtoms;
+    // current carbon is the most recently added carbon of the most recently added carbon chain
+    Atom* previousCarbon = allChains -> at(-1) -> at(-1);
 
-    // finds carbons in the molecule's list of atoms
-    for (int i = 0; i < molecule -> atoms -> size(); i++)
+    // finds if the latest carbon is bonded to any other carbons
+    bool endChain = true;
+    vector<Atom*> potentialCarbonBranches;
+    for (int k = 0; k < previousCarbon -> bonds.size(); k++)
     {
-        
-=======
-    vector<Atom*> foundCarbons;
-
-    // finds carbons in the molecule's list of atoms
-    for (int i = 0; i < molecule -> atoms.size(); i++)
-    {
-        if(molecule -> atoms.at(i) -> element == CARBON)
+        bool carbonFoundPrevious = false;
+        if (previousCarbon -> bonds.at(k) -> element == CARBON)
         {
-            // checks if carbon has already been found
-            bool found = false;
-            for (int j = 0; j < foundCarbons.size(); j++)
-            {
-                if (molecule -> atoms.at(i) == foundCarbons.at(j))
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (found)
-            {
-                break;
-            }
+            // if attatched to another carbon, states this carbon isn't the end of the chain and sets it as current carbon
+            endChain = false;
+            Atom* currentCarbon = previousCarbon -> bonds.at(k);
 
-            // else start searching for carbon chain connected to found carbon
-            
+            // finds if that carbon has been found before
+            for (int i = 0; i < allChains -> size(); i++)
+            {
+                for (int j = 0; j < allChains -> at(i) -> size(); j++)
+                {
+                    if (allChains -> at(i) -> at(j) == currentCarbon)
+                    {
+                        carbonFoundPrevious = true;
+                    }
+                }
+            } 
         }
->>>>>>> 903265e (added new count function and finished bond break function and theres a typo please help me delete its terrible)
+
+        // if bonded atom k is a carbon that has not been found before, add it to the list of potential carbon routes
+        if (!carbonFoundPrevious)
+        {
+            potentialCarbonBranches.push_back(previousCarbon -> bonds.at(k));
+        }
     }
+
+
 }
 
 /*
