@@ -254,8 +254,59 @@ FUNCTIONAL GROUP SEARCHES
 =========================================================================
 */
 
+class Functional_Group
+{
+public:
+    // holds pointers to the atoms 
+    vector<Atom> constituantAtoms;
 
+    // virtual allows child classes to be used wherever their parent class is mentioned instead
+    // finds the first alcohol group it can in a molecule, and returns a pointer to the O
+    virtual Functional_Group findFunctionalGroup(Molecule* molecule) {} // tells compiler react will be a method in all future subclasses
 
+    // finds the first alcohol group it can in a molecule, and returns a pointer to a new alcohol object made of these atoms
+    virtual Functional_Group findFunctionalGroup(Molecule* molecule, bool create) {}
+
+    // finds all alcohol groups it can in a molecule, and returns a vector of alcohol object pointers
+    virtual Functional_Group findFunctionalGroup(Molecule molecule) {}
+};
+
+// alcohol is a child class of functional group
+class Alcohol: public Functional_Group
+{
+public:
+    // constiunt atoms should be stored as [O,H]
+
+    // verifies if two given atoms are an alcohol group
+    bool isAlcohol(Atom* atom1, Atom* atom2)
+    {
+
+    }
+
+    // finds the first alcohol group it can in a molecule, and returns a pointer to the O
+    Atom* findAlcohol(Molecule* molecule)
+    {
+
+    }
+
+    // finds the first alcohol group it can in a molecule, and returns a pointer to a new alcohol object made of these atoms
+    Alcohol* findAlcohol(Molecule* molecule, bool create)
+    {
+
+    }
+
+    // finds all alcohol groups it can in a molecule, and returns a vector of alcohol object pointers
+    vector<Alcohol*>* findAllAlcohol(Molecule* molecule)
+    {
+
+    }
+
+    // finds the alcohol type (void used as it does not need a parameter)
+    unsigned int alcoholType(void)
+    {
+
+    }
+};
 /*
 =========================================================================
 REACTION CLASSES
