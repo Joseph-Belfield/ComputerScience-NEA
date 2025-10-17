@@ -36,9 +36,6 @@ struct Element
     char periodicBlock;
 };
 
-#define HYDROGEN Element(Name::HYDROGEN, 0, 'S')
-#define HELIUM Element(Name::HELIUM, 2, 'S')
-
 // Atom class, holds essential details for atoms. 
 struct Atom 
 { 
@@ -262,13 +259,13 @@ public:
 
     // virtual allows child classes to be used wherever their parent class is mentioned instead
     // finds the first alcohol group it can in a molecule, and returns a pointer to the O
-    virtual Functional_Group findFunctionalGroup(Molecule* molecule) {} // tells compiler react will be a method in all future subclasses
+    virtual Atom* findFunctionalGroup(Molecule* molecule) {} // tells compiler react will be a method in all future subclasses
 
     // finds the first alcohol group it can in a molecule, and returns a pointer to a new alcohol object made of these atoms
-    virtual Functional_Group findFunctionalGroup(Molecule* molecule, bool create) {}
+    virtual Functional_Group* findFunctionalGroup(Molecule* molecule, bool create) {}
 
     // finds all alcohol groups it can in a molecule, and returns a vector of alcohol object pointers
-    virtual Functional_Group findFunctionalGroup(Molecule molecule) {}
+    virtual Functional_Group* findAllFunctionalGroup(Molecule* molecule) {}
 };
 
 // alcohol is a child class of functional group
@@ -280,7 +277,71 @@ public:
     // verifies if two given atoms are an alcohol group
     bool isAlcohol(Atom* atom1, Atom* atom2)
     {
+        Atom* oxygenAtom;
+        Atom* hydrogenAtom;
+        if (atom1 -> element == OXYGEN && atom2 -> element == HYDROGEN)
+        {
+            oxygenAtom = atom1;
+            hydrogenAtom = atom2;
+        }
+        else if (atom2 -> element == OXYGEN && atom1 -> element == HYDROGEN)
+        {
+            oxygenAtom = atom2;
+            hydrogenAtom = atom1;
+        }
+        else
+        {
+            // if they aren't a hydrogen and oxygen, they cannot be a hydroxyl group
+            return false;
+        }
 
+        // checks if the oxygen atom and hydrogen atom are bonded (hydrogen should only have 1 bond)
+        bool bonded = false;
+        for (int i = 0; i < oxygenAtom -> bonds.size(); i++)
+        {
+            if (oxygenAtom -> bonds.at(i) == hydrogenAtom && hydrogenAtom -> bonds.at(0) == oxygenAtom)
+            {
+                bonded = true;
+            }
+        }
+        if (bonded == false)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < oxygenAtom -> bonds.size(); i++)
+        {
+            // if the oxygen atom is bonded to a carbon
+            if (oxygenAtom -> bonds.at(i) -> element == CARBON)
+            {
+                Atom* attatchedCarbon = oxygenAtom -> bonds.at(i);
+                Atom* otherOxygen[2] = {nullptr};
+
+                // check through all of carbons bonds for oxygen (except the given atom) - if none of the bonds are a repeated oxygen, return true
+                for (int j = 0; j < attatchedCarbon -> bonds.size(); j++)
+                {
+                    if (attatchedCarbon -> bonds.at(j) == oxygenAtom)
+                    {
+                        j++;
+                    }
+                    else if (attatchedCarbon -> bonds.at(j) -> element == OXYGEN && otherOxygen[0] == nullptr )
+                    {
+                        otherOxygen[0] = attatchedCarbon -> bonds.at(j);
+                    }
+                    else if (attatchedCarbon -> bonds.at(j) -> element == OXYGEN && attatchedCarbon -> bonds.at(j) != otherOxygen[0] && otherOxygen[1] == nullptr)
+                    {
+                        otherOxygen[1] = attatchedCarbon -> bonds.at(j);
+                    }
+                    else if (attatchedCarbon -> bonds.at(j) -> element == OXYGEN && attatchedCarbon -> bonds.at(j) != otherOxygen[0] && attatchedCarbon -> bonds.at(j) != otherOxygen[1])
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // if the above conditions are failed, it's false
+        return false;
     }
 
     // finds the first alcohol group it can in a molecule, and returns a pointer to the O
