@@ -69,13 +69,6 @@ public:
         {
             (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
             atoms.push_back((*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
-
-            /* 
-            may need to dereference atom pointers later in the program
-
-            delete (*atomVector)[i];    // deletes the pointer
-            (*atomVector)[i] = nullptr; // sets the pointer to null so it cannot be rereferences
-            */
         }
     }
 };
@@ -255,7 +248,7 @@ class Functional_Group
 {
 public:
     // holds pointers to the atoms 
-    vector<Atom> constituantAtoms;
+    vector<Atom*> constituantAtoms;
 
     // virtual allows child classes to be used wherever their parent class is mentioned instead
     // finds the first alcohol group it can in a molecule, and returns a pointer to the O
@@ -273,6 +266,13 @@ class Alcohol: public Functional_Group
 {
 public:
     // constiunt atoms should be stored as [O,H]
+
+    Alcohol(Atom* oxygen, Atom* hydrogen)
+    {
+        constituantAtoms.at(0) = oxygen;
+        constituantAtoms.at(1) = hydrogen;
+
+    }
 
     // verifies if two given atoms are an alcohol group
     bool isAlcohol(Atom* atom1, Atom* atom2)
@@ -344,30 +344,136 @@ public:
         return false;
     }
 
-    // finds the first alcohol group it can in a molecule, and returns a pointer to the O
+    // finds the first alcohol group it can in a molecule, and returns a pointer to the oxygen of the alcohol group
     Atom* findAlcohol(Molecule* molecule)
     {
+        bool alcFound = false;
+        for (int i = 0; i < molecule -> atoms.size() && alcFound == false; i++)
+        {
+            // for each hydrogen in the molecule
+            if (molecule -> atoms.at(i) -> element == HYDROGEN)
+            {
+                // check if its connected to an oxygen
+                if (molecule -> atoms.at(i) -> bonds.at(0) -> element == OXYGEN)
+                {
+                    // check if these atoms make up an alcohol
+                    Atom* hydrogen = molecule -> atoms.at(i);
+                    Atom* oxygen = molecule -> atoms.at(i) -> bonds.at(0);
 
+                    if (isAlcohol(oxygen, hydrogen))
+                    {
+                        // if they do make up an alcohol, return the oxygen
+                        alcFound = true;
+                        return oxygen;
+                    }
+                }
+            }
+        }
+
+        // if no alcohols are found, return a nullptr
+        return nullptr;
     }
 
     // finds the first alcohol group it can in a molecule, and returns a pointer to a new alcohol object made of these atoms
-    Alcohol* findAlcohol(Molecule* molecule, bool create)
+    Alcohol* findAlcohol(Molecule* molecule, bool create = true)
     {
+        bool alcFound = false;
+        for (int i = 0; i < molecule -> atoms.size() && alcFound == false; i++)
+        {
+            // for each hydrogen in the molecule
+            if (molecule -> atoms.at(i) -> element == HYDROGEN)
+            {
+                // check if its connected to an oxygen
+                if (molecule -> atoms.at(i) -> bonds.at(0) -> element == OXYGEN)
+                {
+                    // check if these atoms make up an alcohol
+                    Atom* hydrogen = molecule -> atoms.at(i);
+                    Atom* oxygen = molecule -> atoms.at(i) -> bonds.at(0);
 
+                    if (isAlcohol(oxygen, hydrogen))
+                    {
+                        // if they do make up an alcohol, return the oxygen
+                        alcFound = true;
+                        Alcohol returnAlc(oxygen, hydrogen);
+                    }
+                }
+            }
+        }
+
+        // if no alcohols are found, return a nullptr
+        return nullptr;
     }
 
     // finds all alcohol groups it can in a molecule, and returns a vector of alcohol object pointers
     vector<Alcohol*>* findAllAlcohol(Molecule* molecule)
     {
+        vector<Alcohol*>* allAlcohols;
+        for (int i = 0; i < molecule -> atoms.size(); i++)
+        {
+            // for each hydrogen in the molecule
+            if (molecule -> atoms.at(i) -> element == HYDROGEN)
+            {
+                // check if its connected to an oxygen
+                if (molecule -> atoms.at(i) -> bonds.at(0) -> element == OXYGEN)
+                {
+                    // check if these atoms make up an alcohol
+                    Atom* hydrogen = molecule -> atoms.at(i);
+                    Atom* oxygen = molecule -> atoms.at(i) -> bonds.at(0);
 
+                    if (isAlcohol(oxygen, hydrogen))
+                    {
+                        // if they do make up an alcohol, return the oxygen
+                        Alcohol returnAlc(oxygen, hydrogen);
+                        allAlcohols -> push_back(&returnAlc);
+                    }
+                }
+            }
+        }
+
+        // if no alcohols are found, return a nullptr
+        return allAlcohols;
     }
 
     // finds the alcohol type (void used as it does not need a parameter)
-    unsigned int alcoholType(void)
+    unsigned int alcoholType(Alcohol* alcohol)
     {
+        Atom* oxygen = alcohol -> constituantAtoms.at(0);
+        Atom* carbon;
 
+        // find the attatched carbon atom
+        for (int i = 0; i < oxygen -> bonds.size(); i++)
+        {
+            if (oxygen -> bonds.at(i) -> element == CARBON)
+            {
+                carbon = oxygen -> bonds.at(i);
+            }
+        }
+
+        // check what type of alcohol it is (1st, 2nd, or 3rd) - determined by number of hydrogens attatched to carbon
+        unsigned int hydrogenCounter = 0;
+        for (int i = 0; i < carbon -> bonds.size(); i++)
+        {
+            if (carbon -> bonds.at(i) -> element == HYDROGEN)
+            {
+                hydrogenCounter++;
+            }
+        } 
+
+        // if 3 hydrogens attatched, 1st degree
+        // if 2 hydrogens attatched, 1st degree
+        // if 1 hydrogen attatched, 2nd degree
+        // if no hydrogens attatched, 3rd degree
+
+        int alcoholClass = 3 - hydrogenCounter;
+        if (alcoholClass == 0)
+        {
+            alcoholClass = 1;
+        }
+
+        return alcoholClass;
     }
 };
+
 /*
 =========================================================================
 REACTION CLASSES
