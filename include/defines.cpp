@@ -5,6 +5,7 @@ using namespace std;
 
 // NOTES
 // variable -> function() is equal to (*varible).function()
+// pointers highkey goated
 
 // Element enum, ties atomic number and element name. 
 enum Name
