@@ -23,4 +23,74 @@ class Carbonyl: public Functional_Group
 {
 public:
 
+    Carbonyl(Atom* carbon, Atom* oxygen)
+    {
+        constituantAtoms.at(0) = carbon;
+        constituantAtoms.at(1) = oxygen;
+    }
+
+    bool isCarbonyl(Atom* atom1, Atom* atom2)
+    {
+        Atom* carbon;
+        Atom* oxygen;
+
+        if (atom1 -> element == CARBON && atom2 -> element == OXYGEN)
+        {
+            carbon = atom1;
+            oxygen = atom2;
+        }
+        else if (atom1 -> element == OXYGEN && atom2 -> element == CARBON)
+        {
+            carbon = atom2;
+            oxygen = atom1;
+        }
+        else 
+        {
+            return false;
+        }
+
+        // checks that the carbon has two bonds with oxygen, and if so that oxygen has two bonds with carbon
+        unsigned int bondCounter = 0;
+        for (int i = 0; i < carbon -> bonds.size(); i++)
+        {
+            if (carbon -> bonds.at(i) == oxygen)
+            {
+                bondCounter++;
+            }
+        }
+        if (bondCounter = 2)
+        {
+            bondCounter = 0;
+            for (int i = 0; i < oxygen -> bonds.size(); i++)
+            {
+                if (oxygen -> bonds.at(i) == carbon)
+                {
+                    bondCounter++;
+                }
+            }
+            if (bondCounter == 2)
+            {
+                return true;
+            }
+        }
+
+        // if the oxygen and carbon do not share 2 bonds, not a carbonyl
+        return false;
+    }
+
+    // return the oxygen of a carbonyl
+    Atom* findCarbonyl(Molecule* molecule)
+    {
+
+    }
+
+    Carbonyl* findCarbonyl(Molecule* molecule, bool create)
+    {
+
+    }
+
+    std::vector<Carbonyl*>* findAllCarbonyl(Molecule* molecule)
+    {
+        
+    }
 };

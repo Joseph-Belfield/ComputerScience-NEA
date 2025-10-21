@@ -28,7 +28,6 @@ public:
     {
         constituantAtoms.at(0) = oxygen;
         constituantAtoms.at(1) = hydrogen;
-
     }
 
     // verifies if two given atoms are an alcohol group
@@ -132,8 +131,14 @@ public:
     }
 
     // finds the first alcohol group it can in a molecule, and returns a pointer to a new alcohol object made of these atoms
-    Alcohol* findAlcohol(Molecule* molecule, bool create = true)
+    Alcohol* findAlcohol(Molecule* molecule, bool create)
     {
+        // if they don't want a return (unsure why) return nullptr
+        if (create == false)
+        {
+            return nullptr;
+        }
+        
         bool alcFound = false;
         for (int i = 0; i < molecule -> atoms.size() && alcFound == false; i++)
         {
