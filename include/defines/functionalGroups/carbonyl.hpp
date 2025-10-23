@@ -81,7 +81,29 @@ public:
     // return the oxygen of a carbonyl
     Atom* findCarbonyl(Molecule* molecule)
     {
+        bool carbonylFound = false;
+        for (int i = 0; i < molecule -> atoms.size() && carbonylFound == false; i++)
+        {
+            if (molecule -> atoms.at(i) -> element == OXYGEN)
+            {
+                Atom* oxygen = molecule -> atoms.at(i);
+                Atom* carbon;
+                for (int j = 0; j < oxygen -> bonds.size(); j++)
+                {
+                    if (oxygen -> bonds.at(i) -> element == CARBON)
+                    {
+                        carbon = oxygen -> bonds.at(i);
+                        if (isCarbonyl(carbon, oxygen))
+                        {
+                            return oxygen;
+                            carbonylFound = true;
+                        }
+                    }
+                }
+            }
+        }
 
+        return nullptr;
     }
 
     Carbonyl* findCarbonyl(Molecule* molecule, bool create)
