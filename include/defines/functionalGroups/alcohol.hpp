@@ -157,6 +157,7 @@ public:
                         // if they do make up an alcohol, return the oxygen
                         alcFound = true;
                         Alcohol returnAlc(oxygen, hydrogen);
+                        return &returnAlc;
                     }
                 }
             }

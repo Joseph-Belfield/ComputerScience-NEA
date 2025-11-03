@@ -96,7 +96,6 @@ public:
                         if (isCarbonyl(carbon, oxygen))
                         {
                             return oxygen;
-                            carbonylFound = true;
                         }
                     }
                 }
@@ -108,7 +107,35 @@ public:
 
     Carbonyl* findCarbonyl(Molecule* molecule, bool create)
     {
+        // if create is false, function returns a nullptr (and does nothing?)
+        if (!create)
+        {
+            return nullptr;
 
+            bool carbonylFound = false;
+        for (int i = 0; i < molecule -> atoms.size() && carbonylFound == false; i++)
+        {
+            if (molecule -> atoms.at(i) -> element == OXYGEN)
+            {
+                Atom* oxygen = molecule -> atoms.at(i);
+                Atom* carbon;
+                for (int j = 0; j < oxygen -> bonds.size(); j++)
+                {
+                    if (oxygen -> bonds.at(i) -> element == CARBON)
+                    {
+                        carbon = oxygen -> bonds.at(i);
+                        if (isCarbonyl(carbon, oxygen))
+                        {
+                            Carbonyl returnCarbonyl(carbon, oxygen);
+                            return &returnCarbonyl;
+                        }
+                    }
+                }
+            }
+        }
+
+        return nullptr;
+        }
     }
 
     std::vector<Carbonyl*>* findAllCarbonyl(Molecule* molecule)
