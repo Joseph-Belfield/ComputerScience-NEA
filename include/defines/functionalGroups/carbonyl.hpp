@@ -111,8 +111,9 @@ public:
         if (!create)
         {
             return nullptr;
+        }
 
-            bool carbonylFound = false;
+        bool carbonylFound = false;
         for (int i = 0; i < molecule -> atoms.size() && carbonylFound == false; i++)
         {
             if (molecule -> atoms.at(i) -> element == OXYGEN)
@@ -134,12 +135,35 @@ public:
             }
         }
 
+        // else:
         return nullptr;
-        }
     }
 
     std::vector<Carbonyl*>* findAllCarbonyl(Molecule* molecule)
     {
+        std::vector<Carbonyl*>* allCarbonyls;
         
+        for (int i = 0; i < molecule -> atoms.size(); i++)
+        {
+            if (molecule -> atoms.at(i) -> element == OXYGEN)
+            {
+                Atom* oxygen = molecule -> atoms.at(i);
+                Atom* carbon;
+                for (int j = 0; j < oxygen -> bonds.size(); j++)
+                {
+                    if (oxygen -> bonds.at(i) -> element == CARBON)
+                    {
+                        carbon = oxygen -> bonds.at(i);
+                        if (isCarbonyl(carbon, oxygen))
+                        {
+                            Carbonyl returnCarbonyl(carbon, oxygen);
+                            allCarbonyls -> push_back(&returnCarbonyl);
+                        }
+                    }
+                }
+            }
+        }
+
+        return allCarbonyls;
     }
 };
