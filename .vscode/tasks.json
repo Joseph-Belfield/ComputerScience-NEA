@@ -5,12 +5,28 @@
             "label": "C/C++: clang build active file",
             "command": "/usr/bin/clang",
             "args": [
+                "-std=c++23",
                 "-fcolor-diagnostics",
                 "-fansi-escape-codes",
+                "-Wall",
                 "-g",
-                "${file}",
+                "-I${workspaceFolder}/include",
+                "-L${workspaceFolder}/library",
+                "${workspaceFolder}/source/*.cpp",
+                "${workspaceFolder}/library/libglfw.3.dylib",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${workspaceFolder}/app",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "IOKit",
+                "-framework",
+                "CoreVideo",
+                "-framework",
+                "CoreFoundation",
+                "-Wno-deprecated"
             ],
             "options": {
                 "cwd": "${fileDirname}"
