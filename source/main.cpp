@@ -1,1 +1,1 @@
-#include "rendering/testTriangle.hpp"
+#include "rendering/test_GLFW.hpp"

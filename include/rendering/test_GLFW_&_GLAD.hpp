@@ -181,3 +181,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
+/*
+    Credits: learnopengl.com
+    URL: https://learnopengl.com/code_viewer_gh.php?code=src%2F1.getting_started%2F2.1.hello_triangle%2Fhello_triangle.cpp
+*/
