@@ -7,6 +7,7 @@
             // forces old app files to be cleared out first before remaking when reran
             "dependsOn": ["Clean build"],
             "args": [
+                "-O2",
                 "-std=c++23",
                 "-fcolor-diagnostics",
                 "-fansi-escape-codes",
