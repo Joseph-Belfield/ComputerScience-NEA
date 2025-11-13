@@ -14,9 +14,17 @@
 #endif
 
 
-    
+
 // callback function which resizes windows dimensions.
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+void processInput(GLFWwindow* window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
 
 int main()
 {
@@ -70,6 +78,19 @@ int main()
     // main render loop.
     while (!glfwWindowShouldClose(window))
     {
+     // input:
+        processInput(window);
+
+        
+     // render commands:
+
+        // R, G , B, opcaity (Alpha)
+        glClearColor(1.0f, 0.0f, 0.5f, 1.0f);
+        // clears the color buffer after so the frames dont bleed into each other
+        glClear(GL_COLOR_BUFFER_BIT);
+
+     // check and call events, replace buffers:
+
         // the buffer effectively is just all the data about what colors should be where on the screen.
         glfwSwapBuffers(window);
         // events are user input, etc.
