@@ -163,7 +163,28 @@ int main()
     glDeleteShader(fragmentShader);
 
 
- // 7. tell OpenGL how to interperet vertex data:
+ // 8. vertex data for a triangle in the centre of the screen.
+    float exampleVertices[] = {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f, 0.5f, 0.0f
+    };
+
+
+ // 9. Vetex Array & Buffer Objects: 
+
+    // creates a vertex buffer (used to send data in chunks to the GPU).
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    // bind VAO first, then bind and set VBO, and then configure vertex attributes
+    glBindVertexArray(VAO);
+
+    // binds the vertex buffer (data type GL_ARRAY_BUFFER) to the vertex buffer object
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // takes the (user-defined) vertix data into the current vertex buffer object (GL_ARRAY_BUFFER).
+    // STATIC means the data will be set once and is used mutliple times (static image).
+    glBufferData(GL_ARRAY_BUFFER, sizeof(exampleVertices), exampleVertices, GL_STATIC_DRAW);
 
     // the attributes here are as follows:
         // the vertex attribute we want to configure (set to 0 earlier using "layout(locatiom = 0)").
@@ -175,26 +196,10 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
- // 8. vertex data for a triangle in the centre of the screen.
-    float exampleVertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f, 0.5f, 0.0f
-    };
-
- // 9. Buffer Objects: 
-
-    // creates a vertex buffer (used to send data in chunks to the GPU).
-    unsigned int vertexBufferObject;
-    glGenBuffers(1, &vertexBufferObject);
-
-    // binds the vertex buffer (data type GL_ARRAY_BUFFER) to the vertex buffer object
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-
-    // takes the (user-defined) vertix data into the current vertex buffer object (GL_ARRAY_BUFFER).
-    // STATIC means the data will be set once and is used mutliple times (static image).
-    glBufferData(GL_ARRAY_BUFFER, sizeof(exampleVertices), exampleVertices, GL_STATIC_DRAW);
+    glBindVertexArray(0);
+    
 
  // 10. render loop:
 
@@ -211,6 +216,11 @@ int main()
         glClearColor(1.0f, 0.0f, 0.5f, 1.0f);
         // clears the color buffer after so the frames dont bleed into each other
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // drawing the triangle
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
      // check and call events, replace buffers:
 
