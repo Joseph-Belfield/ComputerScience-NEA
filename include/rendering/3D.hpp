@@ -44,6 +44,9 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 int main()
 {
+
+// ===== CREATING THE WINDOW =====
+
  // 1. initialize GLFW window:
 
     // initialize GLFW.
@@ -87,6 +90,9 @@ int main()
         std::cout << "Failed to initialize GLAD" << "\n";
         return -1;
     }
+
+
+// ===== SHADERS =====
 
 
  // 4. vertex shader compilation:
@@ -163,6 +169,9 @@ int main()
     glDeleteShader(fragmentShader);
 
 
+// ===== VERTEX DATA AND HANDLING
+
+
  // 8. vertex data 
 
     // all UNIIQUE vertexes needed (so overlapping vertices only needed once)
@@ -214,6 +223,9 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     
 
+// ===== RENDER LOOP =====
+
+
  // 10. render loop:
 
     // main render loop.
@@ -243,6 +255,11 @@ int main()
         // events are user input, etc.
         glfwPollEvents();  
     }
+
+
+// ===== CLEANUP ======
+
+
 
  // 11. end main function:
 
