@@ -163,20 +163,30 @@ int main()
     glDeleteShader(fragmentShader);
 
 
- // 8. vertex data for a triangle in the centre of the screen.
+ // 8. vertex data 
+
+    // all UNIIQUE vertexes needed (so overlapping vertices only needed once)
     float exampleVertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f, 0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f, // bottom left
+         0.5f, -0.5f, 0.0f, // bottom right
+         0.5f,  0.5f, 0.0f, // top right
+        -0.5f,  0.5f, 0.0f  // top left
+    };
+    // order in which to visit vertices for each triangle in square
+    unsigned int indices[] = {
+        0, 1, 3, // triangle 1
+        1, 2, 3  // triangle 2
     };
 
 
  // 9. Vetex Array & Buffer Objects: 
 
     // creates a vertex buffer (used to send data in chunks to the GPU).
-    unsigned int VBO, VAO;
+    unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
     // bind VAO first, then bind and set VBO, and then configure vertex attributes
     glBindVertexArray(VAO);
 
@@ -185,6 +195,10 @@ int main()
     // takes the (user-defined) vertix data into the current vertex buffer object (GL_ARRAY_BUFFER).
     // STATIC means the data will be set once and is used mutliple times (static image).
     glBufferData(GL_ARRAY_BUFFER, sizeof(exampleVertices), exampleVertices, GL_STATIC_DRAW);
+
+    // repeat above for EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // the attributes here are as follows:
         // the vertex attribute we want to configure (set to 0 earlier using "layout(locatiom = 0)").
@@ -197,8 +211,7 @@ int main()
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     
 
  // 10. render loop:
@@ -220,7 +233,8 @@ int main()
         // drawing the triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
      // check and call events, replace buffers:
 
