@@ -222,6 +222,9 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     
+    // to set whether shapes should be drawn in wireframe or fill modes. 
+        // this will cause the program to draw lines rather than fill until set otherwise.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 // ===== RENDER LOOP =====
 
@@ -234,7 +237,7 @@ int main()
      // input:
         processInput(window);
 
-        
+
      // render commands:
 
         // R, G , B, opcaity (Alpha)
