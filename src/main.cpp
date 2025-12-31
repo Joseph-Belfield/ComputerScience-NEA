@@ -11,7 +11,7 @@ auto init(SDL_Window **window, SDL_Renderer **renderer) -> auto {
   }
 
   bool success = SDL_CreateWindowAndRenderer(
-      "compsci-nea", 600, 500, SDL_WINDOW_RESIZABLE, window, renderer);
+      "compsci_nea", 800, 600, SDL_WINDOW_RESIZABLE, window, renderer);
 
   if (success == false) {
     SDL_Log("errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
