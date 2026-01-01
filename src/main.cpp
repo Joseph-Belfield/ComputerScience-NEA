@@ -69,6 +69,9 @@ int main(int argc, char *argv[]) {
 
   init_imgui(window, renderer);
 
+  // window background color variables
+  Uint8 r = 255, g = 255, b = 255, a = 255;
+
   /* **************************************************************
   //  _
   // | | ___   ___  _ __
@@ -98,10 +101,35 @@ int main(int argc, char *argv[]) {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    ImGui::Text("Hello World!");
+
+
+
+    bool color_picker_active = true;
+
+    // create a window with menu bar called "Color Picker"
+    ImGui::Begin("Color Picker", &color_picker_active, ImGuiWindowFlags_MenuBar);
+    if (ImGui::BeginMenuBar())
+    {
+      if (ImGui::BeginMenu("File"))
+      {
+        if (ImGui::MenuItem("Open..", "Ctrl+O")) {r = 0;}
+        if (ImGui::MenuItem("Close", "Ctrl+W")) {color_picker_active = false;}
+        ImGui::EndMenu();
+      }
+      ImGui::EndMenuBar();
+    }
+
+    // edit a color stored as 4 floats
+    // ImGui::ColorEdit4("Color",my_color);
+
+    ImGui::End();
+
+
+
 
     ImGui::Render();
-    SDL_SetRenderDrawColor(renderer, 17, 17, 27, 255);
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
     SDL_RenderClear(renderer);
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
