@@ -5,6 +5,8 @@
 #include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_sdlrenderer3.h"
 
+#include <math.h>
+
 auto init(SDL_Window **window, SDL_Renderer **renderer) -> auto {
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
     return false;
@@ -26,10 +28,8 @@ auto init_imgui(SDL_Window *window, SDL_Renderer *renderer) -> auto {
 
   ImGuiIO &io = ImGui::GetIO();
   (void)io;
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-  io.ConfigFlags |=
-      ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
   // Setup scaling
   float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 
   // window background color variables
   Uint8 r = 255, g = 255, b = 255, a = 255;
+  float my_color;
 
   /* **************************************************************
   //  _
@@ -101,6 +102,10 @@ int main(int argc, char *argv[]) {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
+
+    // ********************** DO STUFF HERE **********************
+
+
     ImGui::Text("Hello World!");
 
 
@@ -121,11 +126,29 @@ int main(int argc, char *argv[]) {
     }
 
     // edit a color stored as 4 floats
-    // ImGui::ColorEdit4("Color",my_color);
+    ImGui::ColorEdit4("Color", &my_color);
+
+    // generate samples of color
+    float samples[100];
+    for (int i = 0; i < 100; i++)
+    {
+      samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
+    }
+    ImGui::PlotLines("Samples", samples, 100);
+
+    // display contents in scrolling region
+    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
+    ImGui::BeginChild("Scrolling");
+    for (int i = 0; i < 15; i++)
+    {
+      ImGui::Text("Some text");
+    }
+    ImGui::EndChild();
 
     ImGui::End();
 
 
+    // ********************** STOP DOING STUFF HERE **********************
 
 
     ImGui::Render();
@@ -142,3 +165,5 @@ int main(int argc, char *argv[]) {
   SDL_Quit();
   return 0;
 }
+
+// enter "sh make.sh" into terminal to run program
