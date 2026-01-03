@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/Users/josephbelfield/Code/ComputerScience-NEA/build/cmake_install.cmake",
-		"/Users/josephbelfield/Code/ComputerScience-NEA/build/lib/SDL/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
