@@ -69,9 +69,18 @@ int main(int argc, char *argv[]) {
 
   init_imgui(window, renderer);
 
+  // initialize variables used inside the loop here!
+
   // window background color variables
-  Uint8 r = 255, g = 255, b = 255, a = 255;
-  float my_color;
+  float my_color[4];
+  my_color[3] = 1.0f;
+
+  // bools determining if windows should be rendered
+  bool main_window = true;
+  bool hello_world = false;
+  bool show_colorPicker = false;
+  bool show_sineGraph = false;
+  bool show_scrolling = false;
 
   /* **************************************************************
   //  _
@@ -102,57 +111,76 @@ int main(int argc, char *argv[]) {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
+    
 
     // ********************** DO STUFF HERE **********************
 
-
-    ImGui::Text("Hello World!");
-
-
-
-    bool color_picker_active = true;
-
-    // create a window with menu bar called "Color Picker"
-    ImGui::Begin("Color Picker", &color_picker_active, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Main Window", &main_window, ImGuiWindowFlags_MenuBar);
     if (ImGui::BeginMenuBar())
     {
-      if (ImGui::BeginMenu("File"))
+      if (ImGui::BeginMenu("Options"))
       {
-        if (ImGui::MenuItem("Open..", "Ctrl+O")) {r = 0;}
-        if (ImGui::MenuItem("Close", "Ctrl+W")) {color_picker_active = false;}
+        if (ImGui::MenuItem("Change Background Color")) {show_colorPicker = true;}
+        if (ImGui::MenuItem("Sine Graph")) {show_sineGraph = true;}
+        if (ImGui::MenuItem("Scrolling")) {show_scrolling = true;}
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();
     }
 
-    // edit a color stored as 4 floats
-    ImGui::ColorEdit4("Color", &my_color);
-
-    // generate samples of color
-    float samples[100];
-    for (int i = 0; i < 100; i++)
+    if (ImGui::Button("Hello World"))
     {
-      samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
+      hello_world = true;
     }
-    ImGui::PlotLines("Samples", samples, 100);
-
-    // display contents in scrolling region
-    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
-    ImGui::BeginChild("Scrolling");
-    for (int i = 0; i < 15; i++)
-    {
-      ImGui::Text("Some text");
-    }
-    ImGui::EndChild();
-
     ImGui::End();
 
+
+
+    if (hello_world)
+    {
+      ImGui::Text("Hello World!");
+    }
+
+    if (show_sineGraph)
+    {
+      ImGui::Begin("Sine Graph", &show_sineGraph);
+      float samples[100];
+      for (int i = 0; i < 100; i++)
+      {
+        samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
+      }
+      ImGui::PlotLines("Samples", samples, 100);
+      ImGui::End();
+    }
+
+    if (show_scrolling)
+    {
+      // display contents in scrolling region
+      ImGui::Begin("Scrolling", &show_scrolling);
+      ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
+      ImGui::BeginChild("Scrolling");
+      for (int i = 0; i < 15; i++)
+      {
+        ImGui::Text("Some text");
+      }
+      ImGui::EndChild();
+      ImGui::End();
+    }
+
+    if (show_colorPicker)
+    {
+      // create a window with menu bar called "Color Picker"
+      ImGui::Begin("Color Picker", &show_colorPicker);
+      // edit a color stored as 4 floats
+      ImGui::ColorEdit4("Color", my_color);
+      ImGui::End();
+    }
 
     // ********************** STOP DOING STUFF HERE **********************
 
 
     ImGui::Render();
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    SDL_SetRenderDrawColor(renderer, round(255 * my_color[0]), round(255 * my_color[1]), round(255 * my_color[2]), round(255 * my_color[3]));
     SDL_RenderClear(renderer);
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
     SDL_RenderPresent(renderer);
