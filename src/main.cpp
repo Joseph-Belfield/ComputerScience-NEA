@@ -42,8 +42,8 @@ auto init_imgui(SDL_Window *window, SDL_Renderer *renderer) -> auto {
                    // documentation purpose)
   style.FontScaleDpi = main_scale;
 
-  style.FontSizeBase = 20.f;
-  io.Fonts->AddFontDefault();
+  // ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+  ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
 
   ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
   ImGui_ImplSDLRenderer3_Init(renderer);
@@ -111,11 +111,10 @@ int main(int argc, char *argv[]) {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 
-    
-
     // ********************** DO STUFF HERE **********************
 
     ImGui::Begin("Main Window", &main_window, ImGuiWindowFlags_MenuBar);
+
     if (ImGui::BeginMenuBar())
     {
       if (ImGui::BeginMenu("Options"))
@@ -132,6 +131,7 @@ int main(int argc, char *argv[]) {
     {
       hello_world = true;
     }
+
     ImGui::End();
 
 
