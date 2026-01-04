@@ -32,4 +32,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 target_include_directories(${PROJECT_NAME} PRIVATE 
     src
     lib/imgui
+    headers
 )
