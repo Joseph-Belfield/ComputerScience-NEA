@@ -22,7 +22,7 @@ add_executable(${PROJECT_NAME}
     lib/imgui/imgui_draw.cpp
     lib/imgui/imgui_demo.cpp
     lib/imgui/backends/imgui_impl_sdl3.cpp
-    lib/imgui/backends/imgui_impl_sdlrenderer3.cpp
+    lib/imgui/backends/imgui_impl_opengl3.cpp
     lib/imgui/imgui_tables.cpp
     lib/imgui/imgui_widgets.cpp
 )
@@ -36,4 +36,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     lib/imgui
     lib/glm
     headers
+    fonts
 )
