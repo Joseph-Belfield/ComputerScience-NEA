@@ -146,9 +146,9 @@ int main(int argc, char *argv[]) {
       We leave both here for documentation purpose) */
   style.FontSizeBase = 20.0f;
 
-  io.Fonts -> AddFontDefault();
-  // ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
-  // ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+  // io.Fonts -> AddFontDefault();
+  ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
+  ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
   ImGui_ImplSDL3_InitForOpenGL(window, GL_context);
   ImGui_ImplOpenGL3_Init(glsl_version);
@@ -275,7 +275,7 @@ int main(int argc, char *argv[]) {
     ImGui::Render();
 
     // sets the OpenGL viewport (what you can see)
-    glViewport(0, 0, 1280, 800);    
+    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);    
 
     // clears colors
     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
