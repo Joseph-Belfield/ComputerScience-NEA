@@ -27,14 +27,14 @@
   #define MATH
 #endif
 
-#ifndef STD_IO
-  #include <stdio.h>              // has standard input/output functions
-  #define STD_IO
+#ifndef STRING
+  #include <string>              // has standard input/output functions
+  #define STRING
 #endif
 
-#ifndef STRING
-  #include <string.h>              // has standard input/output functions
-  #define STRING
+#ifndef VECTOR
+  #include <vector>              // has standard input/output functions
+  #define VECTOR
 #endif
 
 // *************************************************
@@ -51,26 +51,51 @@
 
 // ********************** GLOBAL VARRIABLES **********************
 
-// the window the program runs in
-SDL_Window* window = nullptr;
+// prefix variables with g to state that they're global
 
-// the OpenGL context for the window 
-SDL_GLContext context_OpenGL = nullptr;
+// the window the program runs in
+SDL_Window* gWindow = nullptr;
+
+// the OpenGL context for the gWindow 
+SDL_GLContext gContext_OpenGL = nullptr;
 
 // sets GLSL version (matches OpenGL version)
-const char* glsl_version;
+const char* gVersion_glsl;
 
 // the main scale of the program. relative to display size
-float main_scale;
+float gMainScale;
 
-int window_height;
-int window_width;
+// screen dimensions
+int gWindow_height;
+int gWindow_width;
 
-// bool that controls if the main run loop is active
-bool runtime_loop_active = true;
+// main loop flag
+bool gFlag_mainLoop = true;
+
+// unsigned ints as identifiers for the objects (because C-based language)
+GLuint gVertexArrayObject;
+GLuint gVertexBufferObject;
+
+// unique ID for the graphics pipeline
+GLuint gGraphicsPipeline_shaderProgram = 0;
+
+const std::string gSource_vertexShader = 
+    "#version 410 core\n"
+    "in vec4 position;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
+    "}\n";
+
+const std::string gSource_fragmentShader = 
+    "#version 410 core\n"
+    "out vec4 color;\n"
+    "void main()\n"
+    "{\n"
+    "   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
+    "}\n";
 
 // *************************************************
-
 
 void init_SDL()
 {
@@ -83,22 +108,22 @@ void init_SDL()
   
 
   // finds the scale of the display 
-  main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+  gMainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
-  // flags for the window
-  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
-                                  SDL_WINDOW_OPENGL |             // window uses OpenGL context
-                                  SDL_WINDOW_HIDDEN |             // window hidden during setup
+  // flags for the gWindow
+  SDL_WindowFlags gWindow_flags = SDL_WINDOW_RESIZABLE |          // lets gWindow be resized
+                                  SDL_WINDOW_OPENGL |             // gWindow uses OpenGL context
+                                  SDL_WINDOW_HIDDEN |             // gWindow hidden during setup
                                   SDL_WINDOW_HIGH_PIXEL_DENSITY;  // higher quality
 
 
-  // creates a window assigned to 'window', errors if failed
-  window = SDL_CreateWindow("compsci_nea", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+  // creates a gWindow assigned to 'gWindow', errors if failed
+  gWindow = SDL_CreateWindow("compsci_nea", (int)(1280 * gMainScale), (int)(800 * gMainScale), gWindow_flags);
 
-  // checks if window has been created properly
-  if (window == nullptr) 
+  // checks if gWindow has been created properly
+  if (gWindow == nullptr) 
   {
-    SDL_Log("Failed to create window.");
+    SDL_Log("Failed to create gWindow.");
     exit(-1); 
   }
 }
@@ -115,7 +140,7 @@ void set_OpenGL_Attributes()
 
 
   // sets the GLSL version to fit the OpenGL version
-  glsl_version = "#version 410";
+  gVersion_glsl = "#version 410";
 
 
   // sets the type of OpenGL context (SDL)
@@ -133,13 +158,13 @@ void set_OpenGL_Attributes()
 
 
 
-void init_Opencontext_OpenGL()
+void init_OpengContext_OpenGL()
 {
-  // create the context for OpenGL in 'window'
-  context_OpenGL = SDL_GL_CreateContext(window);
+  // create the context for OpenGL in 'gWindow'
+  gContext_OpenGL = SDL_GL_CreateContext(gWindow);
 
   // checks context has been created properly
-  if (context_OpenGL == nullptr) 
+  if (gContext_OpenGL == nullptr) 
   {
     SDL_Log("Failed to create OpenGL context.");
     exit(-1); 
@@ -150,11 +175,12 @@ void init_Opencontext_OpenGL()
   gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
   
-  SDL_GL_MakeCurrent(window, context_OpenGL); // sets current window and context
+  SDL_GL_MakeCurrent(gWindow, gContext_OpenGL); // sets current gWindow and context
   SDL_GL_SetSwapInterval(1); // Enable vsync
-  SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres window
-  SDL_ShowWindow(window);  // reveals window once program has been initialized
+  SDL_SetWindowPosition(gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres gWindow
+  SDL_ShowWindow(gWindow);  // reveals gWindow once program has been initialized
 }
+
 
 
 void init_ImGui()
@@ -169,20 +195,20 @@ void init_ImGui()
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-  if (!SDL_GetWindowSizeInPixels(window, &window_width, &window_height))
+  if (!SDL_GetWindowSizeInPixels(gWindow, &gWindow_width, &gWindow_height))
   {
-    SDL_Log("Failed to get window size!");
+    SDL_Log("Failed to get gWindow size!");
     exit(-1);
   }
-  io.DisplaySize = ImVec2((float)window_width, (float)window_height);
+  io.DisplaySize = ImVec2((float)gWindow_width, (float)gWindow_height);
 
   ImGui::StyleColorsDark();
   ImGuiStyle &style = ImGui::GetStyle();
   
   // Eall scales in file scale around this. errors with style to do with size are probably this.
-  if (main_scale > 1.0f)
+  if (gMainScale > 1.0f)
   {
-    style.ScaleAllSizes(main_scale); 
+    style.ScaleAllSizes(gMainScale); 
    /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
     changing this requires resetting Style + calling this again) makes this unnecessary. 
     We leave both here for documentation purpose) */
@@ -195,16 +221,156 @@ void init_ImGui()
 
 
   // sets a base style for the fonts
-  style.FontSizeBase = 20.0f * main_scale;
+  style.FontSizeBase = 20.0f * gMainScale;
 
   io.Fonts -> AddFontDefault();
-  //ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
-  //ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+  ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
+  ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
-  ImGui_ImplSDL3_InitForOpenGL(window, context_OpenGL);
-  ImGui_ImplOpenGL3_Init(glsl_version);
+  ImGui_ImplSDL3_InitForOpenGL(gWindow, gContext_OpenGL);
+  ImGui_ImplOpenGL3_Init(gVersion_glsl);
 }
 
+
+
+void vertex_specification()
+{
+  // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
+  const std::vector<GLfloat> vertexPosition   // lives on CPU
+  {
+    //  x      y      z
+      -0.8f, -0.8f,  0.0f,    // vertex 1
+       0.8f, -0.8f,  0.0f,    // vertex 2
+       0.0f,  0.8f,  0.0f     // vertex 3
+  };
+
+  // generate Vertex Array Objects  
+  glGenVertexArrays(1, &gVertexArrayObject);             // creates an array to hold vertex data (called gVertexArrayObject)
+  glBindVertexArray(gVertexArrayObject);                 // selects the array as current
+
+  // generate Vertex Buffer Object
+  glGenBuffers(1, &gVertexBufferObject);                 // generates buffer
+  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);    // sets buffer as current, specifies target
+  glBufferData
+  (
+    GL_ARRAY_BUFFER,                           // specifies target
+    vertexPosition.size() * sizeof(GLfloat),  // finds the size (in bytes) of vertex data
+    vertexPosition.data(),                    // pointer to the array holding the data of the vector
+    GL_STATIC_DRAW                             // sets intentions with data
+  );                           
+
+  // setup VAO
+  glEnableVertexAttribArray(0); // enables the 0th attribute
+  glVertexAttribPointer
+  (
+    0,          // index into vecter
+    3,          // pieces of data (per vertex - x, y, z)
+    GL_FLOAT,   // data type
+    GL_FALSE,   // normalized?
+    0,          // stride (byte offset) between data types (eg: position, color)           
+    (void*)0    // pointer for offset
+  );
+
+  // cleanup VAO
+  glBindVertexArray(0);                 // to cleanup, change bind to nothing (0)
+  glDisableVertexAttribArray(0);        // disable previously enabled attribArray
+}
+
+
+GLuint compile_shader(GLuint type, const std::string source)
+{
+  // create shader object
+  GLuint shaderObject;
+
+  // check type of shader
+  if (type == GL_VERTEX_SHADER)
+  {
+    shaderObject = glCreateShader(GL_VERTEX_SHADER);
+  }
+  else if (type == GL_FRAGMENT_SHADER)
+  {
+    shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+  }
+
+  // turn source to a C-string
+  const char* src = source.c_str();
+
+  // create shader source code
+  glShaderSource
+  (
+    shaderObject,   // shader
+    1,              // amount of elements compiled (1 shader)
+    &src,           // shader source
+    nullptr         // length of string 
+  );
+
+  // compile the shader
+  glCompileShader(shaderObject);
+
+  // error checking
+  int result;
+  glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &result);  // gets compile status, stores in result
+
+  // if shaders failed to compile
+  if (result == GL_FALSE)
+  {
+    int length;                                                     
+    glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &length);           // find the length of the error message
+    char* errorMessages = new char[length];                             // create a C-string of that length
+    glGetShaderInfoLog(shaderObject, length, &length, errorMessages);   // log error info
+
+    // display error messages
+    if (type == GL_VERTEX_SHADER)
+    {
+    SDL_Log("GL_VERTEX_SHADER compilation failed! \n");
+    SDL_Log("%s", errorMessages);
+    }
+    else if(type == GL_FRAGMENT_SHADER)
+    {
+      SDL_Log("GL_FRAGMENT_SHADER compilation failed! \n");
+      SDL_Log("%s", errorMessages);
+    }
+
+    // reclaim memory
+    delete[] errorMessages;
+
+    // delete broken shader object
+    glDeleteShader(shaderObject);
+
+    return 0;
+  }
+
+  return shaderObject;
+}
+
+
+
+GLuint create_shader_program(const std::string vertexShaderSource, const std::string fragmentShaderSource)
+{
+  GLuint programObject = glCreateProgram(); // creates an empty program to be filled with shaders
+
+  // compile shaders
+  GLuint vertexShader = compile_shader(GL_VERTEX_SHADER, vertexShaderSource);
+  GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+  // attatch shaders to program object
+  glAttachShader(programObject, vertexShader);
+  glAttachShader(programObject, fragmentShader);
+  glLinkProgram(programObject);   // links shaders together in object
+
+  // validate program - check for errors
+  glValidateProgram(programObject); 
+
+  return programObject;
+}
+
+
+
+void create_graphics_pipeline()
+{
+
+  gGraphicsPipeline_shaderProgram = create_shader_program(gSource_vertexShader, gSource_fragmentShader);
+}
 
 
 void check_events()
@@ -220,12 +386,163 @@ void check_events()
 
     // if SDL is quit, end the run loop
     if (event.type == SDL_EVENT_QUIT) {
-      runtime_loop_active = false;
+      gFlag_mainLoop = false;
     }
     // if Esc key is pressed, end the run loop
     if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
-      runtime_loop_active = false;
+      gFlag_mainLoop = false;
     }
+  }
+}
+
+
+// for setting OpenGL state
+void preDraw_OpenGL()
+{
+  // disables
+  glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
+  glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
+
+  // set size of gWindow for OpenGL
+  glViewport(0, 0, (int)gWindow_width, (int)gWindow_height);
+
+  // background color
+  glClearColor(0.0f, 1.0f, 1.0f, 1.0f);                   // sets background color
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
+
+  glUseProgram(gGraphicsPipeline_shaderProgram);
+}
+
+
+// for drawing OpenGL data
+void draw_OpenGL()
+{
+  // choose VAO and VBO
+  glBindVertexArray(gVertexArrayObject);
+  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
+
+  // draw
+  glDrawArrays
+  (
+    GL_TRIANGLES,         // shape
+    0,                    // starting index for first vertex
+    3                     // no. of vertices
+  );
+}
+
+
+
+void draw_ImGui
+(
+  bool show_mainWindow = true, 
+  bool show_helloWorld = false, 
+  bool show_colorPicker = false,  
+  bool show_sineGraph = false, 
+  bool show_scrolling = false
+)
+{
+
+  ImGui::Begin("Main Window", &show_mainWindow, ImGuiWindowFlags_MenuBar);  
+
+  if (ImGui::BeginMenuBar())
+  {
+    if (ImGui::BeginMenu("Options"))
+    {
+      if (ImGui::MenuItem("Change Background Color")) {show_colorPicker = true;}
+      if (ImGui::MenuItem("Sine Graph")) {show_sineGraph = true;}
+      if (ImGui::MenuItem("Scrolling")) {show_scrolling = true;}
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
+  }
+
+  if (ImGui::Button("Hello World"))
+  {
+    show_helloWorld = true;
+  }
+
+  ImGui::End();
+
+
+
+  if (show_helloWorld)
+  {
+    ImGui::Text("Hello World!");
+  }
+
+  if (show_sineGraph)
+  {
+    ImGui::Begin("Sine Graph", &show_sineGraph);
+    float samples[100];
+    for (int i = 0; i < 100; i++)
+    {
+      samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
+    }
+    ImGui::PlotLines("Samples", samples, 100);
+    ImGui::End();
+  }
+
+  if (show_scrolling)
+  {
+    // display contents in scrolling region
+    ImGui::Begin("Scrolling", &show_scrolling);
+    ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
+    ImGui::BeginChild("Scrolling");
+    for (int i = 0; i < 15; i++)
+    {
+      ImGui::Text("Some text");
+    }
+    ImGui::EndChild();
+    ImGui::End();
+  }
+
+  if (show_colorPicker)
+  {
+    // create a gWindow with menu bar called "Color Picker"
+    ImGui::Begin("Background Color", &show_colorPicker);
+    // edit a color stored as 4 floats
+    // ImGui::ColorEdit3("Color", (float*)&clear_color);
+    ImGui::End();
+  }
+}
+
+
+
+void run_loop()
+{
+  // gWindow background color variables
+  ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+  // bools determining if gWindows should be rendered
+  bool show_mainWindow = true;
+  bool show_helloWorld = false;
+  bool show_colorPicker = false;
+  bool show_sineGraph = false;
+  bool show_scrolling = false;
+
+  // ********************** RUN LOOP **********************
+
+  while (gFlag_mainLoop) {
+
+    check_events();
+
+    // starts a new frame for OpenGL, SDL and ImGui
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    // ********************** DO STUFF HERE **********************
+
+    preDraw_OpenGL();
+    draw_OpenGL();
+
+    draw_ImGui();
+
+    // render
+    ImGui::Render();                                               // renders ImGui instructions 
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        // renders the ImGui data with OpenGL  
+    SDL_GL_SwapWindow(gWindow);                                     // swaps in the new frame
+
   }
 }
 
@@ -248,10 +565,10 @@ void clean_ImGui()
 void clean_SDL()
 {
   // destroys SDL context 
-  SDL_GL_DestroyContext(context_OpenGL);
+  SDL_GL_DestroyContext(gContext_OpenGL);
 
-  // destroys SDL window
-  SDL_DestroyWindow(window);
+  // destroys SDL gWindow
+  SDL_DestroyWindow(gWindow);
 
   // quits SDL
   SDL_Quit();
@@ -263,136 +580,23 @@ void clean_SDL()
 
 int main(int argc, char *argv[]) {
 
-  // ********************** INITIALIZE LIBRARIES HERE **********************
-
+  // 1. initialize libraries
   init_SDL();
-
   set_OpenGL_Attributes();
-  init_Opencontext_OpenGL();
-
+  init_OpengContext_OpenGL();
   init_ImGui();
 
-  // ********************** INITIALIZE VARIABLES HERE **********************
+  // 2. set up geometry
+  vertex_specification();
 
-  // window background color variables
-  ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+  // 3. set up shaders (at least, vertex and fragment)
+  create_graphics_pipeline();
 
-  // bools determining if windows should be rendered
-  bool main_window = true;
-  bool hello_world = false;
-  bool show_colorPicker = false;
-  bool show_sineGraph = false;
-  bool show_scrolling = false;
+  // 4. main run loop
+  run_loop();
 
-  // ********************** RUN LOOP **********************
-
-  while (runtime_loop_active) {
-
-    check_events();
-
-    // starts a new frame for OpenGL, SDL and ImGui
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
-
-    // ********************** DO STUFF HERE **********************
-
-    ImGui::Begin("Main Window", &main_window, ImGuiWindowFlags_MenuBar);
-
-    // sets the OpenGL viewport (what you can see)
-    
-
-    if (ImGui::BeginMenuBar())
-    {
-      if (ImGui::BeginMenu("Options"))
-      {
-        if (ImGui::MenuItem("Change Background Color")) {show_colorPicker = true;}
-        if (ImGui::MenuItem("Sine Graph")) {show_sineGraph = true;}
-        if (ImGui::MenuItem("Scrolling")) {show_scrolling = true;}
-        ImGui::EndMenu();
-      }
-      ImGui::EndMenuBar();
-    }
-
-    if (ImGui::Button("Hello World"))
-    {
-      hello_world = true;
-    }
-
-    float whatSDLthinkthescaleis = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-    ImGui::Text("%f", whatSDLthinkthescaleis);
-
-    ImGui::End();
-
-
-
-    if (hello_world)
-    {
-      ImGui::Text("Hello World!");
-    }
-
-    if (show_sineGraph)
-    {
-      ImGui::Begin("Sine Graph", &show_sineGraph);
-      float samples[100];
-      for (int i = 0; i < 100; i++)
-      {
-        samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
-      }
-      ImGui::PlotLines("Samples", samples, 100);
-      ImGui::End();
-    }
-
-    if (show_scrolling)
-    {
-      // display contents in scrolling region
-      ImGui::Begin("Scrolling", &show_scrolling);
-      ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
-      ImGui::BeginChild("Scrolling");
-      for (int i = 0; i < 15; i++)
-      {
-        ImGui::Text("Some text");
-      }
-      ImGui::EndChild();
-      ImGui::End();
-    }
-
-    if (show_colorPicker)
-    {
-      // create a window with menu bar called "Color Picker"
-      ImGui::Begin("Background Color", &show_colorPicker);
-      // edit a color stored as 4 floats
-      ImGui::ColorEdit3("Color", (float*)&clear_color);
-      ImGui::End();
-    }
-
-    // ********************** RENDERING STAGE **********************
-
-    // renders ImGui instructions 
-    ImGui::Render();
-
-    glViewport(0, 0, (int)window_width, (int)window_height);
-
-    // clears colors
-    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-
-    // clears the OpenGL color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // renders the ImGui data with OpenGL
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    // swaps in the new frame
-    SDL_GL_SwapWindow(window);
-  
-  }
-
-  // ********************** CLEANUP **********************
-
-  // cleans up ImGui
+  // 5. cleans up
   clean_ImGui();
-
-  // cleans up SDL
   clean_SDL();
 
   return 0;
