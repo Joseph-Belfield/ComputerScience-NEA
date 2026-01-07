@@ -55,6 +55,11 @@ SDL_GLContext context_OpenGL = nullptr;
 // sets GLSL version (matches OpenGL version)
 const char* glsl_version;
 
+float main_scale;
+
+int window_height;
+int window_width;
+
 // *************************************************
 
 
@@ -143,6 +148,12 @@ void init_Opencontext_OpenGL()
 }
 
 
+void init_ImGui()
+{
+  
+}
+
+
 
 void clean_ImGui()
 {
@@ -183,6 +194,8 @@ int main(int argc, char *argv[]) {
 
   // ********************** INITIALIZE IMGUI **********************
 
+  init_ImGui();
+
   // creates ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -193,21 +206,21 @@ int main(int argc, char *argv[]) {
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-  // finds the size of the window so window can be scaled correctly
-  float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-  io.DisplaySize = ImVec2(main_scale * 1280, main_scale * 800);
+  SDL_GetWindowSizeInPixels(window, &window_width, &window_height);
+  io.DisplaySize = ImVec2((float)window_width, (float)window_height);
 
+  ImGui::StyleColorsDark();
   ImGuiStyle &style = ImGui::GetStyle();
-
+  
   style.ScaleAllSizes(main_scale); 
   /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
       changing this requires resetting Style + calling this again) makes this unnecessary. 
       We leave both here for documentation purpose) */
   style.FontSizeBase = 20.0f;
 
-  // io.Fonts -> AddFontDefault();
-  ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
-  ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+  io.Fonts -> AddFontDefault();
+  //ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
+  //ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
   ImGui_ImplSDL3_InitForOpenGL(window, context_OpenGL);
   ImGui_ImplOpenGL3_Init(glsl_version);
@@ -266,6 +279,9 @@ int main(int argc, char *argv[]) {
     // ********************** DO STUFF HERE **********************
 
     ImGui::Begin("Main Window", &main_window, ImGuiWindowFlags_MenuBar);
+
+    // sets the OpenGL viewport (what you can see)
+    
 
     if (ImGui::BeginMenuBar())
     {
@@ -333,8 +349,7 @@ int main(int argc, char *argv[]) {
     // renders ImGui instructions 
     ImGui::Render();
 
-    // sets the OpenGL viewport (what you can see)
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);    
+    glViewport(0, 0, (int)window_width, (int)window_height);
 
     // clears colors
     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
