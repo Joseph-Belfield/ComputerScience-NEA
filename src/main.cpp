@@ -44,46 +44,65 @@
   #define ELEMENT
 #endif
 
+// ********************** GLOBAL VARRIABLES **********************
+
+// the window the program runs in
+SDL_Window* window = nullptr;
+
+// the OpenGL context for the window 
+SDL_GLContext context_OpenGL = nullptr;
+
+// sets GLSL version (matches OpenGL version)
+const char* glsl_version;
+
 // *************************************************
 
-int main(int argc, char *argv[]) {
 
-  // **************************************************************
-  //  ____       _
-  // / ___|  ___| |_ _   _ _ __
-  // \___ \ / _ \ __| | | | '_ \
-  //  ___) |  __/ |_| |_| | |_) |
-  // |____/ \___|\__|\__,_| .__/
-  //                      |_|
-  // **************************************************************
-
-  // creates SDL window
-  SDL_Window *window;
-  // creates OpenGL context (manages state machine)
-  SDL_GLContext GL_context;
-  // sets GLSL version (matches OpenGL version)
-  const char* glsl_version;
-  // finds the scale of the progran
-
-
- // ********************** INITIALIZE SDL & OPENGL **********************
-  
+void init_SDL()
+{
+  // initialize SDL
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) 
   {
-      SDL_Log("Failed to initialize SDL.");
-      return -1; 
+    SDL_Log("Failed to initialize SDL.");
+    exit(-1); 
   }
+  
 
-  // ******************** OPENGL ATTRIBUTES *****************************
+  // finds the scale of the display 
+  float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
+  // flags for the window
+  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
+                                  SDL_WINDOW_OPENGL |             // window uses OpenGL context
+                                  SDL_WINDOW_HIDDEN |             // window hidden during setup
+                                  SDL_WINDOW_HIGH_PIXEL_DENSITY;  // higher quality
+
+
+  // creates a window assigned to 'window', errors if failed
+  window = SDL_CreateWindow("compsci_nea", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+
+  // checks if window has been created properly
+  if (window == nullptr) 
+  {
+    SDL_Log("Failed to create window.");
+    exit(-1); 
+  }
+}
+
+
+
+void set_OpenGL_Attributes()
+{
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
   // sets the OpenGL version (4.1)
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
+
   // sets the GLSL version to fit the OpenGL version
   glsl_version = "#version 410";
+
 
   // sets the type of OpenGL context (SDL)
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -96,29 +115,71 @@ int main(int argc, char *argv[]) {
 
   // allows 8 bits as minimum in stencil (allows for use of stencil)
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+}
 
-  // ********************* CREATE WINDOW ****************************
-  
-  float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
-                                  SDL_WINDOW_OPENGL |             // window uses OpenGL context
-                                  SDL_WINDOW_HIDDEN |             // window hidden during setup
-                                  SDL_WINDOW_HIGH_PIXEL_DENSITY;  // higher quality
 
-  // creates a window assigned to 'window', errors if failed
-  window = SDL_CreateWindow("compsci_nea", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
 
-  // ********************* CREATE CONTEXT ****************************
-
+void init_Opencontext_OpenGL()
+{
   // create the context for OpenGL in 'window'
-  GL_context = SDL_GL_CreateContext(window);
+  context_OpenGL = SDL_GL_CreateContext(window);
 
+  // checks context has been created properly
+  if (context_OpenGL == nullptr) 
+  {
+    SDL_Log("Failed to create OpenGL context.");
+    exit(-1); 
+  }
+
+
+  // initializes GLAD
   gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
-  SDL_GL_MakeCurrent(window, GL_context); // sets current window and context
+  
+  SDL_GL_MakeCurrent(window, context_OpenGL); // sets current window and context
   SDL_GL_SetSwapInterval(1); // Enable vsync
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres window
   SDL_ShowWindow(window);  // reveals window once program has been initialized
+}
+
+
+
+void clean_ImGui()
+{
+  // shuts down ImGui + OpenGL link
+  ImGui_ImplOpenGL3_Shutdown();
+
+  // shuts down ImGui + SDL link
+  ImGui_ImplSDL3_Shutdown();
+
+  // destroys ImGui context
+  ImGui::DestroyContext();
+}
+
+
+
+void clean_SDL()
+{
+  // destroys SDL context 
+  SDL_GL_DestroyContext(context_OpenGL);
+
+  // destroys SDL window
+  SDL_DestroyWindow(window);
+
+  // quits SDL
+  SDL_Quit();
+}
+
+
+
+// *************************************************
+
+int main(int argc, char *argv[]) {
+
+  init_SDL();
+
+  set_OpenGL_Attributes();
+  init_Opencontext_OpenGL();
 
   // ********************** INITIALIZE IMGUI **********************
 
@@ -127,16 +188,14 @@ int main(int argc, char *argv[]) {
   ImGui::CreateContext();
 
   // ImGui Inputs/Outputs
-  ImGuiIO &io = ImGui::GetIO();
-  (void)io; // initializes io
+  ImGuiIO &io = ImGui::GetIO();  (void)io; // initializes io
 
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
   // finds the size of the window so window can be scaled correctly
-  int width, height;
-  SDL_GetWindowSizeInPixels(window, &width, &height);
-  io.DisplaySize = ImVec2((float)width, (float)height);
+  float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+  io.DisplaySize = ImVec2(main_scale * 1280, main_scale * 800);
 
   ImGuiStyle &style = ImGui::GetStyle();
 
@@ -150,7 +209,7 @@ int main(int argc, char *argv[]) {
   ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
   ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
-  ImGui_ImplSDL3_InitForOpenGL(window, GL_context);
+  ImGui_ImplSDL3_InitForOpenGL(window, context_OpenGL);
   ImGui_ImplOpenGL3_Init(glsl_version);
 
   // ********************** INITIALIZE VARIABLES HERE **********************
@@ -293,25 +352,11 @@ int main(int argc, char *argv[]) {
 
   // ********************** CLEANUP **********************
 
-  // shuts down ImGui + OpenGL link
-  ImGui_ImplOpenGL3_Shutdown();
+  // cleans up ImGui
+  clean_ImGui();
 
-  // shuts down ImGui + SDL link
-  ImGui_ImplSDL3_Shutdown();
-
-  // destroys ImGui context
-  ImGui::DestroyContext();
-
-  
-
-  // destroys SDL context 
-  SDL_GL_DestroyContext(GL_context);
-
-  // destroys SDL window
-  SDL_DestroyWindow(window);
-
-  // quits SDL
-  SDL_Quit();
+  // cleans up SDL
+  clean_SDL();
 
   return 0;
 }
