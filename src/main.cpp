@@ -32,6 +32,11 @@
   #define STD_IO
 #endif
 
+#ifndef STRING
+  #include <string.h>              // has standard input/output functions
+  #define STRING
+#endif
+
 // *************************************************
 
 #ifndef ATOM
@@ -55,10 +60,14 @@ SDL_GLContext context_OpenGL = nullptr;
 // sets GLSL version (matches OpenGL version)
 const char* glsl_version;
 
+// the main scale of the program. relative to display size
 float main_scale;
 
 int window_height;
 int window_width;
+
+// bool that controls if the main run loop is active
+bool runtime_loop_active = true;
 
 // *************************************************
 
@@ -74,7 +83,7 @@ void init_SDL()
   
 
   // finds the scale of the display 
-  float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+  main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
   // flags for the window
   SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
@@ -150,7 +159,74 @@ void init_Opencontext_OpenGL()
 
 void init_ImGui()
 {
+  // creates ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+
+  // ImGui Inputs/Outputs
+  ImGuiIO &io = ImGui::GetIO();  (void)io; // initializes io
+
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+  if (!SDL_GetWindowSizeInPixels(window, &window_width, &window_height))
+  {
+    SDL_Log("Failed to get window size!");
+    exit(-1);
+  }
+  io.DisplaySize = ImVec2((float)window_width, (float)window_height);
+
+  ImGui::StyleColorsDark();
+  ImGuiStyle &style = ImGui::GetStyle();
   
+  // Eall scales in file scale around this. errors with style to do with size are probably this.
+  if (main_scale > 1.0f)
+  {
+    style.ScaleAllSizes(main_scale); 
+   /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
+    changing this requires resetting Style + calling this again) makes this unnecessary. 
+    We leave both here for documentation purpose) */
+  }
+  else
+  {
+    // protection so program doesn't error
+    style.ScaleAllSizes(1.0f);
+  }
+
+
+  // sets a base style for the fonts
+  style.FontSizeBase = 20.0f * main_scale;
+
+  io.Fonts -> AddFontDefault();
+  //ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
+  //ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+
+  ImGui_ImplSDL3_InitForOpenGL(window, context_OpenGL);
+  ImGui_ImplOpenGL3_Init(glsl_version);
+}
+
+
+
+void check_events()
+{
+  // checks for events
+  SDL_Event event;
+
+  // if there were events, do:
+  while (SDL_PollEvent(&event)) {
+
+    // ImGui processes the event
+    ImGui_ImplSDL3_ProcessEvent(&event);
+
+    // if SDL is quit, end the run loop
+    if (event.type == SDL_EVENT_QUIT) {
+      runtime_loop_active = false;
+    }
+    // if Esc key is pressed, end the run loop
+    if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
+      runtime_loop_active = false;
+    }
+  }
 }
 
 
@@ -187,43 +263,14 @@ void clean_SDL()
 
 int main(int argc, char *argv[]) {
 
+  // ********************** INITIALIZE LIBRARIES HERE **********************
+
   init_SDL();
 
   set_OpenGL_Attributes();
   init_Opencontext_OpenGL();
 
-  // ********************** INITIALIZE IMGUI **********************
-
   init_ImGui();
-
-  // creates ImGui context
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-
-  // ImGui Inputs/Outputs
-  ImGuiIO &io = ImGui::GetIO();  (void)io; // initializes io
-
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
-
-  SDL_GetWindowSizeInPixels(window, &window_width, &window_height);
-  io.DisplaySize = ImVec2((float)window_width, (float)window_height);
-
-  ImGui::StyleColorsDark();
-  ImGuiStyle &style = ImGui::GetStyle();
-  
-  style.ScaleAllSizes(main_scale); 
-  /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
-      changing this requires resetting Style + calling this again) makes this unnecessary. 
-      We leave both here for documentation purpose) */
-  style.FontSizeBase = 20.0f;
-
-  io.Fonts -> AddFontDefault();
-  //ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
-  //ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
-
-  ImGui_ImplSDL3_InitForOpenGL(window, context_OpenGL);
-  ImGui_ImplOpenGL3_Init(glsl_version);
 
   // ********************** INITIALIZE VARIABLES HERE **********************
 
@@ -237,39 +284,11 @@ int main(int argc, char *argv[]) {
   bool show_sineGraph = false;
   bool show_scrolling = false;
 
-  /* **************************************************************
-  //  _
-  // | | ___   ___  _ __
-  // | |/ _ \ / _ \| '_ \
-  // | | (_) | (_) | |_) |
-  // |_|\___/ \___/| .__/
-  //               |_|
-  // ************************************************************** */
+  // ********************** RUN LOOP **********************
 
-  bool should_run{true};
+  while (runtime_loop_active) {
 
-  while (should_run) {
-
-    // checks for events
-    SDL_Event event;
-
-    // ********************** EVENTS **********************
-
-    // if there were events, do:
-    while (SDL_PollEvent(&event)) {
-
-      // ImGui processes the event
-      ImGui_ImplSDL3_ProcessEvent(&event);
-
-      // if SDL is quit, end the run loop
-      if (event.type == SDL_EVENT_QUIT) {
-        should_run = false;
-      }
-      // if Esc key is pressed, end the run loop
-      if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
-        should_run = false;
-      }
-    }
+    check_events();
 
     // starts a new frame for OpenGL, SDL and ImGui
     ImGui_ImplOpenGL3_NewFrame();
@@ -299,6 +318,9 @@ int main(int argc, char *argv[]) {
     {
       hello_world = true;
     }
+
+    float whatSDLthinkthescaleis = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+    ImGui::Text("%f", whatSDLthinkthescaleis);
 
     ImGui::End();
 
