@@ -322,9 +322,9 @@ int main(int argc, char *argv[]) {
     if (show_colorPicker)
     {
       // create a window with menu bar called "Color Picker"
-      ImGui::Begin("Color Picker", &show_colorPicker);
+      ImGui::Begin("Background Color", &show_colorPicker);
       // edit a color stored as 4 floats
-      ImGui::ColorEdit3("Background Color", (float*)&clear_color);
+      ImGui::ColorEdit3("Color", (float*)&clear_color);
       ImGui::End();
     }
 
