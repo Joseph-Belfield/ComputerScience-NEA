@@ -56,35 +56,37 @@
 
 // ********************** GLOBAL VARRIABLES **********************
 
-// prefix variables with g to state that they're global
+namespace global
+{
+  // prefix variables with g to state that they're global
 
-// the window the program runs in
-SDL_Window* gWindow = nullptr;
+  // the window the program runs in
+  SDL_Window* window = nullptr;
 
-// the OpenGL context for the gWindow 
-SDL_GLContext gContext_OpenGL = nullptr;
+  // the OpenGL context for the window 
+  SDL_GLContext context_OpenGL = nullptr;
 
-// sets GLSL version (matches OpenGL version)
-const char* gVersion_glsl;
+  // sets GLSL version (matches OpenGL version)
+  const char* version_glsl;
 
-// the main scale of the program. relative to display size
-float gMainScale;
+  // the main scale of the program. relative to display size
+  float mainScale;
 
-// screen dimensions
-int gWindow_height;
-int gWindow_width;
+  // screen dimensions
+  int window_height;
+  int window_width;
 
-// main loop flag
-bool gFlag_mainLoop = true;
+  // main loop flag
+  bool flag_mainLoop = true;
 
-// unsigned ints as identifiers for the objects (because C-based language)
-GLuint gVertexArrayObject;
-GLuint gVertexBufferObject_position;
-GLuint gVertexBufferObject_color;
+  // unsigned ints as identifiers for the objects (because C-based language)
+  GLuint vertexArrayObject;
+  GLuint vertexBufferObject_position;
+  GLuint vertexBufferObject_color;
 
-// unique ID for the graphics pipeline
-GLuint gGraphicsPipeline_shaderProgram = 0;
-
+  // unique ID for the graphics pipeline
+  GLuint shaderProgram = 0;
+}
 // *************************************************
 
 void init_SDL()
@@ -98,22 +100,22 @@ void init_SDL()
   
 
   // finds the scale of the display 
-  gMainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+  global::mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
-  // flags for the gWindow
-  SDL_WindowFlags gWindow_flags = SDL_WINDOW_RESIZABLE |          // lets gWindow be resized
-                                  SDL_WINDOW_OPENGL |             // gWindow uses OpenGL context
-                                  SDL_WINDOW_HIDDEN |             // gWindow hidden during setup
+  // flags for the window
+  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
+                                  SDL_WINDOW_OPENGL |             // window uses OpenGL context
+                                  SDL_WINDOW_HIDDEN |             // window hidden during setup
                                   SDL_WINDOW_HIGH_PIXEL_DENSITY;  // higher quality
 
 
-  // creates a gWindow assigned to 'gWindow', errors if failed
-  gWindow = SDL_CreateWindow("compsci_nea", (int)(1280 * gMainScale), (int)(800 * gMainScale), gWindow_flags);
+  // creates a window assigned to 'window', errors if failed
+  global::window = SDL_CreateWindow("compsci_nea", (int)(1280 * global::mainScale), (int)(800 * global::mainScale), window_flags);
 
-  // checks if gWindow has been created properly
-  if (gWindow == nullptr) 
+  // checks if window has been created properly
+  if (global::window == nullptr) 
   {
-    SDL_Log("Failed to create gWindow.");
+    SDL_Log("Failed to create window.");
     exit(-1); 
   }
 }
@@ -130,7 +132,7 @@ void set_OpenGL_Attributes()
 
 
   // sets the GLSL version to fit the OpenGL version
-  gVersion_glsl = "#version 410";
+  global::version_glsl = "#version 410";
 
 
   // sets the type of OpenGL context (SDL)
@@ -148,13 +150,13 @@ void set_OpenGL_Attributes()
 
 
 
-void init_OpengContext_OpenGL()
+void init_Opencontext_OpenGL()
 {
-  // create the context for OpenGL in 'gWindow'
-  gContext_OpenGL = SDL_GL_CreateContext(gWindow);
+  // create the context for OpenGL in 'window'
+  global::context_OpenGL = SDL_GL_CreateContext(global::window);
 
   // checks context has been created properly
-  if (gContext_OpenGL == nullptr) 
+  if (global::context_OpenGL == nullptr) 
   {
     SDL_Log("Failed to create OpenGL context.");
     exit(-1); 
@@ -165,10 +167,10 @@ void init_OpengContext_OpenGL()
   gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
   
-  SDL_GL_MakeCurrent(gWindow, gContext_OpenGL); // sets current gWindow and context
+  SDL_GL_MakeCurrent(global::window, global::context_OpenGL); // sets current window and context
   SDL_GL_SetSwapInterval(1); // Enable vsync
-  SDL_SetWindowPosition(gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres gWindow
-  SDL_ShowWindow(gWindow);  // reveals gWindow once program has been initialized
+  SDL_SetWindowPosition(global::window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres window
+  SDL_ShowWindow(global::window);  // reveals window once program has been initialized
 }
 
 
@@ -185,20 +187,20 @@ void init_ImGui()
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-  if (!SDL_GetWindowSizeInPixels(gWindow, &gWindow_width, &gWindow_height))
+  if (!SDL_GetWindowSizeInPixels(global::window, &global::window_width, &global::window_height))
   {
-    SDL_Log("Failed to get gWindow size!");
+    SDL_Log("Failed to get window size!");
     exit(-1);
   }
-  io.DisplaySize = ImVec2((float)gWindow_width, (float)gWindow_height);
+  io.DisplaySize = ImVec2((float)global::window_width, (float)global::window_height);
 
   ImGui::StyleColorsDark();
   ImGuiStyle &style = ImGui::GetStyle();
   
   // Eall scales in file scale around this. errors with style to do with size are probably this.
-  if (gMainScale > 1.0f)
+  if (global::mainScale > 1.0f)
   {
-    style.ScaleAllSizes(gMainScale); 
+    style.ScaleAllSizes(global::mainScale); 
    /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
     changing this requires resetting Style + calling this again) makes this unnecessary. 
     We leave both here for documentation purpose) */
@@ -211,14 +213,14 @@ void init_ImGui()
 
 
   // sets a base style for the fonts
-  style.FontSizeBase = 20.0f * gMainScale;
+  style.FontSizeBase = 20.0f * global::mainScale;
 
   io.Fonts -> AddFontDefault();
   ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
   ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
-  ImGui_ImplSDL3_InitForOpenGL(gWindow, gContext_OpenGL);
-  ImGui_ImplOpenGL3_Init(gVersion_glsl);
+  ImGui_ImplSDL3_InitForOpenGL(global::window, global::context_OpenGL);
+  ImGui_ImplOpenGL3_Init(global::version_glsl);
 }
 
 
@@ -243,12 +245,12 @@ void vertex_specification()
   };
 
   // generate Vertex Array Objects  
-  glGenVertexArrays(1, &gVertexArrayObject);             // creates an array to hold vertex data (called gVertexArrayObject)
-  glBindVertexArray(gVertexArrayObject);                 // selects the array as current
+  glGenVertexArrays(1, &global::vertexArrayObject);             // creates an array to hold vertex data (called vertexArrayObject)
+  glBindVertexArray(global::vertexArrayObject);                 // selects the array as current
 
   // generate Vertex Buffer Object for position
-  glGenBuffers(1, &gVertexBufferObject_position);                 // generates buffer
-  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_position);    // sets buffer as current, specifies target
+  glGenBuffers(1, &global::vertexBufferObject_position);                 // generates buffer
+  glBindBuffer(GL_ARRAY_BUFFER, global::vertexBufferObject_position);    // sets buffer as current, specifies target
   glBufferData
   (
     GL_ARRAY_BUFFER,                           // specifies target
@@ -270,8 +272,8 @@ void vertex_specification()
   );
 
  // create a VBO for vertex colors
-  glGenBuffers(1, &gVertexBufferObject_color);
-  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_color);
+  glGenBuffers(1, &global::vertexBufferObject_color);
+  glBindBuffer(GL_ARRAY_BUFFER, global::vertexBufferObject_color);
   glBufferData
   (
     GL_ARRAY_BUFFER,
@@ -394,13 +396,13 @@ GLuint compile_shader(GLuint type, const std::string source)
 
 
 
-GLuint create_shader_program(const std::string vertexShaderSource, const std::string fragmentShaderSource)
+GLuint create_shader_program(const std::string source_vertexShader, const std::string source_fragmentShader)
 {
   GLuint programObject = glCreateProgram(); // creates an empty program to be filled with shaders
 
   // compile shaders
-  GLuint vertexShader = compile_shader(GL_VERTEX_SHADER, vertexShaderSource);
-  GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+  GLuint vertexShader = compile_shader(GL_VERTEX_SHADER, source_vertexShader);
+  GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, source_fragmentShader);
 
   // attatch shaders to program object
   glAttachShader(programObject, vertexShader);    // attatches vertex shader to the object
@@ -420,7 +422,7 @@ void create_graphics_pipeline()
   std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");
   std::string source_fragmentShader = load_shader_from_file("./shaders/fragmentShader.glsl");
 
-  gGraphicsPipeline_shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
+  global::shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
 }
 
 
@@ -437,11 +439,11 @@ void check_events()
 
     // if SDL is quit, end the run loop
     if (event.type == SDL_EVENT_QUIT) {
-      gFlag_mainLoop = false;
+      global::flag_mainLoop = false;
     }
     // if Esc key is pressed, end the run loop
     if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
-      gFlag_mainLoop = false;
+      global::flag_mainLoop = false;
     }
   }
 }
@@ -454,14 +456,14 @@ void preDraw_OpenGL()
   glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
   glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
 
-  // set size of gWindow for OpenGL
-  glViewport(0, 0, (int)gWindow_width, (int)gWindow_height);
+  // set size of window for OpenGL
+  glViewport(0, 0, (int)global::window_width, (int)global::window_height);
 
   // background color
   glClearColor(0.0f, 1.0f, 1.0f, 1.0f);                   // sets background color
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
-  glUseProgram(gGraphicsPipeline_shaderProgram);
+  glUseProgram(global::shaderProgram);
 }
 
 
@@ -469,8 +471,8 @@ void preDraw_OpenGL()
 void draw_OpenGL()
 {
   // choose VAO and VBO
-  glBindVertexArray(gVertexArrayObject);
-  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_position);
+  glBindVertexArray(global::vertexArrayObject);
+  glBindBuffer(GL_ARRAY_BUFFER, global::vertexBufferObject_position);
 
   // draw
   glDrawArrays
@@ -549,7 +551,7 @@ void draw_ImGui
 
   if (show_colorPicker)
   {
-    // create a gWindow with menu bar called "Color Picker"
+    // create a window with menu bar called "Color Picker"
     ImGui::Begin("Background Color", &show_colorPicker);
     // edit a color stored as 4 floats
     // ImGui::ColorEdit3("Color", (float*)&clear_color);
@@ -561,10 +563,10 @@ void draw_ImGui
 
 void run_loop()
 {
-  // gWindow background color variables
+  // window background color variables
   ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-  // bools determining if gWindows should be rendered
+  // bools determining if windows should be rendered
   bool show_mainWindow = true;
   bool show_helloWorld = false;
   bool show_colorPicker = false;
@@ -573,7 +575,7 @@ void run_loop()
 
   // ********************** RUN LOOP **********************
 
-  while (gFlag_mainLoop) {
+  while (global::flag_mainLoop) {
 
     check_events();
 
@@ -592,7 +594,7 @@ void run_loop()
     // render
     ImGui::Render();                                               // renders ImGui instructions 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        // renders the ImGui data with OpenGL  
-    SDL_GL_SwapWindow(gWindow);                                     // swaps in the new frame
+    SDL_GL_SwapWindow(global::window);                                     // swaps in the new frame
 
   }
 }
@@ -616,10 +618,10 @@ void clean_ImGui()
 void clean_SDL()
 {
   // destroys SDL context 
-  SDL_GL_DestroyContext(gContext_OpenGL);
+  SDL_GL_DestroyContext(global::context_OpenGL);
 
-  // destroys SDL gWindow
-  SDL_DestroyWindow(gWindow);
+  // destroys SDL window
+  SDL_DestroyWindow(global::window);
 
   // quits SDL
   SDL_Quit();
@@ -634,7 +636,7 @@ int main(int argc, char *argv[]) {
   // 1. initialize libraries
   init_SDL();
   set_OpenGL_Attributes();
-  init_OpengContext_OpenGL();
+  init_Opencontext_OpenGL();
   init_ImGui();
 
   // 2. set up geometry
@@ -648,7 +650,7 @@ int main(int argc, char *argv[]) {
 
   // 5. cleans up
   clean_ImGui();
-  clean_SDL();
+  clean_SDL();  
 
   return 0;
 }
