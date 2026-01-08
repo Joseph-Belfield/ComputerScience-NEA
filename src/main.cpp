@@ -32,6 +32,11 @@
   #define STRING
 #endif
 
+#ifndef FSTREAM
+  #include <fstream>             // has standard input/output functions
+  #define FSTREAM
+#endif
+
 #ifndef VECTOR
   #include <vector>              // has standard input/output functions
   #define VECTOR
@@ -74,26 +79,11 @@ bool gFlag_mainLoop = true;
 
 // unsigned ints as identifiers for the objects (because C-based language)
 GLuint gVertexArrayObject;
-GLuint gVertexBufferObject;
+GLuint gVertexBufferObject_position;
+GLuint gVertexBufferObject_color;
 
 // unique ID for the graphics pipeline
 GLuint gGraphicsPipeline_shaderProgram = 0;
-
-const std::string gSource_vertexShader = 
-    "#version 410 core\n"
-    "in vec4 position;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
-    "}\n";
-
-const std::string gSource_fragmentShader = 
-    "#version 410 core\n"
-    "out vec4 color;\n"
-    "void main()\n"
-    "{\n"
-    "   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
-    "}\n";
 
 // *************************************************
 
@@ -244,13 +234,21 @@ void vertex_specification()
        0.0f,  0.8f,  0.0f     // vertex 3
   };
 
+  const std::vector<GLfloat> vertexColor  
+  {
+    //  r      g      b
+       1.0f,  0.0f,  0.0f,    // vertex 1
+       0.0f,  1.0f,  0.0f,    // vertex 2
+       0.0f,  0.0f,  1.0f     // vertex 3
+  };
+
   // generate Vertex Array Objects  
   glGenVertexArrays(1, &gVertexArrayObject);             // creates an array to hold vertex data (called gVertexArrayObject)
   glBindVertexArray(gVertexArrayObject);                 // selects the array as current
 
-  // generate Vertex Buffer Object
-  glGenBuffers(1, &gVertexBufferObject);                 // generates buffer
-  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);    // sets buffer as current, specifies target
+  // generate Vertex Buffer Object for position
+  glGenBuffers(1, &gVertexBufferObject_position);                 // generates buffer
+  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_position);    // sets buffer as current, specifies target
   glBufferData
   (
     GL_ARRAY_BUFFER,                           // specifies target
@@ -271,10 +269,61 @@ void vertex_specification()
     (void*)0    // pointer for offset
   );
 
+ // create a VBO for vertex colors
+  glGenBuffers(1, &gVertexBufferObject_color);
+  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_color);
+  glBufferData
+  (
+    GL_ARRAY_BUFFER,
+    vertexColor.size() * sizeof(GLfloat),
+    vertexColor.data(),
+    GL_STATIC_DRAW
+  );
+
+  // linking attributes for colors in VAO
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer
+  (
+    1,
+    3,          // r g b
+    GL_FLOAT,
+    GL_FALSE,
+    0,
+    (void*)0
+  );
+
   // cleanup VAO
-  glBindVertexArray(0);                 // to cleanup, change bind to nothing (0)
-  glDisableVertexAttribArray(0);        // disable previously enabled attribArray
+  glBindVertexArray(0);                 // unbind currently bound VAO
+
+  // disable any attributes previously opened in our vertex attribute array
+  glDisableVertexAttribArray(0);        // position
+  glDisableVertexAttribArray(1);        // color
+
 }
+
+
+// load a shader from a file, passing in reference to file name
+std::string load_shader_from_file(const std::string& fileName)
+{
+  // initialize result var
+  std::string result = "";    // holds shader program as single string
+
+  std::string line = "";  // holds one line of shader file at a time
+  std::ifstream shaderFile(fileName.c_str());     // opens file
+
+  // if the file is opened successfully
+  if (shaderFile.is_open())
+  {
+    while(std::getline(shaderFile, line))   // go through each line of the file
+    {
+      result += line + "\n";                // concatinate new line into result string
+    }
+    shaderFile.close();                     // close file when done 
+  }
+
+  return result;
+}
+
 
 
 GLuint compile_shader(GLuint type, const std::string source)
@@ -354,9 +403,9 @@ GLuint create_shader_program(const std::string vertexShaderSource, const std::st
   GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
   // attatch shaders to program object
-  glAttachShader(programObject, vertexShader);
+  glAttachShader(programObject, vertexShader);    // attatches vertex shader to the object
   glAttachShader(programObject, fragmentShader);
-  glLinkProgram(programObject);   // links shaders together in object
+  glLinkProgram(programObject);   // links shaders together within object
 
   // validate program - check for errors
   glValidateProgram(programObject); 
@@ -368,8 +417,10 @@ GLuint create_shader_program(const std::string vertexShaderSource, const std::st
 
 void create_graphics_pipeline()
 {
+  std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");
+  std::string source_fragmentShader = load_shader_from_file("./shaders/fragmentShader.glsl");
 
-  gGraphicsPipeline_shaderProgram = create_shader_program(gSource_vertexShader, gSource_fragmentShader);
+  gGraphicsPipeline_shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
 }
 
 
@@ -419,7 +470,7 @@ void draw_OpenGL()
 {
   // choose VAO and VBO
   glBindVertexArray(gVertexArrayObject);
-  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
+  glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject_position);
 
   // draw
   glDrawArrays
