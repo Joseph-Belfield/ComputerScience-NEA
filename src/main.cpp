@@ -20,6 +20,13 @@
   #define IMGUI
 #endif
 
+#ifndef GLM
+  #include "glm/glm.hpp"            // main GLM library
+  #include "glm/vec3.hpp"           // GLM vec3 class and methods - for position data
+  #include "glm/mat4x4.hpp"         // GLM 4x4 matrix class and methods - for transformations 
+  #define GLM
+#endif
+
 // *************************************************
 
 #ifndef MATH
@@ -58,8 +65,7 @@
 
 namespace global
 {
-  // prefix variables with g to state that they're global
-
+ 
   // the window the program runs in
   SDL_Window* window = nullptr;
 
@@ -86,6 +92,9 @@ namespace global
 
   // unique ID for the graphics pipeline
   GLuint shaderProgram = 0;
+
+  // offset that allows us to change values in the GPU
+  float uOffeset = 0.0f;
 }
 // *************************************************
 
@@ -103,7 +112,7 @@ void init_SDL()
   global::mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
   // flags for the window
-  SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE |          // lets window be resized
+  SDL_WindowFlags window_flags =  SDL_WINDOW_RESIZABLE |          // lets window be resized
                                   SDL_WINDOW_OPENGL |             // window uses OpenGL context
                                   SDL_WINDOW_HIDDEN |             // window hidden during setup
                                   SDL_WINDOW_HIGH_PIXEL_DENSITY;  // higher quality
@@ -240,7 +249,7 @@ void vertex_specification()
      0.0f,  0.0f,  1.0f,    // color   
 
      0.5f,  0.5f,  0.0f,    // vertex 4 
-     1.0f,  1.0f,  1.0f     // color
+     0.0f,  0.0f,  1.0f     // color
   };
 
 
@@ -448,14 +457,28 @@ void check_events()
     ImGui_ImplSDL3_ProcessEvent(&event);
 
     // if SDL is quit, end the run loop
-    if (event.type == SDL_EVENT_QUIT) {
+    if (event.type == SDL_EVENT_QUIT) 
+    {
       global::flag_mainLoop = false;
     }
     // if Esc key is pressed, end the run loop
-    if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
+    if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) 
+    {
       global::flag_mainLoop = false;
     }
+
+    if (event.key.key == SDLK_UP)
+    {
+      global::uOffeset+=0.1f;
+    }
+
+    if (event.key.key == SDLK_DOWN)
+    {
+      global::uOffeset-=0.1f;
+    }
+
   }
+
 }
 
 
@@ -473,7 +496,19 @@ void preDraw_OpenGL()
   glClearColor(0.0f, 1.0f, 1.0f, 1.0f);                   // sets background color
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
-  glUseProgram(global::shaderProgram);
+  glUseProgram(global::shaderProgram);            // selects program in use
+
+  GLuint uniformLocation = glGetUniformLocation(global::shaderProgram, "uOffset");
+  if (uniformLocation >= 0)
+  {
+    glUniform1f(uniformLocation, global::uOffeset);
+  }
+  else
+  {
+    SDL_Log("Could not find uniform location!");
+    SDL_Log("Check spelling.");
+  }
+
 }
 
 
@@ -496,25 +531,18 @@ void draw_OpenGL()
 
 
 
-void draw_ImGui
-(
-  bool show_mainWindow = true, 
-  bool show_helloWorld = false, 
-  bool show_colorPicker = false,  
-  bool show_sineGraph = false, 
-  bool show_scrolling = false
-)
+void draw_ImGui(bool* show_mainWindow, bool* show_colorPicker, bool* show_sineGraph, bool* show_scrolling, bool* show_helloWorld)
 {
 
-  ImGui::Begin("Main Window", &show_mainWindow, ImGuiWindowFlags_MenuBar);  
+  ImGui::Begin("Main Window", show_mainWindow, ImGuiWindowFlags_MenuBar);  
 
   if (ImGui::BeginMenuBar())
   {
     if (ImGui::BeginMenu("Options"))
     {
-      if (ImGui::MenuItem("Change Background Color")) {show_colorPicker = true;}
-      if (ImGui::MenuItem("Sine Graph")) {show_sineGraph = true;}
-      if (ImGui::MenuItem("Scrolling")) {show_scrolling = true;}
+      if (ImGui::MenuItem("Change Background Color")) {*show_colorPicker = true;}
+      if (ImGui::MenuItem("Sine Graph")) {*show_sineGraph = true;}
+      if (ImGui::MenuItem("Scrolling")) {*show_scrolling = true;}
       ImGui::EndMenu();
     }
     ImGui::EndMenuBar();
@@ -522,7 +550,7 @@ void draw_ImGui
 
   if (ImGui::Button("Hello World"))
   {
-    show_helloWorld = true;
+    *show_helloWorld = true;
   }
 
   ImGui::End();
@@ -536,7 +564,7 @@ void draw_ImGui
 
   if (show_sineGraph)
   {
-    ImGui::Begin("Sine Graph", &show_sineGraph);
+    ImGui::Begin("Sine Graph", show_sineGraph);
     float samples[100];
     for (int i = 0; i < 100; i++)
     {
@@ -549,7 +577,7 @@ void draw_ImGui
   if (show_scrolling)
   {
     // display contents in scrolling region
-    ImGui::Begin("Scrolling", &show_scrolling);
+    ImGui::Begin("Scrolling", show_scrolling);
     ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
     ImGui::BeginChild("Scrolling");
     for (int i = 0; i < 15; i++)
@@ -563,7 +591,7 @@ void draw_ImGui
   if (show_colorPicker)
   {
     // create a window with menu bar called "Color Picker"
-    ImGui::Begin("Background Color", &show_colorPicker);
+    ImGui::Begin("Background Color", show_colorPicker);
     // edit a color stored as 4 floats
     // ImGui::ColorEdit3("Color", (float*)&clear_color);
     ImGui::End();
@@ -577,8 +605,8 @@ void run_loop()
   // window background color variables
   ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-  // bools determining if windows should be rendered
-  bool show_mainWindow = true;
+  // bools determining if windows should be rendered  
+  bool show_mainWindow;
   bool show_helloWorld = false;
   bool show_colorPicker = false;
   bool show_sineGraph = false;
@@ -597,10 +625,11 @@ void run_loop()
 
     // ********************** DO STUFF HERE **********************
 
+    draw_ImGui(&show_mainWindow, &show_colorPicker, &show_sineGraph, &show_scrolling, &show_helloWorld);
+
     preDraw_OpenGL();
     draw_OpenGL();
 
-    draw_ImGui();
 
     // render
     ImGui::Render();                                               // renders ImGui instructions 
