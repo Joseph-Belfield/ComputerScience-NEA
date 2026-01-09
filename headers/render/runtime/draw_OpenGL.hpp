@@ -1,6 +1,7 @@
 // *************************************************
 
 // added error protetion around includes. library includes grouped.
+
 #ifndef GLAD
   #include "glad/glad.h"          // OpenGL extension loader
   #define GLAD
@@ -51,86 +52,29 @@
 
 // *************************************************
 
-#ifndef ATOM
-  #include "defines/chemistry/atom.hpp"
-  #define ATOM
-#endif
-
-#ifndef ELEMENT
-  #include "defines/chemistry/elements.hpp"
-  #define ELEMENT
-#endif
-
-// ********************** GLOBAL VARRIABLES **********************
-
 #ifndef GLOBAL
-  #include "defines/global.hpp"
+  #include "defines/global.hpp"        
   #define GLOBAL
-#endif
-
-// ********************** WINDOW **********************
-
-#ifndef INIT
-  #include "render/init.hpp"
-  #define INIT
-#endif
-
-#ifndef VERTEXSPEC
-  #include "render/vertexSpecification.hpp"
-  #define VERTEXSPEC
-#endif
-
-#ifndef GRAPHICS_PIPELINE
-  #include "render/graphicsPipeline.hpp"
-  #define GRAPHICS_PIPELINE
-#endif
-
-// ********************** DRAW **********************
-
-#ifndef DRAW
-  #include "render/runtime/events.hpp"
-  #include "render/runtime/predraw.hpp"
-  #include "render/runtime/draw_ImGui.hpp"
-  #include "render/runtime/draw_OpenGL.hpp"
-  #define DRAW
-#endif
-
-#ifndef RUNTIME
-  #include "render/run_loop.hpp"
-  #define RUNTIME
-#endif
-
-// ********************** CLEAN **********************
-
-#ifndef CLEAN
-  #include "render/cleanup.hpp"
-  #define CLEAN
 #endif
 
 // *************************************************
 
-int main(int argc, char *argv[]) {
+namespace runtime
+{
+  // for drawing OpenGL data
+  void draw_OpenGL()
+  {
+    // choose VAO and VBO
+    glBindVertexArray(global::vertexArrayObject);
+    glBindBuffer(GL_ARRAY_BUFFER, global::vertexBufferObject);
 
-  // 1. initialize libraries
-  init::init_SDL();
-  init::set_OpenGL_Attributes();
-  init::init_Opencontext_OpenGL();
-  init::init_ImGui();
-
-  // 2. set up geometry
-  vertex_specification();
-
-  // 3. set up shaders (at least, vertex and fragment)
-  create_graphics_pipeline();
-
-  // 4. main run loop
-  run_loop();
-
-  // 5. cleans up
-  clean_ImGui();
-  clean_SDL();  
-
-  return 0;
+    // draw
+    glDrawElements
+    (
+      GL_TRIANGLES,         // shape
+      6,                    // number of vertices drawn to (count repeats)
+      GL_UNSIGNED_INT,      // data type
+      0                     // offset into index array for first element (triangle vertex order)
+    );
+  }
 }
-
-// enter "sh make.sh" into terminal to run program

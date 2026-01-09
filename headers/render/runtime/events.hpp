@@ -1,6 +1,7 @@
 // *************************************************
 
 // added error protetion around includes. library includes grouped.
+
 #ifndef GLAD
   #include "glad/glad.h"          // OpenGL extension loader
   #define GLAD
@@ -51,86 +52,56 @@
 
 // *************************************************
 
-#ifndef ATOM
-  #include "defines/chemistry/atom.hpp"
-  #define ATOM
-#endif
-
-#ifndef ELEMENT
-  #include "defines/chemistry/elements.hpp"
-  #define ELEMENT
-#endif
-
-// ********************** GLOBAL VARRIABLES **********************
-
 #ifndef GLOBAL
-  #include "defines/global.hpp"
+  #include "defines/global.hpp"        
   #define GLOBAL
-#endif
-
-// ********************** WINDOW **********************
-
-#ifndef INIT
-  #include "render/init.hpp"
-  #define INIT
-#endif
-
-#ifndef VERTEXSPEC
-  #include "render/vertexSpecification.hpp"
-  #define VERTEXSPEC
-#endif
-
-#ifndef GRAPHICS_PIPELINE
-  #include "render/graphicsPipeline.hpp"
-  #define GRAPHICS_PIPELINE
-#endif
-
-// ********************** DRAW **********************
-
-#ifndef DRAW
-  #include "render/runtime/events.hpp"
-  #include "render/runtime/predraw.hpp"
-  #include "render/runtime/draw_ImGui.hpp"
-  #include "render/runtime/draw_OpenGL.hpp"
-  #define DRAW
-#endif
-
-#ifndef RUNTIME
-  #include "render/run_loop.hpp"
-  #define RUNTIME
-#endif
-
-// ********************** CLEAN **********************
-
-#ifndef CLEAN
-  #include "render/cleanup.hpp"
-  #define CLEAN
 #endif
 
 // *************************************************
 
-int main(int argc, char *argv[]) {
+namespace runtime
+{
+  void check_events()
+  {
+    // checks for events
+    SDL_Event event;
 
-  // 1. initialize libraries
-  init::init_SDL();
-  init::set_OpenGL_Attributes();
-  init::init_Opencontext_OpenGL();
-  init::init_ImGui();
+    // if there were events, do:
+    while (SDL_PollEvent(&event)) {
 
-  // 2. set up geometry
-  vertex_specification();
+      // ImGui processes the event
+      ImGui_ImplSDL3_ProcessEvent(&event);
 
-  // 3. set up shaders (at least, vertex and fragment)
-  create_graphics_pipeline();
+      // if SDL is quit, end the run loop
+      if (event.type == SDL_EVENT_QUIT) 
+      {
+        global::flag_mainLoop = false;
+      }
+      // if Esc key is pressed, end the run loop
+      if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) 
+      {
+        global::flag_mainLoop = false;
+      }
 
-  // 4. main run loop
-  run_loop();
+      if (event.key.key == SDLK_UP)
+      {
+        global::uOffset+=0.1f;
+      }
 
-  // 5. cleans up
-  clean_ImGui();
-  clean_SDL();  
+      if (event.key.key == SDLK_DOWN)
+      {
+        global::uOffset-=0.1f;
+      }
 
-  return 0;
+      if (event.key.key == SDLK_RIGHT)
+      {
+        global::uRotate+=1.0f;
+      }
+
+      if (event.key.key == SDLK_LEFT)
+      {
+        global::uRotate-=1.0f;
+      }
+    }
+  }
 }
-
-// enter "sh make.sh" into terminal to run program

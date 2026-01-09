@@ -1,6 +1,7 @@
 // *************************************************
 
 // added error protetion around includes. library includes grouped.
+
 #ifndef GLAD
   #include "glad/glad.h"          // OpenGL extension loader
   #define GLAD
@@ -51,86 +52,58 @@
 
 // *************************************************
 
-#ifndef ATOM
-  #include "defines/chemistry/atom.hpp"
-  #define ATOM
-#endif
-
-#ifndef ELEMENT
-  #include "defines/chemistry/elements.hpp"
-  #define ELEMENT
-#endif
-
-// ********************** GLOBAL VARRIABLES **********************
-
 #ifndef GLOBAL
-  #include "defines/global.hpp"
+  #include "defines/global.hpp"        
   #define GLOBAL
-#endif
-
-// ********************** WINDOW **********************
-
-#ifndef INIT
-  #include "render/init.hpp"
-  #define INIT
-#endif
-
-#ifndef VERTEXSPEC
-  #include "render/vertexSpecification.hpp"
-  #define VERTEXSPEC
-#endif
-
-#ifndef GRAPHICS_PIPELINE
-  #include "render/graphicsPipeline.hpp"
-  #define GRAPHICS_PIPELINE
 #endif
 
 // ********************** DRAW **********************
 
 #ifndef DRAW
-  #include "render/runtime/events.hpp"
-  #include "render/runtime/predraw.hpp"
-  #include "render/runtime/draw_ImGui.hpp"
-  #include "render/runtime/draw_OpenGL.hpp"
+  #include "render/draw/events.hpp"
+  #include "render/draw/predraw.hpp"
+  #include "render/draw/draw_ImGui.hpp"
+  #include "render/draw/draw_OpenGL.hpp"
   #define DRAW
-#endif
-
-#ifndef RUNTIME
-  #include "render/run_loop.hpp"
-  #define RUNTIME
-#endif
-
-// ********************** CLEAN **********************
-
-#ifndef CLEAN
-  #include "render/cleanup.hpp"
-  #define CLEAN
 #endif
 
 // *************************************************
 
-int main(int argc, char *argv[]) {
+void run_loop()
+{
+  // window background color variables
+  ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-  // 1. initialize libraries
-  init::init_SDL();
-  init::set_OpenGL_Attributes();
-  init::init_Opencontext_OpenGL();
-  init::init_ImGui();
+  // bools determining if windows should be rendered  
+  bool show_mainWindow;
+  bool show_helloWorld = false;
+  bool show_colorPicker = false;
+  bool show_sineGraph = false;
+  bool show_scrolling = false;
 
-  // 2. set up geometry
-  vertex_specification();
+  // ********************** RUN LOOP **********************
 
-  // 3. set up shaders (at least, vertex and fragment)
-  create_graphics_pipeline();
+  while (global::flag_mainLoop) {
 
-  // 4. main run loop
-  run_loop();
+    runtime::check_events();
 
-  // 5. cleans up
-  clean_ImGui();
-  clean_SDL();  
+    // starts a new frame for OpenGL, SDL and ImGui
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
 
-  return 0;
+    // ********************** DO STUFF HERE **********************
+
+    runtime::draw_ImGui(&show_mainWindow, &show_colorPicker, &show_sineGraph, &show_scrolling, &show_helloWorld);
+
+    runtime::preDraw_OpenGL();
+    runtime::draw_OpenGL();
+
+
+    // render
+    ImGui::Render();                                               // renders ImGui instructions 
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        // renders the ImGui data with OpenGL  
+    SDL_GL_SwapWindow(global::window);                                     // swaps in the new frame
+
+  }
 }
-
-// enter "sh make.sh" into terminal to run program
