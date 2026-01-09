@@ -65,9 +65,9 @@ namespace transform
   void model_matrix()
   {
     // create and adapt the matrix to adjust the following transformations
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, global::uOffset)); // movement
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(global::uDisplacement[0], global::uDisplacement[1], global::uOffset)); // movement
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(global::uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(global::uScale, global::uScale, global::uScale));
 
     GLuint uLocation_modelMatrix = glGetUniformLocation(global::shaderProgram, "uModelMatrix"); // get location of uniform variable
     if (uLocation_modelMatrix >= 0)   // if that space has been allocated correctly

@@ -82,7 +82,9 @@ namespace global
 
   // offset that allows us to change values in the GPU
   float uOffset = -2.0f;
+  float uDisplacement[2] = {0.0f, 0.0f};
   float uRotate;
+  float uScale = 1.0f;
 
   // matrix transformations
   float uModelMatrix;         // matrix that transforms shapes position on world axis

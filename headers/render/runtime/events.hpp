@@ -83,11 +83,27 @@ namespace runtime
         global::flag_mainLoop = false;
       }
 
+      if (event.key.key == SDLK_W)
+      {
+        global::uDisplacement[1]+=0.1f;
+      }
+      if (event.key.key == SDLK_A)
+      {
+        global::uDisplacement[0]-=0.1f;
+      }
+      if (event.key.key == SDLK_S)
+      {
+        global::uDisplacement[1]-=0.1f;
+      }
+      if (event.key.key == SDLK_D)
+      {
+        global::uDisplacement[0]+=0.1f;
+      }
+
       if (event.key.key == SDLK_UP)
       {
         global::uOffset+=0.1f;
       }
-
       if (event.key.key == SDLK_DOWN)
       {
         global::uOffset-=0.1f;
@@ -95,12 +111,20 @@ namespace runtime
 
       if (event.key.key == SDLK_RIGHT)
       {
-        global::uRotate+=1.0f;
+        global::uRotate+=5.0f;
       }
-
       if (event.key.key == SDLK_LEFT)
       {
-        global::uRotate-=1.0f;
+        global::uRotate-=5.0f;
+      }
+
+      if (event.key.key == SDLK_P)
+      {
+        global::uScale+=0.1f;
+      }
+      if (event.key.key == SDLK_O)
+      {
+        global::uScale-=0.1f;
       }
     }
   }
