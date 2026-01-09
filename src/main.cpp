@@ -21,9 +21,10 @@
 #endif
 
 #ifndef GLM
-  #include "glm/glm.hpp"            // main GLM library
-  #include "glm/vec3.hpp"           // GLM vec3 class and methods - for position data
-  #include "glm/mat4x4.hpp"         // GLM 4x4 matrix class and methods - for transformations 
+  #include "glm/glm.hpp"                       // main GLM library
+  #include "glm/vec3.hpp"                      // GLM vec3 class and methods - for position data
+  #include "glm/mat4x4.hpp"                    // GLM 4x4 matrix class and methods - for transformations 
+  #include "glm/gtc/matrix_transform.hpp"      // translate function
   #define GLM
 #endif
 
@@ -94,7 +95,8 @@ namespace global
   GLuint shaderProgram = 0;
 
   // offset that allows us to change values in the GPU
-  float uOffeset = 0.0f;
+  float uOffset;
+  float uModelMatrix;
 }
 // *************************************************
 
@@ -469,12 +471,12 @@ void check_events()
 
     if (event.key.key == SDLK_UP)
     {
-      global::uOffeset+=0.1f;
+      global::uOffset+=0.1f;
     }
 
     if (event.key.key == SDLK_DOWN)
     {
-      global::uOffeset-=0.1f;
+      global::uOffset-=0.1f;
     }
 
   }
@@ -497,16 +499,25 @@ void preDraw_OpenGL()
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
   glUseProgram(global::shaderProgram);            // selects program in use
+  
+  glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, global::uOffset, 0.0f));
 
-  GLuint uniformLocation = glGetUniformLocation(global::shaderProgram, "uOffset");
-  if (uniformLocation >= 0)
+  GLuint uLocation_ModelMatrix = glGetUniformLocation(global::shaderProgram, "uModelMatrix");
+  if (uLocation_ModelMatrix >= 0)
   {
-    glUniform1f(uniformLocation, global::uOffeset);
+    glUniformMatrix4fv
+    (
+    uLocation_ModelMatrix,         // location
+    1,                             // count 
+    false,                         // transpose (bool)
+    &translate[0][0]               // value
+    );
   }
   else
   {
     SDL_Log("Could not find uniform location!");
     SDL_Log("Check spelling.");
+    exit(-1);
   }
 
 }

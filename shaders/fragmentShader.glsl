@@ -2,7 +2,7 @@
 
 in vec3 v_vertexColors;
 
-uniform float uOffset;    // uniform variable
+
 
 out vec4 color;
 
