@@ -115,8 +115,8 @@ void vertex_specification()
     3, 2, 1,      // triangle 2
 
     // face 2 - back
-    6, 4, 5,
-    7, 6, 5,
+    7, 5, 4,
+    4, 6, 7,
 
     //face 3 - left
     6, 4, 0,
