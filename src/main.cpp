@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
   // 1. initialize libraries
   init::init_SDL();
   init::set_OpenGL_Attributes();
-  init::init_Opencontext_OpenGL();
+  init::init_OpenGL();
   init::init_ImGui();
 
   // 2. set up geometry

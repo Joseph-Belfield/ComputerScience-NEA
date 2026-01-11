@@ -122,7 +122,7 @@ namespace init
 
 
 
-    void init_Opencontext_OpenGL()
+    void init_OpenGL()
     {
     // create the context for OpenGL in 'window'
     global::context_OpenGL = SDL_GL_CreateContext(global::window);
@@ -138,6 +138,7 @@ namespace init
     // initializes GLAD
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
     
     SDL_GL_MakeCurrent(global::window, global::context_OpenGL); // sets current window and context
     SDL_GL_SetSwapInterval(1); // Enable vsync

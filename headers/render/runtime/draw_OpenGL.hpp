@@ -72,7 +72,7 @@ namespace runtime
     glDrawElements
     (
       GL_TRIANGLES,         // shape
-      6,                    // number of vertices drawn to (count repeats)
+      36,                    // number of vertices drawn to (count repeats)
       GL_UNSIGNED_INT,      // data type
       0                     // offset into index array for first element (triangle vertex order)
     );

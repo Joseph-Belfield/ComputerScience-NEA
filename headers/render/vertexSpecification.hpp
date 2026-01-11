@@ -65,17 +65,29 @@ void vertex_specification()
   // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
   const std::vector<GLfloat> vertexData   // lives on CPU
   {
-    -0.5f, -0.5f,  0.0f,    // vertex 1
+    -0.5f, -0.5f,  0.5f,    // vertex 0 - (front bottom left)
      1.0f,  0.0f,  0.0f,    // color
 
-     0.5f, -0.5f,  0.0f,    // vertex 2
-     0.0f,  1.0f,  0.0f,    // color
+     0.5f, -0.5f,  0.5f,    // vertex 1 - (front bottom right)
+     0.0f,  0.0f,  1.0f,    // color
 
-    -0.5f,  0.5f,  0.0f,    // vertex 3
-     0.0f,  0.0f,  1.0f,    // color   
+    -0.5f,  0.5f,  0.5f,    // vertex 2 - (front top left)
+     1.0f,  0.0f,  0.0f,    // color   
 
-     0.5f,  0.5f,  0.0f,    // vertex 4 
-     0.0f,  0.0f,  1.0f     // color
+     0.5f,  0.5f,  0.5f,    // vertex 3 - (front top right)
+     0.0f,  0.0f,  1.0f,    // color
+
+    -0.5f, -0.5f, -0.5f,    // vertex 4 - (back bottom left)
+     1.0f,  0.0f,  0.0f,    // color
+
+     0.5f, -0.5f, -0.5f,    // vertex 5 - (back bottom right)
+     0.0f,  0.0f,  1.0f,    // color
+
+    -0.5f,  0.5f, -0.5f,    // vertex 6 - (back top left)
+     1.0f,  0.0f,  0.0f,    // color   
+
+     0.5f,  0.5f, -0.5f,    // vertex 7 - (back top right)
+     0.0f,  0.0f,  1.0f,    // color
   };
 
 
@@ -98,8 +110,30 @@ void vertex_specification()
   // data about the order vertices should be renderd in
   const std::vector<GLuint> indexBufferData
   {
+    // face 1 - front
     2, 0, 1,      // triangle 1
-    3, 2, 1       // triangle 2
+    3, 2, 1,      // triangle 2
+
+    // face 2 - back
+    6, 4, 5,
+    7, 6, 5,
+
+    //face 3 - left
+    6, 4, 0,
+    0, 2, 6,
+
+    //face 4 - right
+    3, 1, 5,
+    5, 7, 3,
+
+    // face 5 - top
+    7, 6, 2,
+    2, 3, 7,
+
+    //face 6 - bottom
+    4, 0, 1,
+    1, 5, 4
+
   };
 
   // set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
