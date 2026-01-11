@@ -49,7 +49,7 @@
   #define VECTOR
 #endif
 
-// ********************** GLOBAL VARRIABLES **********************
+// A namespace used to handle global variables held in the global header file. Prevents global variables from being used accidently, or from cluttering the namespace.
 namespace global
 {
 

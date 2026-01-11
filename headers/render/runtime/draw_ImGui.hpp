@@ -59,6 +59,7 @@
 
 // *************************************************
 
+// A namespace used for functions associated with the main run loop.
 namespace runtime
 {
   void draw_ImGui(bool* show_mainWindow, bool* show_colorPicker, bool* show_sineGraph, bool* show_scrolling, bool* show_helloWorld)

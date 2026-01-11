@@ -59,6 +59,7 @@
 
 // *************************************************
 
+// A namespace used for functions associated with the main run loop.
 namespace runtime
 {
   void check_events()

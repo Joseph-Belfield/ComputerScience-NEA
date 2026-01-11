@@ -59,6 +59,7 @@
 
 // *************************************************
 
+// A namespace for functions involved with transformation matrices.
 namespace transform
 {
   // model matrices move objects from their 'local' space and positions it in the 'world' space
@@ -120,6 +121,7 @@ namespace transform
   }
 }
 
+// A namespace used for functions associated with the main run loop.
 namespace runtime
 {
   // for setting OpenGL state
