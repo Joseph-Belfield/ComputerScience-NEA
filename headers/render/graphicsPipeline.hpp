@@ -59,7 +59,8 @@
 
 // *************************************************
 
-// load a shader from a file, passing in reference to file name
+// Load a shader from a file
+// - Pass in the shader by file name. File name is passed only by reference to prevent duplication.
 std::string load_shader_from_file(const std::string& fileName)
 {
   // initialize result var
@@ -83,6 +84,11 @@ std::string load_shader_from_file(const std::string& fileName)
 
 
 
+// Compiles veretx and fragment shaders.
+// - Shader type is a (enum) OpenGL flag indicating the type of shader it is (vertex/fragment)
+// - Source is the GLSL code for a shader passed as a C++ string
+//
+// If the shader compiles incorrectly, this function will cancel and log the appropriate error information.
 GLuint compile_shader(GLuint type, const std::string source)
 {
   // create shader object
@@ -150,7 +156,10 @@ GLuint compile_shader(GLuint type, const std::string source)
 }
 
 
-
+// Creates a shader program object.
+// - The function passes in the vertex and fragment shaders' GLSL code as C++ strings
+//
+// The shaders are compiled within the function, and then attatcehed to the program object. The program object is then validated.
 GLuint create_shader_program(const std::string source_vertexShader, const std::string source_fragmentShader)
 {
   GLuint programObject = glCreateProgram(); // creates an empty program to be filled with shaders
@@ -171,7 +180,7 @@ GLuint create_shader_program(const std::string source_vertexShader, const std::s
 }
 
 
-
+// Creates a shader program using the shaders found in the shader folder. The shader program is referenced using a unique unsigned integer value assigned as its ID.
 void create_graphics_pipeline()
 {
   std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");

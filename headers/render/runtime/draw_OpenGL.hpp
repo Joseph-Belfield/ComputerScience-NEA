@@ -67,7 +67,6 @@ namespace runtime
   {
     // choose VAO and VBO
     glBindVertexArray(global::vertexArrayObject);
-    glBindBuffer(GL_ARRAY_BUFFER, global::vertexBufferObject);
 
     // draw
     glDrawElements
