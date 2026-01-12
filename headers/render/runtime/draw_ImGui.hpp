@@ -62,18 +62,17 @@
 // A namespace used for functions associated with the main run loop.
 namespace runtime
 {
-  void draw_ImGui(bool* show_mainWindow, bool* show_colorPicker, bool* show_sineGraph, bool* show_scrolling, bool* show_helloWorld)
+  void draw_ImGui()
   {
-
-    ImGui::Begin("Main Window", show_mainWindow, ImGuiWindowFlags_MenuBar);  
+    ImGui::Begin("Main Window", &(global::show_mainWindow), ImGuiWindowFlags_MenuBar);  
 
     if (ImGui::BeginMenuBar())
     {
       if (ImGui::BeginMenu("Options"))
       {
-        if (ImGui::MenuItem("Change Background Color")) {*show_colorPicker = true;}
-        if (ImGui::MenuItem("Sine Graph")) {*show_sineGraph = true;}
-        if (ImGui::MenuItem("Scrolling")) {*show_scrolling = true;}
+        if (ImGui::MenuItem("Change Background Color")) {global::show_colorPicker = true;}
+        if (ImGui::MenuItem("Sine Graph")) {global::show_sineGraph = true;}
+        if (ImGui::MenuItem("Scrolling")) {global::show_scrolling = true;}
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();
@@ -81,21 +80,21 @@ namespace runtime
 
     if (ImGui::Button("Hello World"))
     {
-      *show_helloWorld = true;
+      global::show_helloWorld = true;
     }
 
     ImGui::End();
 
 
 
-    if (show_helloWorld)
+    if (global::show_helloWorld)
     {
       ImGui::Text("Hello World!");
     }
 
-    if (show_sineGraph)
+    if (global::show_sineGraph)
     {
-      ImGui::Begin("Sine Graph", show_sineGraph);
+      ImGui::Begin("Sine Graph", &(global::show_sineGraph));
       float samples[100];
       for (int i = 0; i < 100; i++)
       {
@@ -105,10 +104,10 @@ namespace runtime
       ImGui::End();
     }
 
-    if (show_scrolling)
+    if (global::show_scrolling)
     {
       // display contents in scrolling region
-      ImGui::Begin("Scrolling", show_scrolling);
+      ImGui::Begin("Scrolling", &(global::show_scrolling));
       ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
       ImGui::BeginChild("Scrolling");
       for (int i = 0; i < 15; i++)
@@ -119,12 +118,12 @@ namespace runtime
       ImGui::End();
     }
 
-    if (show_colorPicker)
+    if (global::show_colorPicker)
     {
       // create a window with menu bar called "Color Picker"
-      ImGui::Begin("Background Color", show_colorPicker);
+      ImGui::Begin("Background Color", &(global::show_colorPicker));
       // edit a color stored as 4 floats
-      // ImGui::ColorEdit3("Color", (float*)&clear_color);
+      ImGui::ColorEdit3("Color", (float*)&global::clearColor);
       ImGui::End();
     }
   }

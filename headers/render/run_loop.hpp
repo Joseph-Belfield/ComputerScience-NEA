@@ -71,15 +71,8 @@
 
 void run_loop()
 {
-  // window background color variables
-  ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-  // bools determining if windows should be rendered  
-  bool show_mainWindow;
-  bool show_helloWorld = false;
-  bool show_colorPicker = false;
-  bool show_sineGraph = false;
-  bool show_scrolling = false;
+ 
 
   // ********************** RUN LOOP **********************
 
@@ -94,7 +87,7 @@ void run_loop()
 
     // ********************** DO STUFF HERE **********************
 
-    runtime::draw_ImGui(&show_mainWindow, &show_colorPicker, &show_sineGraph, &show_scrolling, &show_helloWorld);
+    runtime::draw_ImGui();
 
     runtime::preDraw_OpenGL();
     runtime::draw_OpenGL();

@@ -49,6 +49,13 @@
   #define VECTOR
 #endif
 
+// *************************************************
+
+#ifndef CAMERA
+  #include "defines/camera.hpp"
+  #define CAMERA
+#endif
+
 // A namespace used to handle global variables held in the global header file. Prevents global variables from being used accidently, or from cluttering the namespace.
 namespace global
 {
@@ -80,6 +87,8 @@ namespace global
   // unique ID for the graphics pipeline
   GLuint shaderProgram = 0;
 
+  ImVec4 clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
   // offset that allows us to change values in the GPU
   float uOffset = -2.0f;
   float uDisplacement[2] = {0.0f, 0.0f};
@@ -87,6 +96,19 @@ namespace global
   float uScale = 1.0f;
 
   // matrix transformations
-  float uModelMatrix;         // matrix that transforms shapes position on world axis
-  float uPerspective;         // matrix that creates perspective (shows movement on Z plane)
+  float uModelMatrix;         // Matrix that transforms shapes position on world axis.
+  float uViewMatrix;          // Matrix that moves shapes into camera space.
+  float uPerspective;         // Matrix that creates perspective (shows movement on Z plane).
+
+  // bools determining if windows should be rendered  
+  bool show_mainWindow;
+  bool show_helloWorld = false;
+  bool show_colorPicker = false;
+  bool show_sineGraph = false;
+  bool show_scrolling = false;
+
+  // Universal camera object. 
+  // - Used to view the scene. 
+  // - More than one camera can be used for multiple viewpoints.
+  Camera camera;             
 }

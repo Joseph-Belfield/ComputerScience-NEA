@@ -72,7 +72,6 @@ void clean_ImGui()
 }
 
 
-
 void clean_SDL()
 {
   // destroys SDL context 

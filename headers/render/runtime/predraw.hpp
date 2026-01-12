@@ -59,9 +59,48 @@
 
 // *************************************************
 
+#ifndef CAMERA
+  #include "defines/camera.hpp"
+  #define CAMERA
+#endif
+
+// *************************************************
+
 // A namespace for functions involved with transformation matrices.
 namespace transform
 {
+
+  GLuint create_uniform_mat4
+          (
+            GLuint shaderProgram,
+            std::string uniformName,
+            int amount,
+            bool enableTranspose,
+            glm::mat4 matrix
+          )
+  {
+    GLuint uniformLocation = glGetUniformLocation(shaderProgram, uniformName.c_str());
+    if (uniformLocation >= 0)
+    {
+      glUniformMatrix4fv
+      (
+        uniformLocation,
+        amount,
+        enableTranspose,
+        &matrix[0][0]
+      );
+
+      return uniformLocation;
+    }
+    else
+    {
+      SDL_Log("Could not find uniform location!");
+      SDL_Log("Check spelling.");
+      exit(-1);
+    }
+  }
+
+
   // model matrices move objects from their 'local' space and positions it in the 'world' space
   void model_matrix()
   {
@@ -70,23 +109,17 @@ namespace transform
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(global::uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
     modelMatrix = glm::scale(modelMatrix, glm::vec3(global::uScale, global::uScale, global::uScale));
 
-    GLuint uLocation_modelMatrix = glGetUniformLocation(global::shaderProgram, "uModelMatrix"); // get location of uniform variable
-    if (uLocation_modelMatrix >= 0)   // if that space has been allocated correctly
-    {
-      glUniformMatrix4fv             // create a uniform matrix
-      (
-      uLocation_modelMatrix,         // location
-      1,                             // count 
-      false,                         // transpose (bool)
-      &modelMatrix[0][0]               // value
-      );
-    }
-    else                              // else throw an error
-    {
-      SDL_Log("Could not find uniform location!");
-      SDL_Log("Check spelling.");
-      exit(-1);
-    }
+    GLuint uLocation_modelMatrix = create_uniform_mat4(global::shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+  }
+
+  // Creates the view matrix.
+  // - The scene is viewed as if through a camera for the viewer.
+  // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
+  void view_matrix()
+  {
+    glm::mat4 viewMatrix = global::camera.get_view_matrix();
+
+    GLuint uLocation_viewMatrix = create_uniform_mat4(global::shaderProgram, "uViewMatrix", 1, false, viewMatrix);
   }
 
 
@@ -101,23 +134,7 @@ namespace transform
                               10.0f                                                      // far clipping plane (max. distance)
                             );         
 
-    GLuint uLocation_perspective = glGetUniformLocation(global::shaderProgram, "uPerspective");    // get location of uniform variable
-    if (uLocation_perspective >= 0)   // if that space has been allocated correctly
-    {
-      glUniformMatrix4fv             // create a uniform matrix
-      (
-      uLocation_perspective,         // location
-      1,                             // count 
-      false,                         // transpose (bool)
-      &perspective[0][0]             // value
-      );
-    }
-    else                              // else throw an error
-    {
-      SDL_Log("Could not find uniform location!");
-      SDL_Log("Check spelling.");
-      exit(-1);
-    }
+    GLuint uLocation_perpective = create_uniform_mat4(global::shaderProgram, "uPerspective", 1, false, perspective);
   }
 }
 
@@ -135,13 +152,14 @@ namespace runtime
     glViewport(0, 0, (int)global::window_width, (int)global::window_height);
 
     // background color
-    glClearColor(0.0f, 1.0f, 1.0f, 1.0f);                   // sets background color
+    glClearColor(global::clearColor.x, global::clearColor.y, global::clearColor.z, global::clearColor.w);                   // sets background color
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
     glUseProgram(global::shaderProgram);            // selects program in use
 
     // transformation matrices
     transform::model_matrix();         // controls position and rotation on world axis
+    transform::view_matrix();
     transform::perspective_matrix();   // creats illusion of perspective (size changes relative to camera)
 
   }
