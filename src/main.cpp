@@ -1,5 +1,6 @@
 #include "render.hpp"
 #include "defines/everythingClass.hpp"
+#include <iostream>
 
 
 int main(int argc, char *argv[]) {

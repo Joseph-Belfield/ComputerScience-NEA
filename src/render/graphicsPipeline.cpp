@@ -12,6 +12,7 @@
 
 #include <string>              // C++ style strings
 #include <fstream>             // has standard input/output functions
+#include <iostream>            // cout!
 
 // *************************************************
 
@@ -92,13 +93,13 @@ namespace render
             // display error messages
             if (type == GL_VERTEX_SHADER)
             {
-            SDL_Log("GL_VERTEX_SHADER compilation failed! \n");
-            SDL_Log("%s", errorMessages);
+            std::cout << "GL_VERTEX_SHADER compilation failed!" << std::endl;
+            std::cout << errorMessages << std::endl;
             }
             else if(type == GL_FRAGMENT_SHADER)
             {
-            SDL_Log("GL_FRAGMENT_SHADER compilation failed! \n");
-            SDL_Log("%s", errorMessages);
+            std::cout << "GL_FRAGMENT_SHADER compilation failed!" << std::endl;
+            std::cout << errorMessages << std::endl;
             }
 
             // reclaim memory

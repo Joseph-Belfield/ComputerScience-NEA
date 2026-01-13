@@ -12,6 +12,7 @@
 
 #include <vector>              // has standard input/output functions
 #include <stdlib.h>
+#include <iostream>
 
 // *************************************************
 
@@ -20,6 +21,13 @@ namespace render
     void vertex_specification(Context* globalContext)
     {
     
+        globalContext -> context_OpenGL = SDL_GL_GetCurrentContext();
+        if (!(globalContext -> context_OpenGL))
+        {
+            std::cout << "No OpenGL context!" << std::endl;
+        }
+
+
         // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
         const std::vector<GLfloat> vertexData   // lives on CPU
         {
@@ -64,7 +72,6 @@ namespace render
             GL_STATIC_DRAW                             // sets intentions with data
         );                          
 
-       
 
         // data about the order vertices should be renderd in
         const std::vector<GLuint> indexBufferData
@@ -137,15 +144,22 @@ namespace render
             (GLvoid*)(sizeof(GL_FLOAT) * 3)    // pointer for offset - starting position for first of that data type (address)
         );
 
-       
-
-        // cleanup VAO
-        glBindVertexArray(0);                 // unbind currently bound VAO
 
         // disable any attributes previously opened in our vertex attribute array
         glDisableVertexAttribArray(0);        // position
         glDisableVertexAttribArray(1);        // color
-        
+
+        // cleanup VAO
+        glBindVertexArray(0);                 // unbind currently bound VAO
+
+     
+    
+        int error = glGetError();
+        if (error != 0)
+        {
+            std::cout << "Error: " << error << std::endl;
+            exit(-1);
+        }
     }
 }
 

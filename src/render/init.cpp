@@ -26,7 +26,7 @@ namespace render
         // initialize SDL
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) 
         {
-            SDL_Log("Failed to initialize SDL.");
+            std::cout << "Failed to initialize SDL." << std::endl;
             exit(-1); 
         }
 
@@ -47,7 +47,7 @@ namespace render
         // checks if window has been created properly
         if (globalContext -> window == nullptr) 
         {
-            SDL_Log("Failed to create window.");
+            std::cout << "Failed to create window." << std::endl;
             exit(-1); 
         }
     }
@@ -85,7 +85,7 @@ namespace render
         // checks context has been created properly
         if (globalContext -> context_OpenGL == nullptr) 
         {
-            SDL_Log("Failed to create OpenGL context.");
+            std::cout << "Failed to create OpenGL context." << std::endl;
 
             exit(-1); 
         }
@@ -94,7 +94,7 @@ namespace render
         int check_GLAD = gladLoadGL(SDL_GL_GetProcAddress);
         if (check_GLAD == 0)
         {
-            SDL_Log("Error loading GLAD!");
+            std::cout << "Error loading GLAD!" << std::endl;
             exit(-1);
         }
 
@@ -104,9 +104,6 @@ namespace render
         SDL_GL_SetSwapInterval(1); // Enable vsync
         SDL_SetWindowPosition(globalContext -> window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
         SDL_ShowWindow(globalContext -> window);  // reveals window once program has been initialized
-
-        std::cout << SDL_GetError() << std::endl;
-        std::cout << glGetString(GL_VERSION) << std::endl;
     }
 
 
@@ -125,7 +122,7 @@ namespace render
 
         if (!SDL_GetWindowSizeInPixels(globalContext -> window, &(globalContext -> window_width), &(globalContext -> window_height)))
         {
-            SDL_Log("Failed to get window size!");
+            std::cout << "Failed to get window size!" << std::endl;
             exit(-1);
         }
         io.DisplaySize = ImVec2((float)(globalContext -> window_width), (float)(globalContext -> window_height));
