@@ -4,7 +4,7 @@
 
 // *************************************************
 
-#include "glad/glad.h"          // OpenGL extension loader
+#include "glad/gl.h"            // OpenGL extension loader
 
 #include "SDL3/SDL.h"           // SDL main library
 #include "SDL3/SDL_opengl.h"    // SDL OpenGL integration

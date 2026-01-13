@@ -3,10 +3,10 @@
 
 // *************************************************
 
-#include "glad/glad.h"          // OpenGL extension loader
+#include "glad/gl.h"            // OpenGL extension loader
 
 #include "SDL3/SDL.h"           // SDL main library
-#include "SDL3/SDL_opengl.h"    // SDL OpenGL integration
+
  
 #include "imgui.h"                              // ImGui main library
 #include "backends/imgui_impl_sdl3.h"           // ImGui SDL integration
@@ -62,11 +62,6 @@ namespace render
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-
-        // sets the GLSL version to fit the OpenGL version
-        globalContext -> version_glsl = "#version 410";
-
-
         // sets the type of OpenGL context (SDL)
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -96,16 +91,22 @@ namespace render
         }
         
         // initializes GLAD
-        gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
+        int check_GLAD = gladLoadGL(SDL_GL_GetProcAddress);
+        if (check_GLAD == 0)
+        {
+            SDL_Log("Error loading GLAD!");
+            exit(-1);
+        }
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
 
         SDL_GL_MakeCurrent(globalContext -> window, globalContext -> context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync
-        SDL_SetWindowPosition(globalContext -> window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centres window
+        SDL_SetWindowPosition(globalContext -> window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
         SDL_ShowWindow(globalContext -> window);  // reveals window once program has been initialized
 
         std::cout << SDL_GetError() << std::endl;
+        std::cout << glGetString(GL_VERSION) << std::endl;
     }
 
 

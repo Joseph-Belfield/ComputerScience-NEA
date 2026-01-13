@@ -1,12 +1,11 @@
 #pragma once
 
-#ifndef GLM
-  #include "glm/glm.hpp"                       // main GLM library
-  #include "glm/vec3.hpp"                      // GLM vec3 class and methods - for position data
-  #include "glm/mat4x4.hpp"                    // GLM 4x4 matrix class and methods - for transformations 
-  #include "glm/gtc/matrix_transform.hpp"      // translate function
-  #define GLM
-#endif
+
+#include "glm/glm.hpp"                       // main GLM library
+#include "glm/vec3.hpp"                      // GLM vec3 class and methods - for position data
+#include "glm/mat4x4.hpp"                    // GLM 4x4 matrix class and methods - for transformations 
+#include "glm/gtc/matrix_transform.hpp"      // translate function
+
 
 namespace camera
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 // include libraries for basic types that cannot be forward declared (ie: things other than structs, classes, enums)
-#include "glad/glad.h"
+#include "glad/gl.h"
 #include "imgui/imgui.h"
 #include "SDL3/SDL.h"
 
@@ -20,7 +20,7 @@ struct Context
   SDL_GLContext context_OpenGL = nullptr;
 
   // sets GLSL version (matches OpenGL version)
-  const char* version_glsl;
+  const char* version_glsl = "#version 410";
 
   // the main scale of the program. relative to display size
   float mainScale;

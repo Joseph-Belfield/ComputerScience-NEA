@@ -17,14 +17,14 @@ add_subdirectory(lib/SDL EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME} 
     src/main.cpp 
-    src/glad.c
+    src/gl.c
 
     src/render/init.cpp
     src/render/vertexSpecification.cpp
     src/render/graphicsPipeline.cpp
     src/render/runLoop.cpp
     src/render/cleanup.cpp
-    
+
     lib/imgui/imgui.cpp
     lib/imgui/imgui_draw.cpp
     lib/imgui/imgui_demo.cpp

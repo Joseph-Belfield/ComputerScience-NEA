@@ -1,7 +1,7 @@
 #pragma once
 
 // must be included so that types below work
-#include "glad/glad.h"
+#include "glad/gl.h"
 #include "glm/glm.hpp"
 #include <string>
 
