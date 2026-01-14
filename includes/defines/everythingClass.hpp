@@ -4,11 +4,10 @@
 #include "glad/gl.h"
 #include "imgui/imgui.h"
 #include "SDL3/SDL.h"
+#include "defines/camera.hpp"
 
 // forward declarations
 struct SDL_Window;
-
-namespace camera {class Camera;}
 
 
 struct Context
@@ -63,6 +62,6 @@ struct Context
   // Universal camera object. 
   // - Used to view the scene. 
   // - More than one camera can be used for multiple viewpoints.
-  camera::Camera* camera;     
+  Camera camera;     
 
 };

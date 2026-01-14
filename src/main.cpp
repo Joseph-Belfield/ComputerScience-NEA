@@ -13,8 +13,12 @@ int main(int argc, char *argv[]) {
   render::init_OpenGL(&globalContext);
   render::init_ImGui(&globalContext);
 
+ 
+  
+
   // 2. set up geometry
   render::vertex_specification(&globalContext);
+
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(&globalContext);

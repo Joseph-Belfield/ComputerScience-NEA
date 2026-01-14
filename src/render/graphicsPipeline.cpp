@@ -24,8 +24,8 @@ namespace render
     {
         // initialize result var
         std::string result = "";    // holds shader program as single string
+        std::string line = "";      // holds one line of shader file at a time
 
-        std::string line = "";  // holds one line of shader file at a time
         std::ifstream shaderFile(fileName.c_str());     // opens file
 
         // if the file is opened successfully
@@ -33,9 +33,15 @@ namespace render
         {
             while(std::getline(shaderFile, line))   // go through each line of the file
             {
-            result += line + "\n";                // concatinate new line into result string
+                result += line + "\n";              // concatinate new line into result string
             }
+
             shaderFile.close();                     // close file when done 
+        }
+
+        if (result == "")
+        {
+            std::cout << "Shader not loaded correctly!" << std::endl;
         }
 
         return result;
@@ -81,9 +87,7 @@ namespace render
         // error checking
         int result;
         glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &result);  // gets compile status, stores in result
-
-        // if shaders failed to compile
-        if (result == GL_FALSE)
+        if (result == GL_FALSE)                                   // error checking <3
         {
             int length;                                                     
             glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &length);           // find the length of the error message
@@ -133,7 +137,16 @@ namespace render
         glLinkProgram(programObject);   // links shaders together within object
 
         // validate program - check for errors
-        glValidateProgram(programObject); 
+        // glValidateProgram(programObject); 
+
+        int result;
+        char errorLog[512];
+        glGetProgramiv(programObject, GL_LINK_STATUS, &result);
+        if (!result)
+        {
+            glGetProgramInfoLog(programObject, 512, NULL, errorLog);
+            std::cout << "Program link error: " << errorLog << std::endl;
+        }
 
         return programObject;
     }
@@ -142,8 +155,8 @@ namespace render
     // Creates a shader program using the shaders found in the shader folder. The shader program is referenced using a unique unsigned integer value assigned as its ID.
     void create_graphics_pipeline(Context* globalContext)
     {
-        std::string source_vertexShader = load_shader_from_file("../shaders/vertexShader.glsl");
-        std::string source_fragmentShader = load_shader_from_file("../shaders/fragmentShader.glsl");
+        std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");
+        std::string source_fragmentShader = load_shader_from_file("./shaders/fragmentShader.glsl");
 
         globalContext -> shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
     }

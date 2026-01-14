@@ -105,9 +105,6 @@ namespace render
         // set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
         glGenBuffers(1,&(globalContext -> indexBufferObject));                         // generate EBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, globalContext -> indexBufferObject);   // sets buffer type as element buffer
-
-       
-
         glBufferData
         (
             GL_ELEMENT_ARRAY_BUFFER,                        // target
@@ -152,14 +149,6 @@ namespace render
         // cleanup VAO
         glBindVertexArray(0);                 // unbind currently bound VAO
 
-     
-    
-        int error = glGetError();
-        if (error != 0)
-        {
-            std::cout << "Error: " << error << std::endl;
-            exit(-1);
-        }
     }
 }
 

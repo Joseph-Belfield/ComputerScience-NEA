@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME}
     src/main.cpp 
     src/gl.c
 
+    src/render/camera.cpp
+
     src/render/init.cpp
     src/render/vertexSpecification.cpp
     src/render/graphicsPipeline.cpp

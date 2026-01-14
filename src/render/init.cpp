@@ -86,13 +86,12 @@ namespace render
         if (globalContext -> context_OpenGL == nullptr) 
         {
             std::cout << "Failed to create OpenGL context." << std::endl;
-
             exit(-1); 
         }
         
         // initializes GLAD
-        int check_GLAD = gladLoadGL(SDL_GL_GetProcAddress);
-        if (check_GLAD == 0)
+       
+        if (gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress) == 0)
         {
             std::cout << "Error loading GLAD!" << std::endl;
             exit(-1);
@@ -104,6 +103,7 @@ namespace render
         SDL_GL_SetSwapInterval(1); // Enable vsync
         SDL_SetWindowPosition(globalContext -> window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
         SDL_ShowWindow(globalContext -> window);  // reveals window once program has been initialized
+
     }
 
 

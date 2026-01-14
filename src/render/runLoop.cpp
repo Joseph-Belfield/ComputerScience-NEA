@@ -22,6 +22,7 @@
 // *************************************************
 
 #include <string>              // has standard input/output functions
+#include <iostream>
 
 // *************************************************
 
@@ -51,19 +52,11 @@ namespace render
 
             if (event.key.key == SDLK_W)
             {
-                globalContext -> uDisplacement[1]+=0.1f;
-            }
-            if (event.key.key == SDLK_A)
-            {
-                globalContext -> uDisplacement[0]-=0.1f;
+                globalContext -> camera.move_forward(1.0f);
             }
             if (event.key.key == SDLK_S)
             {
-                globalContext -> uDisplacement[1]-=0.1f;
-            }
-            if (event.key.key == SDLK_D)
-            {
-                globalContext -> uDisplacement[0]+=0.1f;
+                globalContext -> camera.move_backward(1.0f);
             }
 
             if (event.key.key == SDLK_UP)
@@ -73,15 +66,6 @@ namespace render
             if (event.key.key == SDLK_DOWN)
             {
                 globalContext -> uOffset-=0.1f;
-            }
-
-            if (event.key.key == SDLK_RIGHT)
-            {
-                globalContext -> uRotate+=5.0f;
-            }
-            if (event.key.key == SDLK_LEFT)
-            {
-                globalContext -> uRotate-=5.0f;
             }
 
             if (event.key.key == SDLK_P)
@@ -142,7 +126,7 @@ namespace render
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
     void view_matrix(Context* globalContext)
     {
-    glm::mat4 viewMatrix = globalContext -> camera -> get_view_matrix();
+    glm::mat4 viewMatrix = globalContext -> camera.get_view_matrix();
 
     GLuint uLocation_viewMatrix = create_uniform_mat4(globalContext -> shaderProgram, "uViewMatrix", 1, false, viewMatrix);
     }
@@ -172,6 +156,7 @@ namespace render
     // - Applies transformation matrices
     void preDraw_OpenGL(Context* globalContext)
     {
+
         // disables
         glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
         glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
@@ -183,12 +168,13 @@ namespace render
         glClearColor(globalContext -> clearColor.x, globalContext -> clearColor.y, globalContext -> clearColor.z, globalContext -> clearColor.w);                   // sets background color
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
-        glUseProgram(globalContext -> shaderProgram);            // selects program in use
-
         // transformation matrices
         model_matrix(globalContext);         // controls position and rotation on world axis
-        view_matrix(globalContext);
+        view_matrix(globalContext);          // Makes a camera work!
         perspective_matrix(globalContext);   // creats illusion of perspective (size changes relative to camera)
+
+        // selects program in use
+        glUseProgram(globalContext -> shaderProgram);  
     }
 
 
@@ -207,6 +193,9 @@ namespace render
             GL_UNSIGNED_INT,      // data type
             0                     // offset into index array for first element (triangle vertex order)
         );
+
+        // unbind VAO after shape drawn
+        glBindVertexArray(0);
     }
 
 
@@ -291,13 +280,14 @@ namespace render
             ImGui_ImplSDL3_NewFrame();
             ImGui::NewFrame();
 
-            // ********************** DO STUFF HERE **********************
-
-            draw_ImGui(globalContext);
+            // ********************** DO STUFF HERE **********************            
 
             preDraw_OpenGL(globalContext);
             draw_OpenGL(globalContext);
 
+            draw_ImGui(globalContext);
+
+            globalContext -> uRotate += 2.0f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 

@@ -2,8 +2,6 @@
 
 in vec3 v_vertexColors;
 
-
-
 out vec4 color;
 
 void main()
