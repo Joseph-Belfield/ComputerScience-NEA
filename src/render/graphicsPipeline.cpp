@@ -1,5 +1,5 @@
 #include "render.hpp"           // defines functions found in source file
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 
 // *************************************************
 
@@ -153,11 +153,11 @@ namespace render
 
 
     // Creates a shader program using the shaders found in the shader folder. The shader program is referenced using a unique unsigned integer value assigned as its ID.
-    void create_graphics_pipeline(Context* globalContext)
+    void create_graphics_pipeline(appData &appData)
     {
         std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");
         std::string source_fragmentShader = load_shader_from_file("./shaders/fragmentShader.glsl");
 
-        globalContext -> shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
+        appData.OpenGL.shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
     }
 }

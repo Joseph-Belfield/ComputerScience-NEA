@@ -1,5 +1,5 @@
 #include "render.hpp"
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 
 // *************************************************
 
@@ -21,7 +21,7 @@
 
 namespace render
 {
-    void init_SDL(Context* globalContext)
+    void init_SDL(appData &appData)
     {
         // initialize SDL
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) 
@@ -32,7 +32,7 @@ namespace render
 
 
         // finds the scale of the display 
-        globalContext -> mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        appData.display.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
         // flags for the window
         SDL_WindowFlags window_flags =  SDL_WINDOW_RESIZABLE |          // lets window be resized
@@ -42,10 +42,10 @@ namespace render
 
 
         // creates a window assigned to 'window', errors if failed
-        globalContext -> window = SDL_CreateWindow("compsci_nea", (int)(1280 * globalContext -> mainScale), (int)(800 * globalContext -> mainScale), window_flags);
+        appData.window.window = SDL_CreateWindow("compsci_nea", (int)(1280 * appData.display.mainScale), (int)(800 * appData.display.mainScale), window_flags);
 
         // checks if window has been created properly
-        if (globalContext -> window == nullptr) 
+        if (appData.window.window == nullptr) 
         {
             std::cout << "Failed to create window." << std::endl;
             exit(-1); 
@@ -54,7 +54,7 @@ namespace render
 
 
 
-    void set_OpenGL_Attributes(Context* globalContext)
+    void set_OpenGL_Attributes()
     {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
@@ -77,13 +77,13 @@ namespace render
 
 
 
-    void init_OpenGL(Context* globalContext)
+    void init_OpenGL(appData &appData)
     {
         // create the context for OpenGL in 'window'
-        globalContext -> context_OpenGL = SDL_GL_CreateContext(globalContext -> window);
+        appData.window.context_OpenGL = SDL_GL_CreateContext(appData.window.window);
 
         // checks context has been created properly
-        if (globalContext -> context_OpenGL == nullptr) 
+        if (appData.window.context_OpenGL == nullptr) 
         {
             std::cout << "Failed to create OpenGL context." << std::endl;
             exit(-1); 
@@ -99,16 +99,16 @@ namespace render
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
 
-        SDL_GL_MakeCurrent(globalContext -> window, globalContext -> context_OpenGL); // sets current window and context
+        SDL_GL_MakeCurrent(appData.window.window, appData.window.context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync
-        SDL_SetWindowPosition(globalContext -> window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
-        SDL_ShowWindow(globalContext -> window);  // reveals window once program has been initialized
+        SDL_SetWindowPosition(appData.window.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
+        SDL_ShowWindow(appData.window.window);  // reveals window once program has been initialized
 
     }
 
 
 
-    void init_ImGui(Context* globalContext)
+    void init_ImGui(appData &appData)
     {
         // creates ImGui context
         IMGUI_CHECKVERSION();
@@ -120,20 +120,20 @@ namespace render
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-        if (!SDL_GetWindowSizeInPixels(globalContext -> window, &(globalContext -> window_width), &(globalContext -> window_height)))
+        if (!SDL_GetWindowSizeInPixels(appData.window.window, &(appData.display.window_width), &(appData.display.window_height)))
         {
             std::cout << "Failed to get window size!" << std::endl;
             exit(-1);
         }
-        io.DisplaySize = ImVec2((float)(globalContext -> window_width), (float)(globalContext -> window_height));
+        io.DisplaySize = ImVec2((float)(appData.display.window_width), (float)(appData.display.window_height));
 
         ImGui::StyleColorsDark();
         ImGuiStyle &style = ImGui::GetStyle();
 
         // Eall scales in file scale around this. errors with style to do with size are probably this.
-        if (globalContext -> mainScale > 1.0f)
+        if (appData.display.mainScale > 1.0f)
         {
-            style.ScaleAllSizes(globalContext -> mainScale); 
+            style.ScaleAllSizes(appData.display.mainScale); 
         /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
             changing this requires resetting Style + calling this again) makes this unnecessary. 
             We leave both here for documentation purpose) */
@@ -146,13 +146,13 @@ namespace render
 
 
         // sets a base style for the fonts
-        style.FontSizeBase = 20.0f * globalContext -> mainScale;
+        style.FontSizeBase = 20.0f * appData.display.mainScale;
 
         io.Fonts -> AddFontDefault();
         ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
         ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
 
-        ImGui_ImplSDL3_InitForOpenGL(globalContext -> window, globalContext -> context_OpenGL);
-        ImGui_ImplOpenGL3_Init(globalContext -> version_glsl);
+        ImGui_ImplSDL3_InitForOpenGL(appData.window.window, appData.window.context_OpenGL);
+        ImGui_ImplOpenGL3_Init(appData.OpenGL.version_glsl);
     }
 }

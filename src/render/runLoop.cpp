@@ -1,5 +1,5 @@
 #include "render.hpp"
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 #include "defines/camera.hpp"
 
 // *************************************************
@@ -28,7 +28,7 @@
 
 namespace render
 {
-    void check_events(Context* globalContext)
+    void check_events(appData &appData)
     {
         // checks for events
         SDL_Event event;
@@ -42,39 +42,39 @@ namespace render
             // if SDL is quit, end the run loop
             if (event.type == SDL_EVENT_QUIT) 
             {
-                globalContext -> flag_mainLoop = false;
+                appData.window.flag_mainLoop = false;
             }
             // if Esc key is pressed, end the run loop
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) 
             {
-                globalContext -> flag_mainLoop = false;
+                appData.window.flag_mainLoop = false;
             }
 
             if (event.key.key == SDLK_W)
             {
-                globalContext -> camera.move_forward(1.0f);
+                appData.camera.camera1.move_forward(1.0f);
             }
             if (event.key.key == SDLK_S)
             {
-                globalContext -> camera.move_backward(1.0f);
+                appData.camera.camera1.move_backward(1.0f);
             }
 
             if (event.key.key == SDLK_UP)
             {
-               globalContext ->  uOffset+=0.1f;
+               appData.uniform.uOffset += 0.1f;
             }
             if (event.key.key == SDLK_DOWN)
             {
-                globalContext -> uOffset-=0.1f;
+                appData.uniform.uOffset -= 0.1f;
             }
 
             if (event.key.key == SDLK_P)
             {
-                globalContext -> uScale+=0.1f;
+                appData.uniform.uScale += 0.1f;
             }
             if (event.key.key == SDLK_O)
             {
-                globalContext -> uScale-=0.1f;
+                appData.uniform.uScale -= 0.1f;
             }
         }
     }
@@ -110,42 +110,42 @@ namespace render
     // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
     //
     // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-    void model_matrix(Context* globalContext)
+    void model_matrix(appData &appData)
     {
         // create and adapt the matrix to adjust the following transformations
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(globalContext -> uDisplacement[0], globalContext -> uDisplacement[1], globalContext -> uOffset)); // movement
-        modelMatrix = glm::rotate(modelMatrix ,glm::radians(globalContext -> uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(globalContext -> uScale, globalContext -> uScale, globalContext -> uScale));
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(appData.uniform.uDisplacement[0], appData.uniform.uDisplacement[1], appData.uniform.uOffset)); // movement
+        modelMatrix = glm::rotate(modelMatrix ,glm::radians(appData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(appData.uniform.uScale, appData.uniform.uScale, appData.uniform.uScale));
 
-        GLuint uLocation_modelMatrix = create_uniform_mat4(globalContext -> shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+        GLuint uLocation_modelMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
     }
 
 
     // Creates a view matrix.
     // - The scene is viewed as if through a camera for the viewer.
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-    void view_matrix(Context* globalContext)
+    void view_matrix(appData &appData)
     {
-    glm::mat4 viewMatrix = globalContext -> camera.get_view_matrix();
+    glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
 
-    GLuint uLocation_viewMatrix = create_uniform_mat4(globalContext -> shaderProgram, "uViewMatrix", 1, false, viewMatrix);
+    GLuint uLocation_viewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
     }
 
     // Creates a projection matrix.
     // - The projection matrix creates the illusion of perspective
     // - It does this by changing a point's coordinates according to distance from the camera (Z-value)
-    void perspective_matrix(Context* globalContext)
+    void perspective_matrix(appData &appData)
     {
         // projection matrix (in perspective)
-        glm::mat4 perspective = glm::perspective                                             // create perspective matrix
+        glm::mat4 perspective = glm::perspective      // create perspective matrix
                                 (
-                                    45.0f,                                                     // FOV (radians)
-                                    (float)(globalContext -> window_width / globalContext -> window_height),     // aspect ratio
-                                    0.1f,                                                      // near clipping plane (min. distance)
-                                    10.0f                                                      // far clipping plane (max. distance)
+                                    45.0f,                                                                     // FOV (radians)
+                                    (float)(appData.display.window_width / appData.display.window_height),     // aspect ratio
+                                    0.1f,                                                                      // near clipping plane (min. distance)
+                                    10.0f                                                                      // far clipping plane (max. distance)
                                 );         
 
-        GLuint uLocation_perpective = create_uniform_mat4(globalContext -> shaderProgram, "uPerspective", 1, false, perspective);
+        GLuint uLocation_perpective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
     }
 
 
@@ -154,7 +154,7 @@ namespace render
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_OpenGL(Context* globalContext)
+    void preDraw_OpenGL(appData &appData)
     {
 
         // disables
@@ -162,28 +162,28 @@ namespace render
         glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
 
         // set size of window for OpenGL
-        glViewport(0, 0, (int)(globalContext -> window_width), (int)(globalContext -> window_height));
+        glViewport(0, 0, (int)(appData.display.window_width), (int)(appData.display.window_height));
 
         // background color
-        glClearColor(globalContext -> clearColor.x, globalContext -> clearColor.y, globalContext -> clearColor.z, globalContext -> clearColor.w);                   // sets background color
+        glClearColor(appData.display.clearColor.x, appData.display.clearColor.y, appData.display.clearColor.z, appData.display.clearColor.w);                   // sets background color
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
         // transformation matrices
-        model_matrix(globalContext);         // controls position and rotation on world axis
-        view_matrix(globalContext);          // Makes a camera work!
-        perspective_matrix(globalContext);   // creats illusion of perspective (size changes relative to camera)
+        model_matrix(appData);         // controls position and rotation on world axis
+        view_matrix(appData);          // Makes a camera work!
+        perspective_matrix(appData);   // creats illusion of perspective (size changes relative to camera)
 
         // selects program in use
-        glUseProgram(globalContext -> shaderProgram);  
+        glUseProgram(appData.OpenGL.shaderProgram);  
     }
 
 
 
     // for drawing OpenGL data
-    void draw_OpenGL(Context* globalContext)
+    void draw_OpenGL(appData &appData)
     {
         // choose VAO and VBO
-        glBindVertexArray(globalContext -> vertexArrayObject);
+        glBindVertexArray(appData.OpenGL.vertexArrayObject);
 
         // draw
         glDrawElements
@@ -200,17 +200,17 @@ namespace render
 
 
 
-    void draw_ImGui(Context* globalContext)
+    void draw_ImGui(appData &appData)
     {
-        ImGui::Begin("Main Window", &(globalContext -> show_mainWindow), ImGuiWindowFlags_MenuBar);  
+        ImGui::Begin("Main Window", &(appData.ImGui.show_mainWindow), ImGuiWindowFlags_MenuBar);  
 
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Options"))
             {
-            if (ImGui::MenuItem("Change Background Color")) {globalContext -> show_colorPicker = true;}
-            if (ImGui::MenuItem("Sine Graph")) {globalContext -> show_sineGraph = true;}
-            if (ImGui::MenuItem("Scrolling")) {globalContext -> show_scrolling = true;}
+            if (ImGui::MenuItem("Change Background Color")) {appData.ImGui.show_colorPicker = true;}
+            if (ImGui::MenuItem("Sine Graph")) {appData.ImGui.show_sineGraph = true;}
+            if (ImGui::MenuItem("Scrolling")) {appData.ImGui.show_scrolling = true;}
             ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
@@ -218,21 +218,21 @@ namespace render
 
         if (ImGui::Button("Hello World"))
         {
-            globalContext -> show_helloWorld = true;
+            appData.ImGui.show_helloWorld = true;
         }
 
         ImGui::End();
 
 
 
-        if (globalContext -> show_helloWorld)
+        if (appData.ImGui.show_helloWorld)
         {
             ImGui::Text("Hello World!");
         }
 
-        if (globalContext -> show_sineGraph)
+        if (appData.ImGui.show_sineGraph)
         {
-            ImGui::Begin("Sine Graph", &(globalContext -> show_sineGraph));
+            ImGui::Begin("Sine Graph", &(appData.ImGui.show_sineGraph));
             float samples[100];
             for (int i = 0; i < 100; i++)
             {
@@ -242,10 +242,10 @@ namespace render
             ImGui::End();
         }
 
-        if (globalContext -> show_scrolling)
+        if (appData.ImGui.show_scrolling)
         {
             // display contents in scrolling region
-            ImGui::Begin("Scrolling", &(globalContext -> show_scrolling));
+            ImGui::Begin("Scrolling", &(appData.ImGui.show_scrolling));
             ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
             ImGui::BeginChild("Scrolling");
             for (int i = 0; i < 15; i++)
@@ -256,24 +256,24 @@ namespace render
             ImGui::End();
         }
 
-        if (globalContext -> show_colorPicker)
+        if (appData.ImGui.show_colorPicker)
         {
             // create a window with menu bar called "Color Picker"
-            ImGui::Begin("Background Color", &(globalContext -> show_colorPicker));
+            ImGui::Begin("Background Color", &(appData.ImGui.show_colorPicker));
             // edit a color stored as 4 floats
-            ImGui::ColorEdit3("Color", (float*)&(globalContext -> clearColor));
+            ImGui::ColorEdit3("Color", (float*)&(appData.display.clearColor));
             ImGui::End();
         }
     }
 
 
 
-    void run_loop(Context* globalContext)
+    void run_loop(appData &appData)
     {
 
-        while (globalContext -> flag_mainLoop) {
+        while (appData.window.flag_mainLoop) {
 
-            check_events(globalContext);
+            check_events(appData);
 
             // starts a new frame for OpenGL, SDL and ImGui
             ImGui_ImplOpenGL3_NewFrame();
@@ -282,17 +282,17 @@ namespace render
 
             // ********************** DO STUFF HERE **********************            
 
-            preDraw_OpenGL(globalContext);
-            draw_OpenGL(globalContext);
+            preDraw_OpenGL(appData);
+            draw_OpenGL(appData);
 
-            draw_ImGui(globalContext);
+            draw_ImGui(appData);
 
-            globalContext -> uRotate += 2.0f;
+            appData.uniform.uRotate += 2.0f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        // renders the ImGui data with OpenGL  
-            SDL_GL_SwapWindow(globalContext -> window);                                     // swaps in the new frame
+            SDL_GL_SwapWindow(appData.window.window);                      // swaps in the new frame
 
         }
     }

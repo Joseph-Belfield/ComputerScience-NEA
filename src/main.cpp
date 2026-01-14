@@ -1,34 +1,32 @@
 #include "render.hpp"
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 #include <iostream>
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char argv[]) {
 
-  Context globalContext;
+  appData app;
 
   // 1. initialize libraries
-  render::init_SDL(&globalContext);
-  render::set_OpenGL_Attributes(&globalContext);
-  render::init_OpenGL(&globalContext);
-  render::init_ImGui(&globalContext);
+  render::init_SDL(app);
+  render::set_OpenGL_Attributes();
+  render::init_OpenGL(app);
+  render::init_ImGui(app);
 
- 
-  
 
   // 2. set up geometry
-  render::vertex_specification(&globalContext);
+  render::vertex_specification(app);
 
 
   // 3. set up shaders (at least, vertex ands fragment)
-  render::create_graphics_pipeline(&globalContext);
+  render::create_graphics_pipeline(app);
 
   // 4. main run loop
-  render::run_loop(&globalContext);
+  render::run_loop(app);
 
   // 5. cleans up
   render::clean_ImGui();
-  render::clean_SDL(&globalContext);  
+  render::clean_SDL(app);  
 
   return 0;
 }

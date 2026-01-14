@@ -1,5 +1,5 @@
 #include "render.hpp"
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 
 // *************************************************
 
@@ -27,13 +27,13 @@ namespace render
     }
 
 
-    void clean_SDL(Context* globalContext)
+    void clean_SDL(appData &appData)
     {
     // destroys SDL context 
-    SDL_GL_DestroyContext(globalContext -> context_OpenGL);
+    SDL_GL_DestroyContext(appData.window.context_OpenGL);
 
     // destroys SDL window
-    SDL_DestroyWindow(globalContext -> window);
+    SDL_DestroyWindow(appData.window.window);
 
     // quits SDL
     SDL_Quit();

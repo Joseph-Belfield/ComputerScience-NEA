@@ -1,5 +1,5 @@
 #include "render.hpp"
-#include "defines/everythingClass.hpp"
+#include "defines/contextData.hpp"
 
 // *************************************************
 
@@ -18,16 +18,9 @@
 
 namespace render
 {
-    void vertex_specification(Context* globalContext)
+    void vertex_specification(appData &appData)
     {
     
-        globalContext -> context_OpenGL = SDL_GL_GetCurrentContext();
-        if (!(globalContext -> context_OpenGL))
-        {
-            std::cout << "No OpenGL context!" << std::endl;
-        }
-
-
         // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
         const std::vector<GLfloat> vertexData   // lives on CPU
         {
@@ -58,12 +51,12 @@ namespace render
 
 
         // generate Vertex Array Objects 
-        glGenVertexArrays(1, &(globalContext -> vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
-        glBindVertexArray(globalContext -> vertexArrayObject);                 // selects the array as current
+        glGenVertexArrays(1, &(appData.OpenGL.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
+        glBindVertexArray(appData.OpenGL.vertexArrayObject);                 // selects the array as current
 
         // generate Vertex Buffer Object for position
-        glGenBuffers(1, &(globalContext -> vertexBufferObject));               // generates buffer
-        glBindBuffer(GL_ARRAY_BUFFER, globalContext -> vertexBufferObject);    // sets buffer as current, specifies target
+        glGenBuffers(1, &(appData.OpenGL.vertexBufferObject));               // generates buffer
+        glBindBuffer(GL_ARRAY_BUFFER, appData.OpenGL.vertexBufferObject);    // sets buffer as current, specifies target
         glBufferData
         (
             GL_ARRAY_BUFFER,                           // specifies target
@@ -103,8 +96,8 @@ namespace render
         };
 
         // set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
-        glGenBuffers(1,&(globalContext -> indexBufferObject));                         // generate EBO
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, globalContext -> indexBufferObject);   // sets buffer type as element buffer
+        glGenBuffers(1,&(appData.OpenGL.indexBufferObject));                         // generate EBO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, appData.OpenGL.indexBufferObject);   // sets buffer type as element buffer
         glBufferData
         (
             GL_ELEMENT_ARRAY_BUFFER,                        // target
