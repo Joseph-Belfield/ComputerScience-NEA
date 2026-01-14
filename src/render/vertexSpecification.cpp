@@ -36,6 +36,8 @@ namespace render
             0.5f,  0.5f,  0.5f,    // vertex 3 - (front top right)
             0.0f,  0.0f,  1.0f,    // color
 
+            /*
+
             -0.5f, -0.5f, -0.5f,    // vertex 4 - (back bottom left)
             1.0f,  0.0f,  0.0f,    // color
 
@@ -47,6 +49,8 @@ namespace render
 
             0.5f,  0.5f, -0.5f,    // vertex 7 - (back top right)
             0.0f,  0.0f,  1.0f,    // color
+
+            */
         };
 
 
@@ -73,6 +77,8 @@ namespace render
             2, 0, 1,      // triangle 1
             3, 2, 1,      // triangle 2
 
+            /*
+
             // face 2 - back
             7, 5, 4,
             4, 6, 7,
@@ -93,6 +99,8 @@ namespace render
             4, 0, 1,
             1, 5, 4
 
+            */
+
         };
 
         // set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
@@ -106,7 +114,6 @@ namespace render
             GL_STATIC_DRAW                                  // usage
         );
 
-        
 
         // setup position VAO
         glEnableVertexAttribArray(0); // enables the 0th attribute - AKA. this is the first VAO
@@ -116,11 +123,10 @@ namespace render
             3,                        // pieces of data (per vertex: x, y, z)
             GL_FLOAT,                 // data type
             GL_FALSE,                 // normalized?
-            sizeof(GL_FLOAT) * 6,     // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+            sizeof(GLfloat) * 6,     // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
             (GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
         );
 
-      
 
         // setup color VAO
         glEnableVertexAttribArray(1); // enables the 1st attribute - AKA. this is the second VAO
@@ -130,8 +136,8 @@ namespace render
             3,                                 // pieces of data (per vertex: r, g, b)
             GL_FLOAT,                          // data type
             GL_FALSE,                          // normalized?
-            sizeof(GL_FLOAT) * 6,              // stride (byte offset) between firsts of same data       
-            (GLvoid*)(sizeof(GL_FLOAT) * 3)    // pointer for offset - starting position for first of that data type (address)
+            sizeof(GLfloat) * 6,              // stride (byte offset) between firsts of same data       
+            (GLvoid*)(sizeof(GLfloat) * 3)    // pointer for offset - starting position for first of that data type (address)
         );
 
 

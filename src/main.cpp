@@ -3,7 +3,8 @@
 #include <iostream>
 
 
-int main(int argc, char argv[]) {
+int main() 
+{
 
   appData app;
 
@@ -27,6 +28,8 @@ int main(int argc, char argv[]) {
   // 5. cleans up
   render::clean_ImGui();
   render::clean_SDL(app);  
+
+  std::cout << "ERROR! -> " << glGetError() << std::endl;
 
   return 0;
 }

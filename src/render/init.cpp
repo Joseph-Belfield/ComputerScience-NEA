@@ -30,7 +30,6 @@ namespace render
             exit(-1); 
         }
 
-
         // finds the scale of the display 
         appData.display.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
@@ -42,7 +41,7 @@ namespace render
 
 
         // creates a window assigned to 'window', errors if failed
-        appData.window.window = SDL_CreateWindow("compsci_nea", (int)(1280 * appData.display.mainScale), (int)(800 * appData.display.mainScale), window_flags);
+        appData.window.window = SDL_CreateWindow("compsci_nea", round(1280 * appData.display.mainScale), round(800 * appData.display.mainScale), window_flags);
 
         // checks if window has been created properly
         if (appData.window.window == nullptr) 
@@ -97,7 +96,7 @@ namespace render
             exit(-1);
         }
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // sets whether gl should fill polygons or render just the lines
 
         SDL_GL_MakeCurrent(appData.window.window, appData.window.context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync
