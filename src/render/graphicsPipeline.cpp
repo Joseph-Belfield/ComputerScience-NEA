@@ -31,12 +31,18 @@ namespace render
         // if the file is opened successfully
         if (shaderFile.is_open())
         {
+            std::cout << "Shader file opened!" << std::endl;
+
             while(std::getline(shaderFile, line))   // go through each line of the file
             {
                 result += line + "\n";              // concatinate new line into result string
             }
 
             shaderFile.close();                     // close file when done 
+        }
+        else
+        {
+            std::cout << "Shader file not found - check path!" << std::endl;
         }
 
         if (result == "")
@@ -154,9 +160,9 @@ namespace render
 
     // Creates a shader program using the shaders found in the shader folder. The shader program is referenced using a unique unsigned integer value assigned as its ID.
     void create_graphics_pipeline(appData &appData)
-    {
-        std::string source_vertexShader = load_shader_from_file("./shaders/vertexShader.glsl");
-        std::string source_fragmentShader = load_shader_from_file("./shaders/fragmentShader.glsl");
+    {   
+        std::string source_vertexShader = load_shader_from_file("../../shaders/vertexShader.glsl");
+        std::string source_fragmentShader = load_shader_from_file("../../shaders/fragmentShader.glsl");
 
         appData.OpenGL.shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
     }

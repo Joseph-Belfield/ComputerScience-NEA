@@ -147,9 +147,10 @@ namespace render
         // sets a base style for the fonts
         style.FontSizeBase = 20.0f * appData.display.mainScale;
 
+        ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("../../fonts/Arimo-Regular.ttf", 20.0f);
+        ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("../../fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
         io.Fonts -> AddFontDefault();
-        ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("fonts/Arimo-Regular.ttf", 20.0f);
-        ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
+        
 
         ImGui_ImplSDL3_InitForOpenGL(appData.window.window, appData.window.context_OpenGL);
         ImGui_ImplOpenGL3_Init(appData.OpenGL.version_glsl);
