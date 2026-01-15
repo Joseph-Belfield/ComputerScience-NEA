@@ -20,7 +20,6 @@ struct windowData
 
   // main loop flag
   bool flag_mainLoop = true;
-
 };
 
 struct displayData
@@ -34,12 +33,10 @@ struct displayData
 
   // background color
   ImVec4 clearColor = ImVec4(0.0f, 0.5f, 0.5f, 1.0f);
-
 };
 
 struct OpenGLData
 {
-
   // unsigned ints as identifiers for the objects (because C-based language)
   GLuint vertexArrayObject = 0;
   GLuint vertexBufferObject = 0;
@@ -50,7 +47,6 @@ struct OpenGLData
 
   // sets GLSL version (matches OpenGL version)
   const char* version_glsl = "#version 410";
-
 };
 
 struct uniformData
@@ -75,7 +71,6 @@ struct ImGuiData
   bool show_colorPicker = false;
   bool show_sineGraph = false;
   bool show_scrolling = false;  
-
 };
 
 struct cameraData

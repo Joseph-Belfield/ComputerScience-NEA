@@ -30,6 +30,10 @@ namespace render
 {
     void check_events(appData &appData)
     {
+        // sets mouse position as centre of window when program run initially
+        static int mouseX = appData.display.window_width / 2;
+        static int mouseY = appData.display.window_height / 2;
+
         // checks for events
         SDL_Event event;
 
@@ -50,31 +54,22 @@ namespace render
                 appData.window.flag_mainLoop = false;
             }
 
-            if (event.key.key == SDLK_W)
+            if (event.type == SDL_EVENT_MOUSE_MOTION)
             {
-                appData.camera.camera1.move_forward(1.0f);
-            }
-            if (event.key.key == SDLK_S)
-            {
-                appData.camera.camera1.move_backward(1.0f);
-            }
-
-            if (event.key.key == SDLK_UP)
-            {
-               appData.uniform.uOffset += 0.1f;
-            }
-            if (event.key.key == SDLK_DOWN)
-            {
-                appData.uniform.uOffset -= 0.1f;
+                // relative changes in position from centre each frame monitored
+                mouseX += event.motion.xrel;
+                mouseY += event.motion.yrel;
+                appData.camera.camera1.mouseLook(mouseX, mouseY);
             }
 
-            if (event.key.key == SDLK_P)
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_W)
             {
-                appData.uniform.uScale += 0.1f;
+                appData.camera.camera1.move_forward(0.5f);
             }
-            if (event.key.key == SDLK_O)
+
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_S)
             {
-                appData.uniform.uScale -= 0.1f;
+                appData.camera.camera1.move_backward(0.5f);
             }
         }
     }
@@ -278,6 +273,12 @@ namespace render
 
     void run_loop(appData &appData)
     {
+
+        // start program with mouse in centre of window
+        SDL_WarpMouseInWindow(appData.window.window, appData.display.window_width / 2, appData.display.window_height / 2);
+
+        // hides cursor, mouse position is constrained to window
+        SDL_SetWindowRelativeMouseMode(appData.window.window, true);
 
         while (appData.window.flag_mainLoop) {
 
