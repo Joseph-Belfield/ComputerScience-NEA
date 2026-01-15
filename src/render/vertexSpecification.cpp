@@ -142,8 +142,8 @@ namespace render
 
 
         // disable any attributes previously opened in our vertex attribute array
-        glDisableVertexAttribArray(0);        // position
-        glDisableVertexAttribArray(1);        // color
+        // glDisableVertexAttribArray(0);        // position
+        // glDisableVertexAttribArray(1);        // color
 
         // cleanup VAO
         glBindVertexArray(0);                 // unbind currently bound VAO

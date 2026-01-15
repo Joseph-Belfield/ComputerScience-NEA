@@ -83,7 +83,24 @@ namespace render
     // Creates a uniform matrix, and returns its GLuint ID.
     GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix)
     {
-        return 0;
+        GLuint uniformLocation = glGetUniformLocation(shaderProgram, uniformName.c_str());
+        if (uniformLocation >= 0)
+        {
+            glUniformMatrix4fv
+            (
+                uniformLocation,
+                amount,
+                false,
+                &matrix[0][0]
+            );
+
+            return uniformLocation;
+        }
+        else
+        {
+            std::cout << "Could not find uniform - check spelling!" << std::endl;
+            exit(-1);
+        }
     }
 
 
@@ -99,22 +116,7 @@ namespace render
         modelMatrix = glm::rotate(modelMatrix ,glm::radians(appData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
         modelMatrix = glm::scale(modelMatrix, glm::vec3(appData.uniform.uScale, appData.uniform.uScale, appData.uniform.uScale));
 
-        GLuint location_modelMatrix = glGetUniformLocation(appData.OpenGL.shaderProgram, "uModelMatrix");
-        if (location_modelMatrix >= 0)
-        {
-            glUniformMatrix4fv
-            (
-                location_modelMatrix,
-                1,
-                false,
-                &modelMatrix[0][0]
-            );
-        }
-        else
-        {
-            std::cout << "Could not find uModelMatrix - check spelling!" << std::endl;
-            exit(-1);
-        }
+        GLuint location_modelMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
     }
 
 
@@ -124,7 +126,7 @@ namespace render
     void view_matrix(appData &appData)
     {
         glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
-        appData.uniform.uViewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
+        GLuint location_viewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
     }
 
     // Creates a projection matrix.
@@ -135,13 +137,13 @@ namespace render
         // projection matrix (in perspective)
         glm::mat4 perspective = glm::perspective      // create perspective matrix
                                 (
-                                    45.0f,                                                                     // FOV (radians)
+                                    glm::radians(45.0f),                                                                     // FOV (radians)
                                     (float)(appData.display.window_width / appData.display.window_height),     // aspect ratio
                                     0.1f,                                                                      // near clipping plane (min. distance)
                                     10.0f                                                                      // far clipping plane (max. distance)
                                 );         
 
-        appData.uniform.uPerspective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
+        GLuint location_perspective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
     }
 
 
@@ -154,8 +156,10 @@ namespace render
     {
 
         // disables
-        glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
-        glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
+        // glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
+        // glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
+
+        glEnable(GL_DEPTH_TEST);
 
         // set size of window for OpenGL
         glViewport(0, 0, (int)(appData.display.window_width), (int)(appData.display.window_height));
@@ -164,13 +168,15 @@ namespace render
         glClearColor(appData.display.clearColor.x, appData.display.clearColor.y, appData.display.clearColor.z, appData.display.clearColor.w);                   // sets background color
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
+        // selects program in use
+        glUseProgram(appData.OpenGL.shaderProgram);  
+
         // transformation matrices
         model_matrix(appData);         // controls position and rotation on world axis
         view_matrix(appData);          // Makes a camera work!
         perspective_matrix(appData);   // creats illusion of perspective (size changes relative to camera)
 
-        // selects program in use
-        glUseProgram(appData.OpenGL.shaderProgram);  
+        
     }
 
 
@@ -194,9 +200,6 @@ namespace render
         if (error)
         {
             std::cout << "ERROR: " << error << std::endl;
-            GLint enabled = 0;
-            glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
-            std::cout << "Attrib 0 enabled? " << enabled << "\n";
         }
 
         // unbind VAO after shape drawn
