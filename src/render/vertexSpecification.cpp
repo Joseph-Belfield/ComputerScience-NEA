@@ -36,7 +36,7 @@ namespace render
             0.5f,  0.5f,  0.5f,    // vertex 3 - (front top right)
             0.0f,  0.0f,  1.0f,    // color
 
-            /*
+    
 
             -0.5f, -0.5f, -0.5f,    // vertex 4 - (back bottom left)
             1.0f,  0.0f,  0.0f,    // color
@@ -50,7 +50,7 @@ namespace render
             0.5f,  0.5f, -0.5f,    // vertex 7 - (back top right)
             0.0f,  0.0f,  1.0f,    // color
 
-            */
+
         };
 
 
@@ -77,7 +77,6 @@ namespace render
             2, 0, 1,      // triangle 1
             3, 2, 1,      // triangle 2
 
-            /*
 
             // face 2 - back
             7, 5, 4,
@@ -99,7 +98,6 @@ namespace render
             4, 0, 1,
             1, 5, 4
 
-            */
 
         };
 
