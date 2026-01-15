@@ -79,6 +79,14 @@ namespace render
             {
                 appData.camera.camera1.move_backward(0.5f);
             }
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_A)
+            {
+                appData.camera.camera1.move_left(0.5f);
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_D)
+            {
+                appData.camera.camera1.move_right(0.5f);
+            }
 
         }
     }
@@ -144,7 +152,7 @@ namespace render
                                     glm::radians(45.0f),                                                                     // FOV (radians)
                                     (float)(appData.display.window_width / appData.display.window_height),     // aspect ratio
                                     0.1f,                                                                      // near clipping plane (min. distance)
-                                    10.0f                                                                      // far clipping plane (max. distance)
+                                    50.0f                                                                      // far clipping plane (max. distance)
                                 );         
 
         GLuint location_perspective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);

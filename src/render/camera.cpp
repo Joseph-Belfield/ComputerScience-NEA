@@ -64,3 +64,16 @@ void Camera::move_backward(float speed)
     eyePosition -= (viewDirection * speed);
 }
 
+void Camera::move_left(float speed)
+{
+    // get the view matrix rotated 90 counter-clockwise (left), and then add it to eyePosition
+    glm::vec3 leftVector = glm::rotate(viewDirection, glm::radians(90.0f), upVector);
+    eyePosition += (leftVector * speed);
+}
+void Camera::move_right(float speed)
+{
+    // get the view matrix rotated 90 counter-clockwise (left), and then add it to eyePosition
+    glm::vec3 leftVector = glm::rotate(viewDirection, glm::radians(270.0f), upVector);
+    eyePosition += (leftVector * speed);
+}
+
