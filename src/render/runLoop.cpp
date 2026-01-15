@@ -244,7 +244,7 @@ namespace render
                 appData.ImGui.show_helloWorld = !appData.ImGui.show_helloWorld;
             }
 
-            ImGui::SliderFloat("DPI", &(appData.camera.DPI), 0.01f, 1.0f);
+            ImGui::SliderFloat("DPI", &(appData.camera.sense), 0.01f, 1.0f);
 
             ImGui::End();
         }

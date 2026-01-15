@@ -76,7 +76,7 @@ struct ImGuiData
 struct cameraData
 {
   Camera camera1;
-  float DPI = 0.5f;
+  float sense = 0.5f;
 };
 
 

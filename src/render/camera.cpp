@@ -46,13 +46,16 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
     // finds the change in mouse position
     glm::vec2 positionDelta = previousMousePosition - currentMousePosition;
     
-    positionDelta = positionDelta * appData.camera.DPI;
+    // modifies how fast turning is
+    positionDelta = positionDelta * appData.camera.sense;
 
+    // changes the view direction by rotating camera around the y-axis (upVector)
     viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.x), upVector);
+
+    
 
     // sets current mouse position as old mouse position for next frame
     previousMousePosition = currentMousePosition;
-
 }
  
 void Camera::move_forward(float speed)
@@ -66,14 +69,14 @@ void Camera::move_backward(float speed)
 
 void Camera::move_left(float speed)
 {
-    // get the view matrix rotated 90 counter-clockwise (left), and then add it to eyePosition
-    glm::vec3 leftVector = glm::rotate(viewDirection, glm::radians(90.0f), upVector);
-    eyePosition += (leftVector * speed);
+    // get the view matrix by getting the normal vector (right-hand rule) and subtracting it to eyePos.
+    glm::vec3 rightVector = glm::cross(viewDirection, upVector);
+    eyePosition -= (rightVector * speed);
 }
 void Camera::move_right(float speed)
 {
-    // get the view matrix rotated 90 counter-clockwise (left), and then add it to eyePosition
-    glm::vec3 leftVector = glm::rotate(viewDirection, glm::radians(270.0f), upVector);
-    eyePosition += (leftVector * speed);
+    // get the view matrix by getting the normal vector (right-hand rule) and adding it to eyePos.
+    glm::vec3 rightVector = glm::cross(viewDirection, upVector);
+    eyePosition += (rightVector * speed);
 }
 
