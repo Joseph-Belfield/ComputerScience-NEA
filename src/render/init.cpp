@@ -88,9 +88,10 @@ namespace render
             exit(-1); 
         }
         
+        
+
         // initializes GLAD
-       
-        if (gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress) == 0)
+        if (!gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress))
         {
             std::cout << "Error loading GLAD!" << std::endl;
             exit(-1);

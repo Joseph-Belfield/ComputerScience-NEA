@@ -83,25 +83,7 @@ namespace render
     // Creates a uniform matrix, and returns its GLuint ID.
     GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix)
     {
-        GLuint uniformLocation = glGetUniformLocation(shaderProgram, uniformName.c_str());
-        if (uniformLocation >= 0)
-        {
-            glUniformMatrix4fv
-            (
-            uniformLocation,
-            amount,
-            enableTranspose,
-            &matrix[0][0]
-            );
-
-            return uniformLocation;
-        }
-        else
-        {
-            SDL_Log("Could not find uniform location!");
-            SDL_Log("Check spelling.");
-            exit(-1);
-        }
+        return 0;
     }
 
 
@@ -117,7 +99,22 @@ namespace render
         modelMatrix = glm::rotate(modelMatrix ,glm::radians(appData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
         modelMatrix = glm::scale(modelMatrix, glm::vec3(appData.uniform.uScale, appData.uniform.uScale, appData.uniform.uScale));
 
-        GLuint uLocation_modelMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+        GLuint location_modelMatrix = glGetUniformLocation(appData.OpenGL.shaderProgram, "uModelMatrix");
+        if (location_modelMatrix >= 0)
+        {
+            glUniformMatrix4fv
+            (
+                location_modelMatrix,
+                1,
+                false,
+                &modelMatrix[0][0]
+            );
+        }
+        else
+        {
+            std::cout << "Could not find uModelMatrix - check spelling!" << std::endl;
+            exit(-1);
+        }
     }
 
 
@@ -126,9 +123,8 @@ namespace render
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
     void view_matrix(appData &appData)
     {
-    glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
-
-    GLuint uLocation_viewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
+        glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
+        appData.uniform.uViewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
     }
 
     // Creates a projection matrix.
@@ -145,7 +141,7 @@ namespace render
                                     10.0f                                                                      // far clipping plane (max. distance)
                                 );         
 
-        GLuint uLocation_perpective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
+        appData.uniform.uPerspective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
     }
 
 
@@ -193,6 +189,15 @@ namespace render
             GL_UNSIGNED_INT,      // data type
             0                     // offset into index array for first element (triangle vertex order)
         );
+
+        int error = glGetError();
+        if (error)
+        {
+            std::cout << "ERROR: " << error << std::endl;
+            GLint enabled = 0;
+            glGetVertexAttribiv(0, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+            std::cout << "Attrib 0 enabled? " << enabled << "\n";
+        }
 
         // unbind VAO after shape drawn
         glBindVertexArray(0);

@@ -147,6 +147,7 @@ namespace render
 
         // cleanup VAO
         glBindVertexArray(0);                 // unbind currently bound VAO
+        glBindBuffer(GL_ARRAY_BUFFER, 0);     // unbind currently bound VBO
 
     }
 }
