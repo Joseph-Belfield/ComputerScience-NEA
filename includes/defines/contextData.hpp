@@ -32,7 +32,7 @@ struct displayData
   int window_width;
 
   // background color
-  ImVec4 clearColor = ImVec4(0.0f, 0.5f, 0.5f, 1.0f);
+  ImVec4 clearColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 };
 
 struct OpenGLData
@@ -66,7 +66,7 @@ struct uniformData
 struct ImGuiData
 {
   // bools determining if windows should be rendered  
-  bool show_mainWindow;
+  bool show_mainWindow = false;
   bool show_helloWorld = false;
   bool show_colorPicker = false;
   bool show_sineGraph = false;
@@ -76,6 +76,7 @@ struct ImGuiData
 struct cameraData
 {
   Camera camera1;
+  float DPI = 0.5f;
 };
 
 

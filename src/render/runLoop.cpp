@@ -54,23 +54,32 @@ namespace render
                 appData.window.flag_mainLoop = false;
             }
 
+            // open/close main menu
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_TAB)
+            {
+                // pressing tab flips the bool state, either revealing or hiding it
+                appData.ImGui.show_mainWindow = !appData.ImGui.show_mainWindow;
+            }
+
+            // view direction
             if (event.type == SDL_EVENT_MOUSE_MOTION)
             {
                 // relative changes in position from centre each frame monitored
                 mouseX += event.motion.xrel;
                 mouseY += event.motion.yrel;
-                appData.camera.camera1.mouseLook(mouseX, mouseY);
+                appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
             }
 
+            // movement
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_W)
             {
                 appData.camera.camera1.move_forward(0.5f);
             }
-
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_S)
             {
                 appData.camera.camera1.move_backward(0.5f);
             }
+
         }
     }
 
@@ -205,27 +214,32 @@ namespace render
 
     void draw_ImGui(appData &appData)
     {
-        ImGui::Begin("Main Window", &(appData.ImGui.show_mainWindow), ImGuiWindowFlags_MenuBar);  
-
-        if (ImGui::BeginMenuBar())
+        if (appData.ImGui.show_mainWindow)
         {
-            if (ImGui::BeginMenu("Options"))
+            ImGui::Begin("Main Window", &(appData.ImGui.show_mainWindow), ImGuiWindowFlags_MenuBar);  
+            if (ImGui::BeginMenuBar())
             {
-            if (ImGui::MenuItem("Change Background Color")) {appData.ImGui.show_colorPicker = true;}
-            if (ImGui::MenuItem("Sine Graph")) {appData.ImGui.show_sineGraph = true;}
-            if (ImGui::MenuItem("Scrolling")) {appData.ImGui.show_scrolling = true;}
-            ImGui::EndMenu();
+                if (ImGui::BeginMenu("Options"))
+                {
+                    if (ImGui::MenuItem("Change Background Color")) {appData.ImGui.show_colorPicker = true;}
+                    if (ImGui::MenuItem("Sine Graph")) {appData.ImGui.show_sineGraph = true;}
+                    if (ImGui::MenuItem("Scrolling")) {appData.ImGui.show_scrolling = true;}
+
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenuBar();
             }
-            ImGui::EndMenuBar();
+
+            if (ImGui::Button("Hello World"))
+            {
+                appData.ImGui.show_helloWorld = !appData.ImGui.show_helloWorld;
+            }
+
+            ImGui::SliderFloat("DPI", &(appData.camera.DPI), 0.01f, 1.0f);
+
+            ImGui::End();
         }
-
-        if (ImGui::Button("Hello World"))
-        {
-            appData.ImGui.show_helloWorld = true;
-        }
-
-        ImGui::End();
-
 
 
         if (appData.ImGui.show_helloWorld)

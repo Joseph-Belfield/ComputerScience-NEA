@@ -1,4 +1,5 @@
 #include "defines/camera.hpp"
+#include "defines/contextData.hpp"
 
 #include "glm/glm.hpp"                       // main GLM library
 
@@ -29,7 +30,7 @@ glm::mat4 Camera::get_view_matrix() const
 }
 
 // A function that allows the camera to follow mouse movement.
-void Camera::mouseLook(int mousePositionX, int mousePositionY)
+void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
 {
     // store current mouse position
     glm::vec2 currentMousePosition = glm::vec2(mousePositionX, mousePositionY);
@@ -44,6 +45,8 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY)
 
     // finds the change in mouse position
     glm::vec2 positionDelta = previousMousePosition - currentMousePosition;
+    
+    positionDelta = positionDelta * appData.camera.DPI;
 
     viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.x), upVector);
 

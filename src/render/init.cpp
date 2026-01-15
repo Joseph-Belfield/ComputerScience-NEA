@@ -87,8 +87,6 @@ namespace render
             std::cout << "Failed to create OpenGL context." << std::endl;
             exit(-1); 
         }
-        
-        
 
         // initializes GLAD
         if (!gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress))
@@ -97,7 +95,7 @@ namespace render
             exit(-1);
         }
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // sets whether gl should fill polygons or render just the lines
 
         SDL_GL_MakeCurrent(appData.window.window, appData.window.context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync
