@@ -59,15 +59,28 @@ namespace render
             {
                 // pressing tab flips the bool state, either revealing or hiding it
                 appData.ImGui.show_mainWindow = !appData.ImGui.show_mainWindow;
+
+                if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
+                {
+                    SDL_WarpMouseInWindow(appData.window.window, (appData.display.window_width / 2), (appData.display.window_height / 2));
+                    SDL_SetWindowRelativeMouseMode(appData.window.window, true);
+                }
+                else
+                {
+                    SDL_SetWindowRelativeMouseMode(appData.window.window, false);
+                }
             }
 
-            // view direction
-            if (event.type == SDL_EVENT_MOUSE_MOTION)
+            if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
             {
-                // relative changes in position from centre each frame monitored
-                mouseX += event.motion.xrel;
-                mouseY += event.motion.yrel;
-                appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
+                // view direction
+                if (event.type == SDL_EVENT_MOUSE_MOTION)
+                {
+                    // relative changes in position from centre each frame monitored
+                    mouseX += event.motion.xrel;
+                    mouseY += event.motion.yrel;
+                    appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
+                }
             }
 
             // movement
@@ -305,7 +318,7 @@ namespace render
     {
 
         // start program with mouse in centre of window
-        SDL_WarpMouseInWindow(appData.window.window, appData.display.window_width / 2, appData.display.window_height / 2);
+        SDL_WarpMouseInWindow(appData.window.window, (appData.display.window_width / 2), (appData.display.window_height / 2));
 
         // hides cursor, mouse position is constrained to window
         SDL_SetWindowRelativeMouseMode(appData.window.window, true);

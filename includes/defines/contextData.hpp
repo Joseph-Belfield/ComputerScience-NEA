@@ -6,6 +6,8 @@
 #include "SDL3/SDL.h"
 #include "defines/camera.hpp"
 
+#include <vector>
+
 // forward declarations
 struct SDL_Window;
 
@@ -63,14 +65,15 @@ struct uniformData
   float uPerspective;         // Matrix that creates perspective (shows movement on Z plane).
 };
 
-struct ImGuiData
+class ImGuiData
 {
-  // bools determining if windows should be rendered  
+public:
+
   bool show_mainWindow = false;
   bool show_helloWorld = false;
   bool show_colorPicker = false;
   bool show_sineGraph = false;
-  bool show_scrolling = false;  
+  bool show_scrolling = false;
 };
 
 struct cameraData
