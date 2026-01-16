@@ -73,19 +73,27 @@ namespace render
             // movement
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_W)
             {
-                appData.camera.camera1.move_forward(0.5f);
+                appData.camera.camera1.move_forward(1.0f);
             }
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_S)
             {
-                appData.camera.camera1.move_backward(0.5f);
+                appData.camera.camera1.move_backward(1.0f);
             }
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_A)
             {
-                appData.camera.camera1.move_left(0.5f);
+                appData.camera.camera1.move_left(1.0f);
             }
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_D)
             {
-                appData.camera.camera1.move_right(0.5f);
+                appData.camera.camera1.move_right(1.0f);
+            }
+             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_O)
+            {
+                appData.camera.camera1.move_up(1.0f);
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_P)
+            {
+                appData.camera.camera1.move_down(1.0f);
             }
 
         }
@@ -244,7 +252,7 @@ namespace render
                 appData.ImGui.show_helloWorld = !appData.ImGui.show_helloWorld;
             }
 
-            ImGui::SliderFloat("DPI", &(appData.camera.sense), 0.01f, 1.0f);
+            ImGui::SliderFloat("Sensitivity", &(appData.camera.sense), 0.01f, 1.0f);
 
             ImGui::End();
         }

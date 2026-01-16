@@ -14,6 +14,7 @@ class Camera
         glm::vec3 upVector;
 
         glm::vec2 previousMousePosition;
+        glm::vec2 initialMousePosition;
 
     public:
         Camera();   // constructor
@@ -26,4 +27,6 @@ class Camera
         void move_backward(float speed);
         void move_left(float speed);
         void move_right(float speed);
+        void move_up(float speed);
+        void move_down(float speed);
 };

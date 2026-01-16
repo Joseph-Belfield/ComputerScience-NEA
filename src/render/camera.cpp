@@ -39,34 +39,47 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
     static bool firstLook = true;
     if (firstLook)
     {
+        // sets the position of the mouse when scene first begins
+        initialMousePosition = currentMousePosition;
         previousMousePosition = currentMousePosition;
         firstLook = false;
     }
 
     // finds the change in mouse position
     glm::vec2 positionDelta = previousMousePosition - currentMousePosition;
+    glm::vec2 totalPositionDelta = initialMousePosition - currentMousePosition;
     
     // modifies how fast turning is
     positionDelta = positionDelta * appData.camera.sense;
 
+
     // changes the view direction by rotating camera around the y-axis (upVector)
     viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.x), upVector);
 
-    
+    // prevents view moving camera more than 90 degrees up or down (no gimbal lock)
+    if ((glm::radians(totalPositionDelta.y) > glm::radians(-90.0f)) && (glm::radians(totalPositionDelta.y) < glm::radians(90.0f)))
+    {
+        // changes view direction by rotating camera around x-axis
+        viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.y), glm::vec3(1.0f, 0.0f, 0.0f)); 
+    }
 
+    // make it so that mouse delta y does not change when the user exceeds 90
+    
     // sets current mouse position as old mouse position for next frame
     previousMousePosition = currentMousePosition;
 }
  
+// forward relative to the X-Z plane -> will not change Y position
 void Camera::move_forward(float speed)
 {
-    eyePosition += (viewDirection * speed);
+    eyePosition += (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed);
 }
 void Camera::move_backward(float speed)
 {
-    eyePosition -= (viewDirection * speed);
+    eyePosition -= (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed);
 }
 
+// cannot change Y as there is no Z rotation on the camera
 void Camera::move_left(float speed)
 {
     // get the view matrix by getting the normal vector (right-hand rule) and subtracting it to eyePos.
@@ -78,5 +91,15 @@ void Camera::move_right(float speed)
     // get the view matrix by getting the normal vector (right-hand rule) and adding it to eyePos.
     glm::vec3 rightVector = glm::cross(viewDirection, upVector);
     eyePosition += (rightVector * speed);
+}
+
+// forward relative to the X-Z plane -> will not change Y position
+void Camera::move_up(float speed)
+{
+    eyePosition += (upVector * speed);
+}
+void Camera::move_down(float speed)
+{
+    eyePosition -= (upVector * speed);
 }
 
