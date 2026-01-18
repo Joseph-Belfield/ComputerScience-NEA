@@ -170,8 +170,8 @@ namespace render
         // projection matrix (in perspective)
         glm::mat4 perspective = glm::perspective      // create perspective matrix
                                 (
-                                    glm::radians(45.0f),                                                                     // FOV (radians)
-                                    (float)(appData.window.window_width / appData.window.window_height),     // aspect ratio
+                                    glm::radians(45.0f),                                                       // FOV (radians)
+                                    (float)(appData.window.window_width / appData.window.window_height),       // aspect ratio
                                     0.1f,                                                                      // near clipping plane (min. distance)
                                     50.0f                                                                      // far clipping plane (max. distance)
                                 );         
@@ -185,7 +185,7 @@ namespace render
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_OpenGL(appData &appData, objectData &objectData)
+    void preDraw_mesh(appData &appData, objectData &objectData)
     {
 
         // disables
@@ -215,7 +215,7 @@ namespace render
 
 
     // for drawing OpenGL data
-    void draw_OpenGL(appData &appData, objectData &objectData)
+    void draw_mesh(objectData &objectData)
     {
         // choose VAO and VBO
         glBindVertexArray(objectData.mesh.vertexArrayObject);
@@ -334,8 +334,8 @@ namespace render
 
             // ********************** DO STUFF HERE **********************            
 
-            preDraw_OpenGL(appData, objectData);
-            draw_OpenGL(appData, objectData);
+            preDraw_mesh(appData, objectData);
+            draw_mesh(objectData);
 
             draw_ImGui(appData);
 

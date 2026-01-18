@@ -21,7 +21,7 @@ namespace render
 
     // *************************************************
 
-    void vertex_specification(objectData &objectData);
+    void setup_mesh(objectData &objectData);
 
     // *************************************************
 
@@ -74,10 +74,10 @@ namespace render
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_OpenGL(appData &appData, objectData &objectData);
+    void preDraw_mesh(appData &appData, objectData &objectData);
 
     // for drawing OpenGL data
-    void draw_OpenGL(appData &appData, objectData &objectData);
+    void draw_mesh(objectData &objectData);
 
     void draw_ImGui(appData &appData);
 
@@ -87,5 +87,5 @@ namespace render
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData);
+    void clean_SDL(appData &appData, objectData &objectData);
 }

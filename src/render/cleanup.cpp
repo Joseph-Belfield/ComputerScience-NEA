@@ -27,13 +27,19 @@ namespace render
     }
 
 
-    void clean_SDL(appData &appData)
+    void clean_SDL(appData &appData, objectData &objectData)
     {
-    // destroys SDL context 
-    SDL_GL_DestroyContext(appData.program.context_OpenGL);
 
     // destroys SDL window
     SDL_DestroyWindow(appData.program.window);
+    appData.program.window = nullptr;
+
+    // delete OpenGL objects
+    glDeleteBuffers(1, &(objectData.mesh.vertexBufferObject));
+    glDeleteVertexArrays(1, &(objectData.mesh.vertexArrayObject));
+
+    // delete graphics pipeline
+    glDeleteProgram(appData.program.shaderProgram);
 
     // quits SDL
     SDL_Quit();

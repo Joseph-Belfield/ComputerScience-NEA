@@ -22,7 +22,7 @@ add_executable(${PROJECT_NAME}
     src/render/camera.cpp
 
     src/render/init.cpp
-    src/render/vertexSpecification.cpp
+    src/render/setupMesh.cpp
     src/render/graphicsPipeline.cpp
     src/render/runLoop.cpp
     src/render/cleanup.cpp

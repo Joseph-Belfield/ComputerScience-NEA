@@ -18,7 +18,7 @@ int main()
   objectData object;
 
   // 2. set up geometry
-  render::vertex_specification(object);
+  render::setup_mesh(object);
 
 
   // 3. set up shaders (at least, vertex ands fragment)
@@ -29,7 +29,7 @@ int main()
 
   // 5. cleans up
   render::clean_ImGui();
-  render::clean_SDL(app);  
+  render::clean_SDL(app, object);  
 
   
   std::cout << "ERROR! -> " << glGetError() << std::endl;

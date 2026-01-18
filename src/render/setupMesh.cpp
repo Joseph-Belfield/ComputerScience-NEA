@@ -18,7 +18,7 @@
 
 namespace render
 {
-    void vertex_specification(objectData &objectData)
+    void setup_mesh(objectData &objectData)
     {
     
         // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
