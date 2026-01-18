@@ -30,10 +30,10 @@ namespace render
     void clean_SDL(appData &appData)
     {
     // destroys SDL context 
-    SDL_GL_DestroyContext(appData.window.context_OpenGL);
+    SDL_GL_DestroyContext(appData.program.context_OpenGL);
 
     // destroys SDL window
-    SDL_DestroyWindow(appData.window.window);
+    SDL_DestroyWindow(appData.program.window);
 
     // quits SDL
     SDL_Quit();

@@ -164,6 +164,6 @@ namespace render
         std::string source_vertexShader = load_shader_from_file("../../shaders/vertexShader.glsl");
         std::string source_fragmentShader = load_shader_from_file("../../shaders/fragmentShader.glsl");
 
-        appData.OpenGL.shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
+        appData.program.shaderProgram = create_shader_program(source_vertexShader, source_fragmentShader);
     }
 }

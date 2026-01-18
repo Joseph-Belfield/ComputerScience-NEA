@@ -31,8 +31,8 @@ namespace render
     void check_events(appData &appData)
     {
         // sets mouse position as centre of window when program run initially
-        static int mouseX = appData.display.window_width / 2;
-        static int mouseY = appData.display.window_height / 2;
+        static int mouseX = appData.window.window_width / 2;
+        static int mouseY = appData.window.window_height / 2;
 
         // checks for events
         SDL_Event event;
@@ -46,12 +46,12 @@ namespace render
             // if SDL is quit, end the run loop
             if (event.type == SDL_EVENT_QUIT) 
             {
-                appData.window.flag_mainLoop = false;
+                appData.program.flag_mainLoop = false;
             }
             // if Esc key is pressed, end the run loop
             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) 
             {
-                appData.window.flag_mainLoop = false;
+                appData.program.flag_mainLoop = false;
             }
 
             // open/close main menu
@@ -62,12 +62,12 @@ namespace render
 
                 if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
                 {
-                    SDL_WarpMouseInWindow(appData.window.window, (appData.display.window_width / 2), (appData.display.window_height / 2));
-                    SDL_SetWindowRelativeMouseMode(appData.window.window, true);
+                    SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
+                    SDL_SetWindowRelativeMouseMode(appData.program.window, true);
                 }
                 else
                 {
-                    SDL_SetWindowRelativeMouseMode(appData.window.window, false);
+                    SDL_SetWindowRelativeMouseMode(appData.program.window, false);
                 }
             }
 
@@ -142,24 +142,24 @@ namespace render
     // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
     //
     // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-    void model_matrix(appData &appData)
+    void model_matrix(appData &appData, objectData &objectData)
     {
         // create and adapt the matrix to adjust the following transformations
-        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(appData.uniform.uDisplacement[0], appData.uniform.uDisplacement[1], appData.uniform.uOffset)); // movement
-        modelMatrix = glm::rotate(modelMatrix ,glm::radians(appData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(appData.uniform.uScale, appData.uniform.uScale, appData.uniform.uScale));
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(objectData.uniform.uDisplacement[0], objectData.uniform.uDisplacement[1], objectData.uniform.uOffset)); // movement
+        modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(objectData.uniform.uScale, objectData.uniform.uScale, objectData.uniform.uScale));
 
-        GLuint location_modelMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+        GLuint location_modelMatrix = create_uniform_mat4(appData.program.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
     }
 
 
     // Creates a view matrix.
     // - The scene is viewed as if through a camera for the viewer.
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-    void view_matrix(appData &appData)
+    void view_matrix(appData &appData, objectData &objectData)
     {
         glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
-        GLuint location_viewMatrix = create_uniform_mat4(appData.OpenGL.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
+        GLuint location_viewMatrix = create_uniform_mat4(appData.program.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
     }
 
     // Creates a projection matrix.
@@ -171,12 +171,12 @@ namespace render
         glm::mat4 perspective = glm::perspective      // create perspective matrix
                                 (
                                     glm::radians(45.0f),                                                                     // FOV (radians)
-                                    (float)(appData.display.window_width / appData.display.window_height),     // aspect ratio
+                                    (float)(appData.window.window_width / appData.window.window_height),     // aspect ratio
                                     0.1f,                                                                      // near clipping plane (min. distance)
                                     50.0f                                                                      // far clipping plane (max. distance)
                                 );         
 
-        GLuint location_perspective = create_uniform_mat4(appData.OpenGL.shaderProgram, "uPerspective", 1, false, perspective);
+        GLuint location_perspective = create_uniform_mat4(appData.program.shaderProgram, "uPerspective", 1, false, perspective);
     }
 
 
@@ -185,7 +185,7 @@ namespace render
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_OpenGL(appData &appData)
+    void preDraw_OpenGL(appData &appData, objectData &objectData)
     {
 
         // disables
@@ -195,19 +195,19 @@ namespace render
         glEnable(GL_DEPTH_TEST);
 
         // set size of window for OpenGL
-        glViewport(0, 0, (int)(appData.display.window_width), (int)(appData.display.window_height));
+        glViewport(0, 0, (int)(appData.window.window_width), (int)(appData.window.window_height));
 
         // background color
-        glClearColor(appData.display.clearColor.x, appData.display.clearColor.y, appData.display.clearColor.z, appData.display.clearColor.w);                   // sets background color
+        glClearColor(appData.window.clearColor.x, appData.window.clearColor.y, appData.window.clearColor.z, appData.window.clearColor.w);                   // sets background color
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
         // selects program in use
-        glUseProgram(appData.OpenGL.shaderProgram);  
+        glUseProgram(appData.program.shaderProgram);  
 
         // transformation matrices
-        model_matrix(appData);         // controls position and rotation on world axis
-        view_matrix(appData);          // Makes a camera work!
-        perspective_matrix(appData);   // creats illusion of perspective (size changes relative to camera)
+        model_matrix(appData, objectData);         // controls position, rotation and scale on world axis
+        view_matrix(appData, objectData);          // Makes a camera work!
+        perspective_matrix(appData);               // creats illusion of perspective (size changes relative to camera)
 
         
     }
@@ -215,10 +215,10 @@ namespace render
 
 
     // for drawing OpenGL data
-    void draw_OpenGL(appData &appData)
+    void draw_OpenGL(appData &appData, objectData &objectData)
     {
         // choose VAO and VBO
-        glBindVertexArray(appData.OpenGL.vertexArrayObject);
+        glBindVertexArray(objectData.mesh.vertexArrayObject);
 
         // draw
         glDrawElements
@@ -290,7 +290,7 @@ namespace render
 
         if (appData.ImGui.show_scrolling)
         {
-            // display contents in scrolling region
+            // window contents in scrolling region
             ImGui::Begin("Scrolling", &(appData.ImGui.show_scrolling));
             ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
             ImGui::BeginChild("Scrolling");
@@ -307,23 +307,23 @@ namespace render
             // create a window with menu bar called "Color Picker"
             ImGui::Begin("Background Color", &(appData.ImGui.show_colorPicker));
             // edit a color stored as 4 floats
-            ImGui::ColorEdit3("Color", (float*)&(appData.display.clearColor));
+            ImGui::ColorEdit3("Color", (float*)&(appData.window.clearColor));
             ImGui::End();
         }
     }
 
 
 
-    void run_loop(appData &appData)
+    void run_loop(appData &appData, objectData &objectData)
     {
 
         // start program with mouse in centre of window
-        SDL_WarpMouseInWindow(appData.window.window, (appData.display.window_width / 2), (appData.display.window_height / 2));
+        SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
 
         // hides cursor, mouse position is constrained to window
-        SDL_SetWindowRelativeMouseMode(appData.window.window, true);
+        SDL_SetWindowRelativeMouseMode(appData.program.window, true);
 
-        while (appData.window.flag_mainLoop) {
+        while (appData.program.flag_mainLoop) {
 
             check_events(appData);
 
@@ -334,17 +334,17 @@ namespace render
 
             // ********************** DO STUFF HERE **********************            
 
-            preDraw_OpenGL(appData);
-            draw_OpenGL(appData);
+            preDraw_OpenGL(appData, objectData);
+            draw_OpenGL(appData, objectData);
 
             draw_ImGui(appData);
 
-            appData.uniform.uRotate += 2.0f;
+            objectData.uniform.uRotate += 0.5f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());        // renders the ImGui data with OpenGL  
-            SDL_GL_SwapWindow(appData.window.window);                      // swaps in the new frame
+            SDL_GL_SwapWindow(appData.program.window);                      // swaps in the new frame
 
         }
     }

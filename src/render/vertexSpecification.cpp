@@ -18,7 +18,7 @@
 
 namespace render
 {
-    void vertex_specification(appData &appData)
+    void vertex_specification(objectData &objectData)
     {
     
         // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
@@ -55,12 +55,12 @@ namespace render
 
 
         // generate Vertex Array Objects 
-        glGenVertexArrays(1, &(appData.OpenGL.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
-        glBindVertexArray(appData.OpenGL.vertexArrayObject);                 // selects the array as current
+        glGenVertexArrays(1, &(objectData.mesh.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
+        glBindVertexArray(objectData.mesh.vertexArrayObject);                 // selects the array as current
 
         // generate Vertex Buffer Object for position
-        glGenBuffers(1, &(appData.OpenGL.vertexBufferObject));               // generates buffer
-        glBindBuffer(GL_ARRAY_BUFFER, appData.OpenGL.vertexBufferObject);    // sets buffer as current, specifies target
+        glGenBuffers(1, &(objectData.mesh.vertexBufferObject));               // generates buffer
+        glBindBuffer(GL_ARRAY_BUFFER, objectData.mesh.vertexBufferObject);    // sets buffer as current, specifies target
         glBufferData
         (
             GL_ARRAY_BUFFER,                           // specifies target
@@ -102,8 +102,8 @@ namespace render
         };
 
         // set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
-        glGenBuffers(1,&(appData.OpenGL.indexBufferObject));                         // generate EBO
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, appData.OpenGL.indexBufferObject);   // sets buffer type as element buffer
+        glGenBuffers(1,&(objectData.mesh.indexBufferObject));                         // generate EBO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectData.mesh.indexBufferObject);   // sets buffer type as element buffer
         glBufferData
         (
             GL_ELEMENT_ARRAY_BUFFER,                        // target

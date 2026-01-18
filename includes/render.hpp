@@ -7,6 +7,7 @@
 
 // forward declare classes, structs 
 struct appData;
+struct objectData;
 
 namespace render
 {
@@ -20,7 +21,7 @@ namespace render
 
     // *************************************************
 
-    void vertex_specification(appData &appData);
+    void vertex_specification(objectData &objectData);
 
     // *************************************************
 
@@ -56,12 +57,12 @@ namespace render
     // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
     //
     // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-    void model_matrix(appData &appData);
+    void model_matrix(appData &appData, objectData &objectData);
 
     // Creates a view matrix.
     // - The scene is viewed as if through a camera for the viewer.
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-    void view_matrix(appData &appData);
+    void view_matrix(appData &appData, objectData &objectData);
 
     // Creates a projection matrix.
     // - The projection matrix creates the illusion of perspective
@@ -73,14 +74,14 @@ namespace render
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_OpenGL(appData &appData);
+    void preDraw_OpenGL(appData &appData, objectData &objectData);
 
     // for drawing OpenGL data
-    void draw_OpenGL(appData &appData);
+    void draw_OpenGL(appData &appData, objectData &objectData);
 
     void draw_ImGui(appData &appData);
 
-    void run_loop(appData &appData);
+    void run_loop(appData &appData, objectData &objectData);
 
     // *************************************************
 

@@ -15,16 +15,17 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
+  objectData object;
 
   // 2. set up geometry
-  render::vertex_specification(app);
+  render::vertex_specification(object);
 
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
 
   // 4. main run loop
-  render::run_loop(app);
+  render::run_loop(app, object);
 
   // 5. cleans up
   render::clean_ImGui();

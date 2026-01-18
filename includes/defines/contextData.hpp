@@ -12,7 +12,7 @@
 struct SDL_Window;
 
 
-struct windowData
+struct programData
 {
   // the window the program runs in
   SDL_Window* window = nullptr;
@@ -22,9 +22,15 @@ struct windowData
 
   // main loop flag
   bool flag_mainLoop = true;
+
+  // sets GLSL version (matches OpenGL version)
+  const char* version_glsl = "#version 410";
+
+  // unique ID for the graphics pipeline
+  GLuint shaderProgram = 0;
 };
 
-struct displayData
+struct windowData
 {
   // the main scale of the program. relative to display size
   float mainScale;
@@ -35,34 +41,6 @@ struct displayData
 
   // background color
   ImVec4 clearColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-};
-
-struct OpenGLData
-{
-  // unsigned ints as identifiers for the objects (because C-based language)
-  GLuint vertexArrayObject = 0;
-  GLuint vertexBufferObject = 0;
-  GLuint indexBufferObject = 0;
-
-  // unique ID for the graphics pipeline
-  GLuint shaderProgram = 0;
-
-  // sets GLSL version (matches OpenGL version)
-  const char* version_glsl = "#version 410";
-};
-
-struct uniformData
-{
-  // offset that allows us to change values in the GPU
-  float uOffset = -2.0f;
-  float uDisplacement[2] = {0.0f, 0.0f};
-  float uRotate;
-  float uScale = 1.0f;
-
-  // matrix transformations
-  float uModelMatrix;         // Matrix that transforms shapes position on world axis.
-  float uViewMatrix;          // Matrix that moves shapes into camera space.
-  float uPerspective;         // Matrix that creates perspective (shows movement on Z plane).
 };
 
 class ImGuiData
@@ -82,13 +60,35 @@ struct cameraData
   float sense = 0.5f;
 };
 
+struct meshData
+{
+  // unsigned ints as identifiers for the objects (because C-based language)
+  GLuint vertexArrayObject = 0;
+  GLuint vertexBufferObject = 0;
+  GLuint indexBufferObject = 0;
+};
 
+struct uniformData
+{
+  // offset that allows us to change values in the GPU
+  float uOffset = -2.0f;
+  float uDisplacement[2] = {0.0f, 0.0f};
+  float uRotate;
+  float uScale = 1.0f;
+};
+
+// for the whole program
 struct appData
 {
+  programData program;
   windowData window;
-  displayData display;
-  OpenGLData OpenGL;
   ImGuiData ImGui;
-  uniformData uniform;
   cameraData camera;
+};
+
+// for each induvidual object
+struct objectData
+{
+  meshData mesh;
+  uniformData uniform;
 };

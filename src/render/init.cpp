@@ -30,8 +30,8 @@ namespace render
             exit(-1); 
         }
 
-        // finds the scale of the display 
-        appData.display.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        // finds the scale of the window 
+        appData.window.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 
         // flags for the window
         SDL_WindowFlags window_flags =  SDL_WINDOW_RESIZABLE |          // lets window be resized
@@ -41,10 +41,10 @@ namespace render
 
 
         // creates a window assigned to 'window', errors if failed
-        appData.window.window = SDL_CreateWindow("compsci_nea", round(1280 * appData.display.mainScale), round(800 * appData.display.mainScale), window_flags);
+        appData.program.window = SDL_CreateWindow("compsci_nea", round(1280 * appData.window.mainScale), round(800 * appData.window.mainScale), window_flags);
 
         // checks if window has been created properly
-        if (appData.window.window == nullptr) 
+        if (appData.program.window == nullptr) 
         {
             std::cout << "Failed to create window." << std::endl;
             exit(-1); 
@@ -79,10 +79,10 @@ namespace render
     void init_OpenGL(appData &appData)
     {
         // create the context for OpenGL in 'window'
-        appData.window.context_OpenGL = SDL_GL_CreateContext(appData.window.window);
+        appData.program.context_OpenGL = SDL_GL_CreateContext(appData.program.window);
 
         // checks context has been created properly
-        if (appData.window.context_OpenGL == nullptr) 
+        if (appData.program.context_OpenGL == nullptr) 
         {
             std::cout << "Failed to create OpenGL context." << std::endl;
             exit(-1); 
@@ -97,10 +97,10 @@ namespace render
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // sets whether gl should fill polygons or render just the lines
 
-        SDL_GL_MakeCurrent(appData.window.window, appData.window.context_OpenGL); // sets current window and context
+        SDL_GL_MakeCurrent(appData.program.window, appData.program.context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync
-        SDL_SetWindowPosition(appData.window.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
-        SDL_ShowWindow(appData.window.window);  // reveals window once program has been initialized
+        SDL_SetWindowPosition(appData.program.window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED); // centers window
+        SDL_ShowWindow(appData.program.window);  // reveals window once program has been initialized
 
     }
 
@@ -118,20 +118,20 @@ namespace render
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-        if (!SDL_GetWindowSizeInPixels(appData.window.window, &(appData.display.window_width), &(appData.display.window_height)))
+        if (!SDL_GetWindowSizeInPixels(appData.program.window, &(appData.window.window_width), &(appData.window.window_height)))
         {
             std::cout << "Failed to get window size!" << std::endl;
             exit(-1);
         }
-        io.DisplaySize = ImVec2((float)(appData.display.window_width), (float)(appData.display.window_height));
+        io.DisplaySize = ImVec2((float)(appData.window.window_width), (float)(appData.window.window_height));
 
         ImGui::StyleColorsDark();
         ImGuiStyle &style = ImGui::GetStyle();
 
         // Eall scales in file scale around this. errors with style to do with size are probably this.
-        if (appData.display.mainScale > 1.0f)
+        if (appData.window.mainScale > 1.0f)
         {
-            style.ScaleAllSizes(appData.display.mainScale); 
+            style.ScaleAllSizes(appData.window.mainScale); 
         /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
             changing this requires resetting Style + calling this again) makes this unnecessary. 
             We leave both here for documentation purpose) */
@@ -144,14 +144,14 @@ namespace render
 
 
         // sets a base style for the fonts
-        style.FontSizeBase = 20.0f * appData.display.mainScale;
+        style.FontSizeBase = 20.0f * appData.window.mainScale;
 
         ImFont* Arimo_Regular = io.Fonts -> AddFontFromFileTTF("../../fonts/Arimo-Regular.ttf", 20.0f);
         ImFont* Roboto_SemiCondensed_Italic = io.Fonts -> AddFontFromFileTTF("../../fonts/Roboto_SemiCondensed-Italic.ttf", 20.0f);
         io.Fonts -> AddFontDefault();
         
 
-        ImGui_ImplSDL3_InitForOpenGL(appData.window.window, appData.window.context_OpenGL);
-        ImGui_ImplOpenGL3_Init(appData.OpenGL.version_glsl);
+        ImGui_ImplSDL3_InitForOpenGL(appData.program.window, appData.program.context_OpenGL);
+        ImGui_ImplOpenGL3_Init(appData.program.version_glsl);
     }
 }
