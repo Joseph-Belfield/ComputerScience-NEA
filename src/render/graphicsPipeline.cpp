@@ -45,10 +45,7 @@ namespace render
             std::cout << "Shader file not found - check path!" << std::endl;
         }
 
-        if (result == "")
-        {
-            std::cout << "Shader not loaded correctly!" << std::endl;
-        }
+        error::check_shaderFull(result);
 
         return result;
     }
@@ -89,37 +86,7 @@ namespace render
 
         // compile the shader
         glCompileShader(shaderObject);
-
-        // error checking
-        int result;
-        glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &result);  // gets compile status, stores in result
-        if (result == GL_FALSE)                                   // error checking <3
-        {
-            int length;                                                     
-            glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &length);           // find the length of the error message
-            char* errorMessages = new char[length];                             // create a C-string of that length
-            glGetShaderInfoLog(shaderObject, length, &length, errorMessages);   // log error info
-
-            // display error messages
-            if (type == GL_VERTEX_SHADER)
-            {
-            std::cout << "GL_VERTEX_SHADER compilation failed!" << std::endl;
-            std::cout << errorMessages << std::endl;
-            }
-            else if(type == GL_FRAGMENT_SHADER)
-            {
-            std::cout << "GL_FRAGMENT_SHADER compilation failed!" << std::endl;
-            std::cout << errorMessages << std::endl;
-            }
-
-            // reclaim memory
-            delete[] errorMessages;
-
-            // delete broken shader object
-            glDeleteShader(shaderObject);
-
-            return 0;
-        }
+        error::check_shaderCompilation(shaderObject, type);
 
         return shaderObject;
     }
@@ -145,14 +112,7 @@ namespace render
         // validate program - check for errors
         // glValidateProgram(programObject); 
 
-        int result;
-        char errorLog[512];
-        glGetProgramiv(programObject, GL_LINK_STATUS, &result);
-        if (!result)
-        {
-            glGetProgramInfoLog(programObject, 512, NULL, errorLog);
-            std::cout << "Program link error: " << errorLog << std::endl;
-        }
+        error::check_shaderProgram(programObject);
 
         return programObject;
     }

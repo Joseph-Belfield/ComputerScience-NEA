@@ -229,12 +229,6 @@ namespace render
             0                     // offset into index array for first element (triangle vertex order)
         );
 
-        int error = glGetError();
-        if (error)
-        {
-            std::cout << "ERROR: " << error << std::endl;
-        }
-
         // unbind VAO after shape drawn
         glBindVertexArray(0);
     }

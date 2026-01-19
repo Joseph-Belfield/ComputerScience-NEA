@@ -24,11 +24,8 @@ namespace render
     void init_SDL(appData &appData)
     {
         // initialize SDL
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) 
-        {
-            std::cout << "Failed to initialize SDL." << std::endl;
-            exit(-1); 
-        }
+        bool init_SDL = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+        error::check_SDL;
 
         // finds the scale of the window 
         appData.window.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
@@ -42,13 +39,8 @@ namespace render
 
         // creates a window assigned to 'window', errors if failed
         appData.program.window = SDL_CreateWindow("compsci_nea", round(1280 * appData.window.mainScale), round(800 * appData.window.mainScale), window_flags);
-
-        // checks if window has been created properly
-        if (appData.program.window == nullptr) 
-        {
-            std::cout << "Failed to create window." << std::endl;
-            exit(-1); 
-        }
+        error::check_window(appData.program.window);
+        
     }
 
 
@@ -80,20 +72,10 @@ namespace render
     {
         // create the context for OpenGL in 'window'
         appData.program.context_OpenGL = SDL_GL_CreateContext(appData.program.window);
-
-        // checks context has been created properly
-        if (appData.program.context_OpenGL == nullptr) 
-        {
-            std::cout << "Failed to create OpenGL context." << std::endl;
-            exit(-1); 
-        }
-
-        // initializes GLAD
-        if (!gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress))
-        {
-            std::cout << "Error loading GLAD!" << std::endl;
-            exit(-1);
-        }
+        error::check_OpenGL_context(appData.program.context_OpenGL);
+        
+        int init_GLAD = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
+        error::check_GLAD(init_GLAD);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // sets whether gl should fill polygons or render just the lines
 
@@ -118,11 +100,9 @@ namespace render
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
-        if (!SDL_GetWindowSizeInPixels(appData.program.window, &(appData.window.window_width), &(appData.window.window_height)))
-        {
-            std::cout << "Failed to get window size!" << std::endl;
-            exit(-1);
-        }
+        bool init_windowDimensions = SDL_GetWindowSizeInPixels(appData.program.window, &(appData.window.window_width), &(appData.window.window_height));
+        error::check_windowDimensions(init_windowDimensions);
+
         io.DisplaySize = ImVec2((float)(appData.window.window_width), (float)(appData.window.window_height));
 
         ImGui::StyleColorsDark();
