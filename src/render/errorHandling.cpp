@@ -96,7 +96,7 @@ namespace error
         }
     }
 
-    int check_shaderProgram(GLuint program)
+    void check_shaderProgram(GLuint program)
     {
         int result;
         char errorLog[512];

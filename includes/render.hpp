@@ -102,7 +102,7 @@ namespace error
 
     void check_shaderFull(std::string shaderResult);
     void check_shaderCompilation(GLuint shader, GLuint type);
-    int check_shaderProgram(GLuint program);
+    void check_shaderProgram(GLuint program);
 
     void check_OpenGL_error();
 }
