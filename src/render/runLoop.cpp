@@ -13,7 +13,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, objectData &objectData)
+    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2)
     {
 
         // start program with mouse in centre of window
@@ -34,12 +34,17 @@ namespace render
             // ********************** DO STUFF HERE **********************            
 
             update_scene(appData);
-            update_mesh(objectData);
-            draw_mesh(objectData);
+
+            update_mesh(objectData1);
+            draw_mesh(objectData1);
+
+            update_mesh(objectData2);
+            draw_mesh(objectData2);
 
             draw_ImGui(appData);
 
-            objectData.uniform.uRotate += 0.5f;
+            objectData1.uniform.uRotate.y += 0.5f;
+            objectData2.uniform.uRotate.y += 0.5f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 

@@ -42,9 +42,14 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 void model_matrix(objectData &objectData)
 {
     // create and adapt the matrix to adjust the following transformations
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(objectData.uniform.uDisplacement[0], objectData.uniform.uDisplacement[1], objectData.uniform.uOffset)); // movement
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(objectData.uniform.uScale, objectData.uniform.uScale, objectData.uniform.uScale));
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(objectData.uniform.uDisplacement.x, objectData.uniform.uDisplacement.y, objectData.uniform.uDisplacement.z)); // movement
+
+    // rotations
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
+
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(objectData.uniform.uScale.x, objectData.uniform.uScale.y, objectData.uniform.uScale.z));
 
     GLuint location_modelMatrix = create_uniform_mat4(objectData.mesh.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
 }
@@ -70,7 +75,7 @@ void perspective_matrix(appData &appData)
                                 glm::radians(45.0f),                                                       // FOV (radians)
                                 (float)(appData.window.window_width / appData.window.window_height),       // aspect ratio
                                 0.1f,                                                                      // near clipping plane (min. distance)
-                                50.0f                                                                      // far clipping plane (max. distance)
+                                100.0f                                                                     // far clipping plane (max. distance)
                             );         
 
     GLuint location_perspective = create_uniform_mat4(appData.program.shaderProgram, "uPerspective", 1, false, perspective);

@@ -2,8 +2,10 @@
 
 // include libraries for basic types that cannot be forward declared (ie: things other than structs, classes, enums)
 #include "glad/gl.h"
-#include "imgui/imgui.h"
 #include "SDL3/SDL.h"
+#include "imgui/imgui.h"
+#include "glm/vec3.hpp"
+
 #include "defines/camera.hpp"
 
 #include <vector>
@@ -132,10 +134,15 @@ struct meshData
 struct uniformData
 {
   // offset that allows us to change values in the GPU
-  float uOffset = -2.0f;
-  float uDisplacement[2] = {0.0f, 0.0f};
-  float uRotate;
-  float uScale = 1.0f;
+
+  // object's displacement from origin (effectively coords on world axis)
+  glm::vec3 uDisplacement = glm::vec3(0.0f, 0.0f, 0.0f);
+
+  // object's rotation around each axis
+  glm::vec3 uRotate = glm::vec3(0.0f, 0.0f, 0.0f);
+
+  // growth of the object in each direction
+  glm::vec3 uScale = glm::vec3(1.0f, 1.0f, 1.0f);
 };
 
 // for the whole program

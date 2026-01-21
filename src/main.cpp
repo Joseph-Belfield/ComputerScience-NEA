@@ -15,22 +15,27 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
-  objectData object;
+  objectData object1;
+  objectData object2;
 
   // 2. set up geometry
-  render::create_mesh(object);
+  render::create_mesh(object1);
+  render::create_mesh(object2);
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
 
-  object.mesh.shaderProgram = app.program.shaderProgram;
+  object1.mesh.shaderProgram = app.program.shaderProgram;
+  object2.mesh.shaderProgram = app.program.shaderProgram;
+
+  object2.uniform.uDisplacement.z += 5.0f;
 
   // 4. main run loop
-  render::run_loop(app, object);
+  render::run_loop(app, object1, object2);
 
   // 5. cleans up
   render::clean_ImGui();
-  render::clean_SDL(app, object);  
+  render::clean_SDL(app, object1, object2);  
 
   
   std::cout << "ERROR! -> " << glGetError() << std::endl;
