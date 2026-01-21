@@ -142,21 +142,21 @@ namespace render
     // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
     //
     // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-    void model_matrix(appData &appData, objectData &objectData)
+    void model_matrix(objectData &objectData)
     {
         // create and adapt the matrix to adjust the following transformations
         glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(objectData.uniform.uDisplacement[0], objectData.uniform.uDisplacement[1], objectData.uniform.uOffset)); // movement
         modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate), glm::vec3(0.0f, 1.0f, 0.0f));  // rotations
         modelMatrix = glm::scale(modelMatrix, glm::vec3(objectData.uniform.uScale, objectData.uniform.uScale, objectData.uniform.uScale));
 
-        GLuint location_modelMatrix = create_uniform_mat4(appData.program.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+        GLuint location_modelMatrix = create_uniform_mat4(objectData.mesh.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
     }
 
 
     // Creates a view matrix.
     // - The scene is viewed as if through a camera for the viewer.
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-    void view_matrix(appData &appData, objectData &objectData)
+    void view_matrix(appData &appData)
     {
         glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
         GLuint location_viewMatrix = create_uniform_mat4(appData.program.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
@@ -180,41 +180,41 @@ namespace render
     }
 
 
-    // Handles tasks that must be completed before draw:
-    // - OpenGL preferences
-    // - Sets glViewport
-    // - Sets clear color (background color)
-    // - Applies transformation matrices
-    void preDraw_mesh(appData &appData, objectData &objectData)
+    void update_scene(appData &appData)
     {
-
         // disables
         // glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
         // glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
-
         glEnable(GL_DEPTH_TEST);
 
         // set size of window for OpenGL
         glViewport(0, 0, (int)(appData.window.window_width), (int)(appData.window.window_height));
+
 
         // background color
         glClearColor(appData.window.clearColor.x, appData.window.clearColor.y, appData.window.clearColor.z, appData.window.clearColor.w);                   // sets background color
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
         // selects program in use
-        glUseProgram(appData.program.shaderProgram);  
+        glUseProgram(appData.program.shaderProgram); 
 
-        // transformation matrices
-        model_matrix(appData, objectData);         // controls position, rotation and scale on world axis
-        view_matrix(appData, objectData);          // Makes a camera work!
+        view_matrix(appData);                      // Makes a camera work!
         perspective_matrix(appData);               // creats illusion of perspective (size changes relative to camera)
-
-        
     }
 
+    // Handles tasks that must be completed before draw:
+    // - OpenGL preferences
+    // - Sets glViewport
+    // - Sets clear color (background color)
+    // - Applies transformation matrices
+    void update_mesh(objectData &objectData)
+    {
 
+        // transformation matrices
+        model_matrix(objectData);         // controls position, rotation and scale on world axis
+    }
 
-    // for drawing OpenGL data
+    // Draws each induvidual mesh
     void draw_mesh(objectData &objectData)
     {
         // choose VAO and VBO
@@ -328,7 +328,8 @@ namespace render
 
             // ********************** DO STUFF HERE **********************            
 
-            preDraw_mesh(appData, objectData);
+            update_scene(appData);
+            update_mesh(objectData);
             draw_mesh(objectData);
 
             draw_ImGui(appData);

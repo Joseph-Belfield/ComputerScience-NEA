@@ -20,7 +20,7 @@ namespace render
 {
 
 
-    void setup_mesh(objectData &objectData)
+    void create_mesh(objectData &objectData)
     {
 
         // generate Vertex Array Objects 

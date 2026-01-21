@@ -23,7 +23,7 @@ namespace render
 
     // *************************************************
 
-    void setup_mesh(objectData &objectData);
+    void create_mesh(objectData &objectData);
 
     // *************************************************
 
@@ -59,24 +59,31 @@ namespace render
     // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
     //
     // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-    void model_matrix(appData &appData, objectData &objectData);
+    void model_matrix(objectData &objectData);
 
     // Creates a view matrix.
     // - The scene is viewed as if through a camera for the viewer.
     // - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-    void view_matrix(appData &appData, objectData &objectData);
+    void view_matrix(appData &appData);
 
     // Creates a projection matrix.
     // - The projection matrix creates the illusion of perspective
     // - It does this by changing a point's coordinates according to distance from the camera (Z-value)
     void perspective_matrix(appData &appData);
 
+
+    // Updates parts of the scene not specific to the object, such as:
+    // - background color
+    // - view and perspective matrices
+    // - graphics pipeline
+    void update_scene(appData &appData);
+
     // Handles tasks that must be completed before draw:
     // - OpenGL preferences
     // - Sets glViewport
     // - Sets clear color (background color)
     // - Applies transformation matrices
-    void preDraw_mesh(appData &appData, objectData &objectData);
+    void update_mesh(appData &appData, objectData &objectData);
 
     // for drawing OpenGL data
     void draw_mesh(objectData &objectData);

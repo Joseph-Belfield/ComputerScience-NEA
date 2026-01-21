@@ -67,6 +67,8 @@ struct meshData
   GLuint vertexBufferObject = 0;
   GLuint indexBufferObject = 0;
 
+  GLuint shaderProgram = 0;
+
   // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
   const std::vector<GLfloat> vertexData   // lives on CPU
   {

@@ -18,11 +18,12 @@ int main()
   objectData object;
 
   // 2. set up geometry
-  render::setup_mesh(object);
-
+  render::create_mesh(object);
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
+
+  object.mesh.shaderProgram = app.program.shaderProgram;
 
   // 4. main run loop
   render::run_loop(app, object);
