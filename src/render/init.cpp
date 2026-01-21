@@ -25,7 +25,7 @@ namespace render
     {
         // initialize SDL
         bool init_SDL = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-        error::check_SDL;
+        error::check_SDL(init_SDL);
 
         // finds the scale of the window 
         appData.window.mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
