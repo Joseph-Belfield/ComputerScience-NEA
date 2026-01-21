@@ -1,7 +1,8 @@
 #include "render.hpp"
 
 #include "runLoop.hpp"
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
+#include "defines/objectData.hpp"
 
 #include "SDL3/SDL.h"           // SDL main library
 #include "SDL3/SDL_opengl.h"    // SDL OpenGL integration
@@ -13,7 +14,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2)
+    void run_loop(appData &appData, objectData &objectData1)
     {
 
         // start program with mouse in centre of window
@@ -38,13 +39,9 @@ namespace render
             update_mesh(objectData1);
             draw_mesh(objectData1);
 
-            update_mesh(objectData2);
-            draw_mesh(objectData2);
-
             draw_ImGui(appData);
 
             objectData1.uniform.uRotate.y += 0.5f;
-            objectData2.uniform.uRotate.y += 0.5f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 

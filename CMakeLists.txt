@@ -19,12 +19,13 @@ add_executable(${PROJECT_NAME}
     src/main.cpp 
     src/gl.c
 
+    src/defines/objectData.cpp
+
     src/render/errorHandling.cpp
 
     src/render/camera.cpp
 
     src/render/init.cpp
-    src/render/createMesh.cpp
     src/render/graphicsPipeline.cpp
 
     src/render/runLoop/events.cpp

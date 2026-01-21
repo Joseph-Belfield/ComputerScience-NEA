@@ -1,5 +1,5 @@
 #include "defines/camera.hpp"
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
 
 #include "glm/glm.hpp"                       // main GLM library
 

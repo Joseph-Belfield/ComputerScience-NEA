@@ -1,5 +1,8 @@
 #include "render.hpp"
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
+#include "defines/objectData.hpp"
+
+
 #include <iostream>
 #include <filesystem>
 
@@ -15,30 +18,22 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
-  objectData object1;
-  objectData object2;
-
-  // 2. set up geometry
-  render::create_mesh(object1);
-  render::create_mesh(object2);
+  Sphere sphere(0.5f, 18, 9, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
 
-  object1.mesh.shaderProgram = app.program.shaderProgram;
-  object2.mesh.shaderProgram = app.program.shaderProgram;
-
-  object2.uniform.uDisplacement.z += 5.0f;
+  sphere.mesh.shaderProgram = app.program.shaderProgram;
+  sphere.uniform.uDisplacement.z -= 5.0f;
 
   // 4. main run loop
-  render::run_loop(app, object1, object2);
+  render::run_loop(app, sphere);
 
   // 5. cleans up
   render::clean_ImGui();
-  render::clean_SDL(app, object1, object2);  
+  render::clean_SDL(app, sphere);  
 
-  
-  std::cout << "ERROR! -> " << glGetError() << std::endl;
+  error::check_OpenGL_error();
 
   return 0;
 }

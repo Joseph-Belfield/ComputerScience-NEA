@@ -1,6 +1,7 @@
 #include "runLoop.hpp"
 
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
+#include "defines/objectData.hpp"
 #include "defines/camera.hpp"
 
 #include "glm/glm.hpp"                       // main GLM library

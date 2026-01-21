@@ -1,5 +1,6 @@
 #include "render.hpp"
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
+#include "defines/objectData.hpp"
 
 // *************************************************
 
@@ -27,7 +28,7 @@ namespace render
     }
 
 
-    void clean_SDL(appData &appData, objectData &objectData1, objectData &objectData2)
+    void clean_SDL(appData &appData, objectData &objectData1)
     {
 
     // destroys SDL window
@@ -37,10 +38,6 @@ namespace render
     // delete OpenGL objects
     glDeleteBuffers(1, &(objectData1.mesh.vertexBufferObject));
     glDeleteVertexArrays(1, &(objectData1.mesh.vertexArrayObject));
-
-    // delete OpenGL objects
-    glDeleteBuffers(1, &(objectData2.mesh.vertexBufferObject));
-    glDeleteVertexArrays(1, &(objectData2.mesh.vertexArrayObject));
 
     // delete graphics pipeline
     glDeleteProgram(appData.program.shaderProgram);

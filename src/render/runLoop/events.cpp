@@ -1,6 +1,7 @@
 #include "runLoop.hpp"
 
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
+#include "defines/objectData.hpp"
 
 #include "SDL3/SDL.h"           // SDL main library
 #include "SDL3/SDL_opengl.h"    // SDL OpenGL integration

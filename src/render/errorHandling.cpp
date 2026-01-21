@@ -152,4 +152,11 @@ namespace error
             std::cout << "Set when reading or writing to a framebuffer that is not complete." << std::endl;
         }
     }
+
+    void check_boundVAO()
+    {
+        GLint boundVAO = 0;
+        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundVAO);
+        std::cout << "Bound VAO: " << boundVAO << std::endl;
+    }
 }

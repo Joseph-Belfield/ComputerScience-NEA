@@ -1,5 +1,5 @@
 #include "render.hpp"           // defines functions found in source file
-#include "defines/contextData.hpp"
+#include "defines/appData.hpp"
 
 // *************************************************
 

@@ -1,5 +1,6 @@
 #include "runLoop.hpp"
-#include "defines/contextData.hpp"
+
+#include "defines/appData.hpp"
 
 #include "glad/gl.h"            // OpenGL extension loader
 
@@ -9,6 +10,7 @@ void update_scene(appData &appData)
         // glDisable(GL_DEPTH_TEST); // disables depth check - 2D scene
         // glDisable(GL_CULL_FACE);  // disables checking for overlap - 2D scene
         glEnable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
 
         // set size of window for OpenGL
         glViewport(0, 0, (int)(appData.window.window_width), (int)(appData.window.window_height));
@@ -16,7 +18,7 @@ void update_scene(appData &appData)
 
         // background color
         glClearColor(appData.window.clearColor.x, appData.window.clearColor.y, appData.window.clearColor.z, appData.window.clearColor.w);                   // sets background color
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);     // clears the OpenGL color and depth buffers
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
         // selects program in use
         glUseProgram(appData.program.shaderProgram); 

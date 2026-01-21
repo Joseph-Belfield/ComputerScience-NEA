@@ -23,10 +23,6 @@ namespace render
 
     // *************************************************
 
-    void create_mesh(objectData &objectData);
-
-    // *************************************************
-
     // Load a shader from a file
     // - Pass in the shader by file name. File name is passed only by reference to prevent duplication.
     std::string load_shader_from_file(const std::string& fileName);
@@ -49,13 +45,13 @@ namespace render
 
     // *************************************************
 
-    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2);
+    void run_loop(appData &appData, objectData &objectData1);
 
     // *************************************************
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData, objectData &objectData1, objectData &objectData2);
+    void clean_SDL(appData &appData, objectData &objectData1);
 }
 
 namespace error
@@ -71,4 +67,5 @@ namespace error
     void check_shaderProgram(GLuint program);
 
     void check_OpenGL_error();
+    void check_boundVAO();
 }
