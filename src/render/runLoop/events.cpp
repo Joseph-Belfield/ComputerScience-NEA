@@ -16,28 +16,25 @@ void check_events(appData &appData)
         static int mouseX = appData.window.window_width / 2;
         static int mouseY = appData.window.window_height / 2;
 
-        // checks for events
-        SDL_Event event;
-
-        // if there were events, do:
-        while (SDL_PollEvent(&event)) {
+        // refreshes event check each frame (includes SDL pump events)
+        while (SDL_PollEvent(&appData.event.event)) {
 
             // ImGui processes the event
-            ImGui_ImplSDL3_ProcessEvent(&event);
+            ImGui_ImplSDL3_ProcessEvent(&appData.event.event);
 
             // if SDL is quit, end the run loop
-            if (event.type == SDL_EVENT_QUIT) 
+            if (appData.event.event.type == SDL_EVENT_QUIT) 
             {
                 appData.program.flag_mainLoop = false;
             }
             // if Esc key is pressed, end the run loop
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) 
+            if (appData.event.event.type == SDL_EVENT_KEY_DOWN && appData.event.event.key.key == SDLK_ESCAPE) 
             {
                 appData.program.flag_mainLoop = false;
             }
 
             // open/close main menu
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_TAB)
+            if (appData.event.event.type == SDL_EVENT_KEY_DOWN && appData.event.event.key.key == SDLK_TAB)
             {
                 // pressing tab flips the bool state, either revealing or hiding it
                 appData.ImGui.show_mainWindow = !appData.ImGui.show_mainWindow;
@@ -56,37 +53,37 @@ void check_events(appData &appData)
             if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
             {
                 // view direction
-                if (event.type == SDL_EVENT_MOUSE_MOTION)
+                if (appData.event.event.type == SDL_EVENT_MOUSE_MOTION)
                 {
                     // relative changes in position from centre each frame monitored
-                    mouseX += event.motion.xrel;
-                    mouseY += event.motion.yrel;
+                    mouseX += appData.event.event.motion.xrel;
+                    mouseY += appData.event.event.motion.yrel;
                     appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
                 }
             }
 
             // movement
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_W)
+            if (appData.event.keyState[SDL_SCANCODE_W])
             {
                 appData.camera.camera1.move_forward(1.0f);
             }
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_S)
+            if (appData.event.keyState[SDL_SCANCODE_S])
             {
                 appData.camera.camera1.move_backward(1.0f);
             }
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_A)
+            if (appData.event.keyState[SDL_SCANCODE_A])
             {
                 appData.camera.camera1.move_left(1.0f);
             }
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_D)
+            if (appData.event.keyState[SDL_SCANCODE_D])
             {
                 appData.camera.camera1.move_right(1.0f);
             }
-             if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_O)
+             if (appData.event.keyState[SDL_SCANCODE_O])
             {
                 appData.camera.camera1.move_up(1.0f);
             }
-            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_P)
+            if (appData.event.keyState[SDL_SCANCODE_P])
             {
                 appData.camera.camera1.move_down(1.0f);
             }

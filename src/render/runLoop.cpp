@@ -23,6 +23,9 @@ namespace render
         // hides cursor, mouse position is constrained to window
         SDL_SetWindowRelativeMouseMode(appData.program.window, true);
 
+        // allows to check if multiple keys are pressed at once, faster refresh
+        appData.event.keyState = SDL_GetKeyboardState(nullptr);
+
         while (appData.program.flag_mainLoop) {
 
             check_events(appData);

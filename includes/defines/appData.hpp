@@ -62,6 +62,15 @@ struct cameraData
   float sense = 0.5f;
 };
 
+struct eventData
+{
+   // checks for events
+  SDL_Event event;
+
+  // allows to check if multiple keys are pressed at once, faster refresh
+  const bool* keyState;
+};
+
 
 // for the whole program
 struct appData
@@ -70,5 +79,6 @@ struct appData
 	windowData window;
 	ImGuiData ImGui;
 	cameraData camera;
+  eventData event;
 };
 

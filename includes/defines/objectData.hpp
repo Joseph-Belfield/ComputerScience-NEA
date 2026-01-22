@@ -48,10 +48,15 @@ public:
     objectData();
 };
 
+class ReferencePlane: public objectData
+{
+public:
+    ReferencePlane();
+};
+
 class Sphere: public objectData
 {
 public:
     // constructor
-	Sphere(const float radius = (0.5f), const GLuint stacks = (18), const GLuint sectors = (9), const glm::vec4 initColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3 initLocation = glm::vec3(1.0f, 0.0f, 0.0f), float initScale = 1.0f);
-    
+	Sphere(const float radius = (0.5f), const GLuint stacks = (18), const GLuint sectors = (9), const glm::vec4 initColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3 initLocation = glm::vec3(1.0f, 0.0f, 0.0f), float initScale = 1.0f);  
 };

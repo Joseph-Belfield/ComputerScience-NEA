@@ -176,3 +176,5 @@ Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, co
 	uniform.uScale = glm::vec3(initScale);
 	uniform.uColor = initColor;
 }
+
+// ReferencePlane::ReferencePlane(float lineGap, )

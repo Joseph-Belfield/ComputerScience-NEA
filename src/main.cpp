@@ -18,7 +18,7 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
-  Sphere sphere(0.5f, 36, 18, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+  Sphere sphere(0.5f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
