@@ -1,6 +1,7 @@
 #include "runLoop.hpp"
 
 #include "defines/appData.hpp"
+#include "defines/objectData.hpp"
 
 
 #include "imgui.h"                              // ImGui main library

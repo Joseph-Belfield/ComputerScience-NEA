@@ -12,16 +12,16 @@
 objectData::objectData() {};
 
 // calculates the coordinates of all points of a sphere object
-std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint stacks, const GLuint sectors)
+std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint stackCount, const GLuint sectorCount)
 {	
 
 	// array of all vertices in sphere (stored as vec3)
 	std::vector<glm::vec3> vertices;
 
-	for (int stackIndex = 0; stackIndex <= stacks; stackIndex++)
+	for (int stackIndex = 0; stackIndex <= stackCount; stackIndex++)
 	{
 		// angle from ahead (range -90 -> 90)
-		float A = (M_PI / 2) - (M_PI *((float)stackIndex / stacks));
+		float A = (M_PI / 2) - (M_PI *((float)stackIndex / stackCount));
 
 		// find the y value. trigf functions use floats rather than doubles.
 		float y = radius * sinf(A);
@@ -29,10 +29,10 @@ std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint 
 		// find the first step of both the x and z value
 		float xz = radius * cosf(A);
 
-		for (int sectorIndex = 0; sectorIndex <= sectors; sectorIndex++)
+		for (int sectorIndex = 0; sectorIndex <= sectorCount; sectorIndex++)
 		{
 			// angle from straight ahead (range 0 -> 360)
-			float B = glm::radians(2 * M_PI * ((float)sectorIndex / sectors));
+			float B = 2 * M_PI * ((float)sectorIndex / sectorCount);
 
 			float x = xz * cosf(B);
 			float z = xz * sinf(B);
@@ -64,16 +64,16 @@ void calculateIndexData(std::vector<GLuint>& indexData, const GLuint stacks, con
 			if (stackIndex != 0)
 			{
 				indexData.push_back(vertex1);
-				indexData.push_back(vertex1 + 1);
 				indexData.push_back(vertex2);
+				indexData.push_back(vertex1 + 1);
 			}
 
 			// if not the last stack, make the second set of triangles
 			if (stackIndex != (stacks - 1))
 			{
 				indexData.push_back(vertex1 + 1);
-				indexData.push_back(vertex2 + 1);
 				indexData.push_back(vertex2);
+				indexData.push_back(vertex2 + 1);
 			}
 		}
 	}
@@ -173,6 +173,6 @@ Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, co
 
 	// set up uniforms
 	uniform.uDisplacement = initLocation;
-	uniform.uScale = glm::vec3(initScale, initScale, initScale);
+	uniform.uScale = glm::vec3(initScale);
 	uniform.uColor = initColor;
 }
