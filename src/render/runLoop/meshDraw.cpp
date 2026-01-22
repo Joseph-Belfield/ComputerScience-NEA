@@ -15,8 +15,6 @@
 // - Applies transformation matrices
 void update_mesh(objectData &objectData)
 {
-    glUseProgram(objectData.mesh.shaderProgram); 
-
     // transformation matrices
     model_matrix(objectData);         // controls position, rotation and scale on world axis
 }

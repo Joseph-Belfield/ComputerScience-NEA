@@ -21,7 +21,7 @@ std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint 
 	for (int stackIndex = 0; stackIndex <= stacks; stackIndex++)
 	{
 		// angle from ahead (range -90 -> 90)
-		float A = glm::radians(90.0f - (180.0f * ((float)stackIndex / stacks)));
+		float A = (M_PI / 2) - (M_PI *((float)stackIndex / stacks));
 
 		// find the y value. trigf functions use floats rather than doubles.
 		float y = radius * sinf(A);
@@ -32,7 +32,7 @@ std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint 
 		for (int sectorIndex = 0; sectorIndex <= sectors; sectorIndex++)
 		{
 			// angle from straight ahead (range 0 -> 360)
-			float B = glm::radians(360.0f * ((float)sectorIndex / sectors));
+			float B = glm::radians(2 * M_PI * ((float)sectorIndex / sectors));
 
 			float x = xz * cosf(B);
 			float z = xz * sinf(B);
@@ -169,4 +169,10 @@ Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, co
 	// cleanup
 	glBindVertexArray(0);                		// unbind currently bound VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);     		// unbind currently bound VBO
+
+
+	// set up uniforms
+	uniform.uDisplacement = initLocation;
+	uniform.uScale = glm::vec3(initScale, initScale, initScale);
+	uniform.uColor = initColor;
 }

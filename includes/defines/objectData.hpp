@@ -25,16 +25,16 @@ public:
 struct uniformData
 {
 	// object's displacement from origin (effectively coords on world axis)
-	glm::vec3 uDisplacement;
+	glm::vec3 uDisplacement = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// object's rotation around each axis
-	glm::vec3 uRotate;
+	glm::vec3 uRotate = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// growth of the object in each direction
-	glm::vec3 uScale;
+	glm::vec3 uScale = glm::vec3(1.0f, 1.0f, 1.0f);
 
     // change in color values of object
-    glm::vec4 uColor;
+    glm::vec4 uColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 };
 
 // for each induvidual object

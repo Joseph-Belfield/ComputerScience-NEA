@@ -43,14 +43,14 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 void model_matrix(objectData &objectData)
 {
     // create and adapt the matrix to adjust the following transformations
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(objectData.uniform.uDisplacement.x, objectData.uniform.uDisplacement.y, objectData.uniform.uDisplacement.z)); // movement
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), objectData.uniform.uDisplacement); // movement
 
     // rotations
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
 
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(objectData.uniform.uScale.x, objectData.uniform.uScale.y, objectData.uniform.uScale.z));
+    modelMatrix = glm::scale(modelMatrix, objectData.uniform.uScale);
 
     GLuint location_modelMatrix = create_uniform_mat4(objectData.mesh.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
 }
