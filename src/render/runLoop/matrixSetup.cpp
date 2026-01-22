@@ -73,8 +73,8 @@ void perspective_matrix(appData &appData)
     // projection matrix (in perspective)
     glm::mat4 perspective = glm::perspective      // create perspective matrix
                             (
-                                glm::radians(45.0f),                                                       // FOV (radians)
-                                (float)(appData.window.window_width / appData.window.window_height),       // aspect ratio
+                                glm::radians(90.0f),                                                       // FOV (radians)
+                                ((float)(appData.window.window_width) / appData.window.window_height),       // aspect ratio
                                 0.1f,                                                                      // near clipping plane (min. distance)
                                 100.0f                                                                     // far clipping plane (max. distance)
                             );         
