@@ -34,6 +34,29 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
     }
 }
 
+GLuint create_uniform_vec4(GLuint shaderProgram, std::string uniformName, glm::vec4 vector)
+{
+    GLuint uniformLocation = glGetUniformLocation(shaderProgram, uniformName.c_str());
+    if (uniformLocation >= 0)
+    {
+        glUniform4f
+        (
+            uniformLocation,
+            vector.x,
+            vector.y,
+            vector.z,
+            vector.w
+        );
+
+        return uniformLocation;
+    }
+    else
+    {
+        std::cout << "Could not find uniform - check spelling!" << std::endl;
+        exit(-1);
+    }
+}
+
 
 // Creates a model matrix.
 // - Objects begin in local space, where they are created on their own set of axis
@@ -53,6 +76,11 @@ void model_matrix(objectData &objectData)
     modelMatrix = glm::scale(modelMatrix, objectData.uniform.uScale);
 
     GLuint location_modelMatrix = create_uniform_mat4(objectData.mesh.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+}
+
+void color_uniform(objectData &objectData)
+{
+    GLuint location_colorUniform = create_uniform_vec4(objectData.mesh.shaderProgram, "uColor", objectData.uniform.uColor);
 }
 
 
@@ -81,3 +109,4 @@ void perspective_matrix(appData &appData)
 
     GLuint location_perspective = create_uniform_mat4(appData.program.shaderProgram, "uPerspective", 1, false, perspective);
 }
+

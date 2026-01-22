@@ -17,12 +17,17 @@ void check_events(appData &appData);
 // Creates a uniform matrix, and returns its GLuint ID.
 GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix);
 
+GLuint create_uniform_vec4(GLuint shaderProgram, std::string uniformName, glm::vec4 vector);
+
 // Creates a model matrix.
 // - Objects begin in local space, where they are created on their own set of axis
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
 void model_matrix(objectData &objectData);
+
+// For handling color uniforms
+void color_uniform(objectData &objectData);
 
 // Creates a view matrix.
 // - The scene is viewed as if through a camera for the viewer.

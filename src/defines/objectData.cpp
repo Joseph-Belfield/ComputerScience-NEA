@@ -47,7 +47,7 @@ std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint 
 	return vertices;
 }
 
-void calculateIndexData(std::vector<GLuint>& indexData, const GLuint stacks, const GLuint sectors)
+void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stacks, const GLuint sectors)
 {	
 	GLint vertex1, vertex2;
 
@@ -87,20 +87,25 @@ void calculateIndexData(std::vector<GLuint>& indexData, const GLuint stacks, con
 // - initColor is the starting color of the object in RGBA values (from 0 -> 1)
 // - initLocation is the starting position of the sphere in world space (X, Y, Z)
 // - initScale is the initial scale of the sphere (defaults to 1)
-Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, const glm::vec4 initColor, glm::vec3 initLocation, float initScale)
+Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec4 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 
-	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices
-	mesh.vertexData.clear();															// esnures vector is clear
+	// clears the index data vecto
+	mesh.vertexData.clear();
+
+	// esnures vector is clear
+	mesh.indexData.clear();
+
+	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices								
 	for (int i = 0; i < vertices.size(); i++)											// fills vertexData
 	{
 		mesh.vertexData.push_back(vertices.at(i).x);
 		mesh.vertexData.push_back(vertices.at(i).y);
 		mesh.vertexData.push_back(vertices.at(i).z);
-		mesh.vertexData.push_back(initColor.x);
-		mesh.vertexData.push_back(initColor.y);
-		mesh.vertexData.push_back(initColor.z);
-		mesh.vertexData.push_back(initColor.a);
+		mesh.vertexData.push_back(0.0f);				// R
+		mesh.vertexData.push_back(0.0f);				// G
+		mesh.vertexData.push_back(0.0f);				// B
+		mesh.vertexData.push_back(0.0f);				// A
 	}
 	
 
@@ -121,11 +126,8 @@ Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, co
 	);
 	
 
-	// clears the index data vector
-	mesh.indexData.clear();
-
 	// fills indexData with correct index information
-	calculateIndexData(mesh.indexData, stacks, sectors);
+	calculateSphereIndexData(mesh.indexData, stacks, sectors);
 
 
 	// set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
@@ -177,4 +179,131 @@ Sphere::Sphere(const float radius, const GLuint stacks, const GLuint sectors, co
 	uniform.uColor = initColor;
 }
 
-// ReferencePlane::ReferencePlane(float lineGap, )
+
+std::vector<glm::vec3> calculateReferencePlaneVertices(const GLuint stripCount)
+{
+	// create vertices
+	std::vector<glm::vec3> vertices;
+	for (int i = 0; i <= stripCount; i++)
+	{
+		for (int j = 0; i <= stripCount; j++)
+		{
+			GLfloat x = ((GLfloat) i) / stripCount;
+			GLfloat z = ((GLfloat) j) / stripCount;
+
+			vertices.push_back(glm::vec3(x, 0, z));
+		}
+	}
+
+	return vertices;
+}
+
+void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLuint stripCount)
+{
+	for (int i = 0; i < stripCount; i++)
+	{
+		for (int j = 0; j < stripCount; j++)
+		{
+			GLuint row1 = j * (stripCount + 1);
+			GLuint row2 = (j + 1) * (stripCount + 1);
+
+			indexData.push_back(row1 + i );
+			indexData.push_back(row1 + i + 1);
+			indexData.push_back(row1 + i + 1);
+			indexData.push_back(row2 + 1);
+			indexData.push_back(row2 + i + 1);
+			indexData.push_back(row2 + 1);
+			indexData.push_back(row2 + 1);
+			indexData.push_back(row1 + i);
+		}
+	}
+}
+
+// Creates a plane of referenece using a grid system
+//
+// - initHeight sets the starting y-value of the plane
+// - initColor sets the starting color of the plane (only rgb -> alpha predetermined)
+// - initScale sets the starting distance between lines
+ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GLfloat initScale, const GLuint stripCount)
+{
+	// ensures data vectors are clear
+	mesh.vertexData.clear();
+	mesh.indexData.clear();
+
+	std::vector<glm::vec3> vertices = calculateReferencePlaneVertices(stripCount);
+	for (int i = 0; i< vertices.size(); i++)
+	{
+		mesh.vertexData.push_back(vertices[i].x);
+		mesh.vertexData.push_back(vertices[i].y);
+		mesh.vertexData.push_back(vertices[i].z);
+		mesh.vertexData.push_back(0.0f);			// R
+		mesh.vertexData.push_back(0.0f);			// G
+		mesh.vertexData.push_back(0.0f);			// B
+		mesh.vertexData.push_back(0.0f);			// A
+	}
+
+	// generate Vertex Array Objects 
+	glGenVertexArrays(1, &(mesh.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
+	glBindVertexArray(mesh.vertexArrayObject);                 // selects the array as current
+
+
+	// generate Vertex Buffer Object for position
+	glGenBuffers(1, &(mesh.vertexBufferObject));               // generates buffer
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);    // sets buffer as current, specifies target
+	glBufferData
+	(
+		GL_ARRAY_BUFFER,                          							// specifies target
+		mesh.vertexData.size() * sizeof(GLfloat),      	 				   	// finds the size (in bytes) of vertex data
+		mesh.vertexData.data(),                       		  			  	// pointer to the array holding the data of the vector
+		GL_STATIC_DRAW                             							// sets intentions with data
+	);
+
+	calculateReferencePlaneIndexData(mesh.indexData, stripCount);
+
+	// set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
+	glGenBuffers(1,&(mesh.indexBufferObject));                         // generate EBO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.indexBufferObject);   // sets buffer type as element buffer
+	glBufferData
+	(
+		GL_ELEMENT_ARRAY_BUFFER,                        		// target
+		mesh.indexData.size() * sizeof(GLuint),    		   		// size
+		mesh.indexData.data(),                        			// data
+		GL_STATIC_DRAW                                			// usage
+	);
+
+	
+	// setup position VAO
+	glEnableVertexAttribArray(0); // enables the 0th attribute - AKA. this is the first VAO
+	glVertexAttribPointer
+	(
+		0,                        // index into vector of VAOs
+		3,                        // pieces of data (per vertex: x, y, z)
+		GL_FLOAT,                 // data type
+		GL_FALSE,                 // normalized?
+		sizeof(GLfloat) * 7,      // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
+	);
+
+
+	// setup color VAO
+	glEnableVertexAttribArray(1); // enables the 1st attribute - AKA. this is the second VAO
+	glVertexAttribPointer
+	(
+		1,                                 // index into vector of VAOs
+		4,                                 // pieces of data (per vertex: r, g, b, a)
+		GL_FLOAT,                          // data type
+		GL_FALSE,                          // normalized?
+		sizeof(GLfloat) * 7,               // stride (byte offset) between firsts of same data (ie: between r1 and r2)       
+		(GLvoid*)(sizeof(GLfloat) * 3)     // pointer for offset - starting position for first of that data type (address)
+	);
+
+	// cleanup
+	glBindVertexArray(0);                		// unbind currently bound VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);     		// unbind currently bound VBO
+
+
+	// set up uniforms
+	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
+	uniform.uScale = glm::vec3(initScale);
+	uniform.uColor = glm::vec4(initColor, 1.0f);
+}
