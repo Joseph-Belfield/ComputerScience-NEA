@@ -102,9 +102,9 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 		mesh.vertexData.push_back(vertices.at(i).x);
 		mesh.vertexData.push_back(vertices.at(i).y);
 		mesh.vertexData.push_back(vertices.at(i).z);
-		mesh.vertexData.push_back(0.0f);				// R
-		mesh.vertexData.push_back(0.0f);				// G
-		mesh.vertexData.push_back(0.0f);				// B
+		mesh.vertexData.push_back(initColor.r);			// R
+		mesh.vertexData.push_back(initColor.g);			// G
+		mesh.vertexData.push_back(initColor.b);			// B
 		mesh.vertexData.push_back(0.0f);				// A
 	}
 	
@@ -176,7 +176,6 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	// set up uniforms
 	uniform.uDisplacement = initLocation;
 	uniform.uScale = glm::vec3(initScale);
-	uniform.uColor = initColor;
 }
 
 
@@ -236,10 +235,10 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 		mesh.vertexData.push_back(vertices[i].x);
 		mesh.vertexData.push_back(vertices[i].y);
 		mesh.vertexData.push_back(vertices[i].z);
-		mesh.vertexData.push_back(0.0f);			// R
-		mesh.vertexData.push_back(0.0f);			// G
-		mesh.vertexData.push_back(0.0f);			// B
-		mesh.vertexData.push_back(0.0f);			// A
+		mesh.vertexData.push_back(initColor.r);			// R
+		mesh.vertexData.push_back(initColor.g);			// G
+		mesh.vertexData.push_back(initColor.b);			// B
+		mesh.vertexData.push_back(0.0f);				// A
 	}
 
 	// generate Vertex Array Objects 
@@ -305,5 +304,4 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	// set up uniforms
 	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
 	uniform.uScale = glm::vec3(initScale);
-	uniform.uColor = glm::vec4(initColor, 1.0f);
 }

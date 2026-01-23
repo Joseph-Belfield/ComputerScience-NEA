@@ -17,9 +17,6 @@ void update_mesh(objectData &objectData)
 {
     // transformation matrices
     model_matrix(objectData);         // controls position, rotation and scale on world axis
-
-    // object color
-    color_uniform(objectData);
 }
 
 // Draws each induvidual mesh
