@@ -45,13 +45,13 @@ namespace render
 
     // *************************************************
 
-    void run_loop(appData &appData, objectData &objectData1);
+    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2);
 
     // *************************************************
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData, objectData &objectData1);
+    void clean_SDL(appData &appData, objectData &objectData1, objectData &objectData2);
 }
 
 namespace error

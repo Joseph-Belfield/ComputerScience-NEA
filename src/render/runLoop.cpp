@@ -14,7 +14,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, objectData &objectData1)
+    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2)
     {
 
         // start program with mouse in centre of window
@@ -41,6 +41,9 @@ namespace render
 
             update_mesh(objectData1);
             draw_mesh(objectData1);
+
+            update_mesh(objectData2);
+            draw_mesh(objectData2);
 
             draw_ImGui(appData);
 
