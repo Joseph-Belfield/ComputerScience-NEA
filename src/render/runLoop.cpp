@@ -14,7 +14,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2)
+    void run_loop(appData &appData, Object &objectData1, Object &objectData2)
     {
 
         // start program with mouse in centre of window

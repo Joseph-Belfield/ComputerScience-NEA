@@ -9,7 +9,12 @@
 #include <math.h>
 
 
-objectData::objectData() {};
+Object::Object() {};
+
+void Object::draw()
+{
+	
+}
 
 // calculates the coordinates of all points of a sphere object
 std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint stackCount, const GLuint sectorCount)

@@ -28,7 +28,7 @@ namespace render
     }
 
 
-    void clean_SDL(appData &appData, objectData &objectData1, objectData &objectData2)
+    void clean_SDL(appData &appData, Object &objectData1, Object &objectData2)
     {
 
     // destroys SDL window

@@ -13,14 +13,14 @@
 // - Sets glViewport
 // - Sets clear color (background color)
 // - Applies transformation matrices
-void update_mesh(objectData &objectData)
+void update_mesh(Object &objectData)
 {
     // transformation matrices
     model_matrix(objectData);         // controls position, rotation and scale on world axis
 }
 
 // Draws each induvidual mesh
-void draw_mesh(objectData &objectData)
+void draw_mesh(Object &objectData)
 {
     // choose VAO and VBO
     glBindVertexArray(objectData.mesh.vertexArrayObject);

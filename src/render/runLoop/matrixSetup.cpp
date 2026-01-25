@@ -40,7 +40,7 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void model_matrix(objectData &objectData)
+void model_matrix(Object &objectData)
 {
     // create and adapt the matrix to adjust the following transformations
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), objectData.uniform.uDisplacement); // movement

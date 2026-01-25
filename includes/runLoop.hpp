@@ -6,7 +6,7 @@
 
 // forward declare classes, structs 
 struct appData;
-struct objectData;
+struct Object;
 
 // *************************************************
 
@@ -23,7 +23,7 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void model_matrix(objectData &objectData);
+void model_matrix(Object &objectData);
 
 // For handling color uniforms
 
@@ -52,10 +52,10 @@ void update_scene(appData &appData);
 // - Sets glViewport
 // - Sets clear color (background color)
 // - Applies transformation matrices
-void update_mesh(objectData &objectData);
+void update_mesh(Object &objectData);
 
 // for drawing OpenGL data
-void draw_mesh(objectData &objectData);
+void draw_mesh(Object &objectData);
 
 // *************************************************
 

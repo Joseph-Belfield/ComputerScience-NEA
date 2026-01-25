@@ -38,23 +38,23 @@ struct uniformData
 };
 
 // for each induvidual object
-class objectData
+class Object
 {
 public:
 	meshData mesh;
 	uniformData uniform;
 
     // constructor
-    objectData();
+    Object();
 };
 
-class ReferencePlane: public objectData
+class ReferencePlane: public Object
 {
 public:
     ReferencePlane(GLfloat initHeight = -5.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 200);
 };
 
-class Sphere: public objectData
+class Sphere: public Object
 {
 public:
     // constructor

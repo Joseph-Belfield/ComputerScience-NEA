@@ -9,7 +9,7 @@
 
 // forward declare classes, structs 
 struct appData;
-struct objectData;
+struct Object;
 
 namespace render
 {
@@ -45,13 +45,13 @@ namespace render
 
     // *************************************************
 
-    void run_loop(appData &appData, objectData &objectData1, objectData &objectData2);
+    void run_loop(appData &appData, Object &Object1, Object &Object2);
 
     // *************************************************
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData, objectData &objectData1, objectData &objectData2);
+    void clean_SDL(appData &appData, Object &Object1, Object &Object2);
 }
 
 namespace error
