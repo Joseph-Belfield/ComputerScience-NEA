@@ -14,7 +14,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, Object &objectData1, Object &objectData2)
+    void run_loop(appData &appData, std::vector<Object*> objects)
     {
 
         // start program with mouse in centre of window
@@ -39,15 +39,9 @@ namespace render
 
             update_scene(appData);
 
-            update_mesh(objectData1);
-            draw_mesh(objectData1);
-
-            update_mesh(objectData2);
-            draw_mesh(objectData2);
+            draw_objects(objects, appData.program.shaderProgram);
 
             draw_ImGui(appData);
-
-            objectData1.uniform.uRotate.y += 0.5f;
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 

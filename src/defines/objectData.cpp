@@ -1,9 +1,12 @@
 #include "defines/objectData.hpp"
+#include "runLoop.hpp"
 
 #include "glad/gl.h"
+
 #include "glm/glm.hpp"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
+#include "glm/gtc/matrix_transform.hpp"    
 
 #include <vector>
 #include <math.h>
@@ -11,9 +14,45 @@
 
 Object::Object() {};
 
-void Object::draw()
+// Creates a model matrix.
+// - Objects begin in local space, where they are created on their own set of axis
+// - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
+//
+// The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
+void Object::model_matrix(GLuint shaderProgram)
 {
-	
+    // create and adapt the matrix to adjust the following transformations
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
+
+    // rotations
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
+    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
+
+    modelMatrix = glm::scale(modelMatrix, this -> uniform.uScale);
+
+    GLuint location_modelMatrix = create_uniform_mat4(shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+}
+
+void Object::draw(GLuint shaderProgram)
+{
+	// sets the objets model matrix
+	this -> model_matrix(shaderProgram);
+
+	// choose VAO and VBO
+    glBindVertexArray(this -> mesh.vertexArrayObject);
+
+    // draw
+    glDrawElements
+    (
+        GL_TRIANGLES,                       // shape
+        this -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        GL_UNSIGNED_INT,                    // data type
+        (void*)0                            // offset into index array for first element (triangle vertex order)
+    );  
+
+    // unbind VAO after shape drawn
+    glBindVertexArray(0);
 }
 
 // calculates the coordinates of all points of a sphere object

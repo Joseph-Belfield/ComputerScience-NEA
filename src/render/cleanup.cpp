@@ -28,19 +28,20 @@ namespace render
     }
 
 
-    void clean_SDL(appData &appData, Object &objectData1, Object &objectData2)
+    void clean_SDL(appData &appData, std::vector<Object*> objects)
     {
 
     // destroys SDL window
     SDL_DestroyWindow(appData.program.window);
     appData.program.window = nullptr;
 
-    // delete OpenGL objects
-    glDeleteBuffers(1, &(objectData1.mesh.vertexBufferObject));
-    glDeleteVertexArrays(1, &(objectData1.mesh.vertexArrayObject));
 
-    glDeleteBuffers(1, &(objectData2.mesh.vertexBufferObject));
-    glDeleteVertexArrays(1, &(objectData2.mesh.vertexArrayObject));
+    // delete OpenGL objects
+    for (int i = 0; i < objects.size(); i++)
+    {
+        glDeleteBuffers(1, &(objects[i] -> mesh.vertexBufferObject));
+        glDeleteVertexArrays(1, &(objects[i] -> mesh.vertexArrayObject));
+    }
 
     // delete graphics pipeline
     glDeleteProgram(appData.program.shaderProgram);

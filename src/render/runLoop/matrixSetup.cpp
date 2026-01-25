@@ -35,26 +35,6 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 }
 
 
-// Creates a model matrix.
-// - Objects begin in local space, where they are created on their own set of axis
-// - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
-//
-// The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void model_matrix(Object &objectData)
-{
-    // create and adapt the matrix to adjust the following transformations
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), objectData.uniform.uDisplacement); // movement
-
-    // rotations
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(objectData.uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
-
-    modelMatrix = glm::scale(modelMatrix, objectData.uniform.uScale);
-
-    GLuint location_modelMatrix = create_uniform_mat4(objectData.mesh.shaderProgram, "uModelMatrix", 1, false, modelMatrix);
-}
-
 
 // Creates a view matrix.
 // - The scene is viewed as if through a camera for the viewer.

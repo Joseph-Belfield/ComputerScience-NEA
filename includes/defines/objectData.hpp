@@ -12,9 +12,6 @@ public:
     GLuint vertexBufferObject = 0;
     GLuint indexBufferObject = 0;
 
-    // shader program used by the object
-    GLuint shaderProgram = 0;
-
     // use of GLfloat as it is more cross-platform (likely won't matter but best practice)
     std::vector<GLfloat> vertexData;   // lives on CPU
 
@@ -46,6 +43,9 @@ public:
 
     // constructor
     Object();
+
+    void model_matrix(GLuint shaderProgram);
+    void draw(GLuint shaderProgram);
 };
 
 class ReferencePlane: public Object

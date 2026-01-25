@@ -6,6 +6,7 @@
 #include "SDL3/SDL.h"
 
 #include <string>
+#include <vector>
 
 // forward declare classes, structs 
 struct appData;
@@ -45,13 +46,13 @@ namespace render
 
     // *************************************************
 
-    void run_loop(appData &appData, Object &Object1, Object &Object2);
+    void run_loop(appData &appData, std::vector<Object*> objects);
 
     // *************************************************
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData, Object &Object1, Object &Object2);
+    void clean_SDL(appData &appData, std::vector<Object*> objects);
 }
 
 namespace error
