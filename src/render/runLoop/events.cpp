@@ -65,27 +65,27 @@ void check_events(appData &appData)
             // movement
             if (appData.event.keyState[SDL_SCANCODE_W])
             {
-                appData.camera.camera1.move_forward(1.0f);
+                appData.camera.camera1.move_forward(appData.camera.speed);
             }
             if (appData.event.keyState[SDL_SCANCODE_S])
             {
-                appData.camera.camera1.move_backward(1.0f);
+                appData.camera.camera1.move_backward(appData.camera.speed);
             }
             if (appData.event.keyState[SDL_SCANCODE_A])
             {
-                appData.camera.camera1.move_left(1.0f);
+                appData.camera.camera1.move_left(appData.camera.speed);
             }
             if (appData.event.keyState[SDL_SCANCODE_D])
             {
-                appData.camera.camera1.move_right(1.0f);
+                appData.camera.camera1.move_right(appData.camera.speed);
             }
              if (appData.event.keyState[SDL_SCANCODE_O])
             {
-                appData.camera.camera1.move_up(1.0f);
+                appData.camera.camera1.move_up(appData.camera.speed);
             }
             if (appData.event.keyState[SDL_SCANCODE_P])
             {
-                appData.camera.camera1.move_down(1.0f);
+                appData.camera.camera1.move_down(appData.camera.speed);
             }
 
         }

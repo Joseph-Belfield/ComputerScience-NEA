@@ -34,6 +34,13 @@ void draw_objects(std::vector<Object*> objects, GLuint shaderProgram)
 {
     for (int i = 0; i < objects.size(); i++)
     {
-        objects[i] -> draw(shaderProgram);
-    }
+        if (objects[i] -> mesh.drawType == 0)
+        {
+            objects[i] -> draw_polygon(shaderProgram);
+        }
+        else if (objects[i] -> mesh.drawType == 1)
+        {
+            objects[i] -> draw_lines(shaderProgram);
+        }
+    }   
 }

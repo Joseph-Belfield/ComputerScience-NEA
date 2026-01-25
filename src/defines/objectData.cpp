@@ -34,7 +34,7 @@ void Object::model_matrix(GLuint shaderProgram)
     GLuint location_modelMatrix = create_uniform_mat4(shaderProgram, "uModelMatrix", 1, false, modelMatrix);
 }
 
-void Object::draw(GLuint shaderProgram)
+void Object::draw_polygon(GLuint shaderProgram)
 {
 	// sets the objets model matrix
 	this -> model_matrix(shaderProgram);
@@ -46,6 +46,27 @@ void Object::draw(GLuint shaderProgram)
     glDrawElements
     (
         GL_TRIANGLES,                       // shape
+        this -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        GL_UNSIGNED_INT,                    // data type
+        (void*)0                            // offset into index array for first element (triangle vertex order)
+    );  
+
+    // unbind VAO after shape drawn
+    glBindVertexArray(0);
+}
+
+void Object::draw_lines(GLuint shaderProgram)
+{
+	// sets the objets model matrix
+	this -> model_matrix(shaderProgram);
+
+	// choose VAO and VBO
+    glBindVertexArray(this -> mesh.vertexArrayObject);
+
+    // draw
+    glDrawElements
+    (
+        GL_LINES,                     	    // shape
         this -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
@@ -227,9 +248,12 @@ std::vector<glm::vec3> calculateReferencePlaneVertices(const GLuint stripCount)
 {
 	// create vertices
 	std::vector<glm::vec3> vertices;
+	// reserves enough space
+	vertices.reserve(stripCount * stripCount);
+
 	for (int i = 0; i <= stripCount; i++)
 	{
-		for (int j = 0; i <= stripCount; j++)
+		for (int j = 0; j <= stripCount; j++)
 		{
 			GLfloat x = ((GLfloat) i) / stripCount;
 			GLfloat z = ((GLfloat) j) / stripCount;
@@ -254,6 +278,7 @@ void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLui
 			indexData.push_back(row1 + i + 1);
 			indexData.push_back(row1 + i + 1);
 			indexData.push_back(row2 + 1);
+
 			indexData.push_back(row2 + i + 1);
 			indexData.push_back(row2 + 1);
 			indexData.push_back(row2 + 1);
@@ -273,8 +298,12 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
 
+	mesh.drawType = 1;
+
 	std::vector<glm::vec3> vertices = calculateReferencePlaneVertices(stripCount);
-	for (int i = 0; i< vertices.size(); i++)
+
+	mesh.vertexData.reserve(stripCount * stripCount);
+	for (int i = 0; i < vertices.size(); i++)
 	{
 		mesh.vertexData.push_back(vertices[i].x);
 		mesh.vertexData.push_back(vertices[i].y);
@@ -301,6 +330,7 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 		GL_STATIC_DRAW                             							// sets intentions with data
 	);
 
+	mesh.indexData.reserve(stripCount * stripCount);
 	calculateReferencePlaneIndexData(mesh.indexData, stripCount);
 
 	// set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
@@ -347,5 +377,5 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 
 	// set up uniforms
 	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
-	uniform.uScale = glm::vec3(initScale);
+	uniform.uScale = glm::vec3(5.0f);
 }

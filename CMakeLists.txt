@@ -20,10 +20,9 @@ add_executable(${PROJECT_NAME}
     src/gl.c
 
     src/defines/objectData.cpp
+    src/defines/camera.cpp
 
     src/render/errorHandling.cpp
-
-    src/render/camera.cpp
 
     src/render/init.cpp
     src/render/graphicsPipeline.cpp

@@ -10,6 +10,7 @@
 int main() 
 {
 
+  // create an object to handle all important data in the program
   appData app;
 
   // 1. initialize libraries
@@ -19,9 +20,9 @@ int main()
   render::init_ImGui(app);
 
   Sphere sphere(0.5f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-  Sphere sphere2(0.5f, 27, 27, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 5.0f), 1.0f);
+  ReferencePlane plane;
 
-  app.window.objects = {&sphere, &sphere2};
+  app.window.objects = {&sphere, &plane};
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);

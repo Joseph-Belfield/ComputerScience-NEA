@@ -4,6 +4,7 @@
 
 #include <vector>
 
+
 class meshData
 {
 public:
@@ -17,6 +18,10 @@ public:
 
     // data about the order vertices should be renderd in
     std::vector<GLuint> indexData;
+
+    // 0 for triangles
+    // 1 for lines
+    GLuint drawType = 0;
 };
 
 struct uniformData
@@ -45,13 +50,14 @@ public:
     Object();
 
     void model_matrix(GLuint shaderProgram);
-    void draw(GLuint shaderProgram);
+    void draw_polygon(GLuint shaderProgram);
+    void draw_lines(GLuint shaderProgram);
 };
 
 class ReferencePlane: public Object
 {
 public:
-    ReferencePlane(GLfloat initHeight = -5.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 200);
+    ReferencePlane(GLfloat initHeight = -1.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 200);
 };
 
 class Sphere: public Object

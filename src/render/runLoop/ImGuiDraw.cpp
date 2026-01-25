@@ -34,7 +34,8 @@ void draw_ImGui(appData &appData)
             appData.ImGui.show_helloWorld = !appData.ImGui.show_helloWorld;
         }
 
-        ImGui::SliderFloat("Sensitivity", &(appData.camera.sense), 0.01f, 1.0f);
+        ImGui::SliderFloat("Sensitivity", &(appData.camera.sense), 0.01f, 2.0f);
+        ImGui::SliderFloat("Speed", &(appData.camera.speed), 0.01f, 5.0f);
 
         ImGui::End();
     }
