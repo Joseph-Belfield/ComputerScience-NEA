@@ -46,13 +46,13 @@ namespace render
 
     // *************************************************
 
-    void run_loop(appData &appData, std::vector<Object*> objects);
+    void run_loop(appData &appData);
 
     // *************************************************
 
     void clean_ImGui();
 
-    void clean_SDL(appData &appData, std::vector<Object*> objects);
+    void clean_SDL(appData &appData);
 }
 
 namespace error

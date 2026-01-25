@@ -28,7 +28,7 @@ namespace render
     }
 
 
-    void clean_SDL(appData &appData, std::vector<Object*> objects)
+    void clean_SDL(appData &appData)
     {
 
     // destroys SDL window
@@ -37,10 +37,10 @@ namespace render
 
 
     // delete OpenGL objects
-    for (int i = 0; i < objects.size(); i++)
+    for (int i = 0; i < appData.window.objects.size(); i++)
     {
-        glDeleteBuffers(1, &(objects[i] -> mesh.vertexBufferObject));
-        glDeleteVertexArrays(1, &(objects[i] -> mesh.vertexArrayObject));
+        glDeleteBuffers(1, &(appData.window.objects[i] -> mesh.vertexBufferObject));
+        glDeleteVertexArrays(1, &(appData.window.objects[i] -> mesh.vertexArrayObject));
     }
 
     // delete graphics pipeline

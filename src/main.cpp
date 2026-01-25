@@ -21,7 +21,7 @@ int main()
   Sphere sphere(0.5f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
   Sphere sphere2(0.5f, 27, 27, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 5.0f), 1.0f);
 
-  std::vector<Object*> objects = {&sphere, &sphere2};
+  app.window.objects = {&sphere, &sphere2};
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
@@ -30,11 +30,11 @@ int main()
   sphere.uniform.uDisplacement.z += 5.0f;
 
   // 4. main run loop
-  render::run_loop(app, objects);
+  render::run_loop(app);
 
   // 5. cleans up
   render::clean_ImGui();
-  render::clean_SDL(app, objects);  
+  render::clean_SDL(app);  
 
   error::check_OpenGL_error();
 

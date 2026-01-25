@@ -14,7 +14,7 @@
 namespace render
 {
   
-    void run_loop(appData &appData, std::vector<Object*> objects)
+    void run_loop(appData &appData)
     {
 
         // start program with mouse in centre of window
@@ -39,7 +39,7 @@ namespace render
 
             update_scene(appData);
 
-            draw_objects(objects, appData.program.shaderProgram);
+            draw_objects(appData.window.objects, appData.program.shaderProgram);
 
             draw_ImGui(appData);
 

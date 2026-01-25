@@ -12,6 +12,7 @@
 
 // forward declarations
 struct SDL_Window;
+class Object;
 
 
 struct programData
@@ -43,6 +44,8 @@ struct windowData
 
   // background color
   ImVec4 clearColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+  std::vector<Object*> objects;
 };
 
 class ImGuiData
