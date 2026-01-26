@@ -61,8 +61,9 @@ void check_events(appData &appData)
                     appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
                 }
             }
+        }
 
-            // movement
+        // movement
             if (appData.event.keyState[SDL_SCANCODE_W])
             {
                 appData.camera.camera1.move_forward(appData.camera.speed);
@@ -87,6 +88,4 @@ void check_events(appData &appData)
             {
                 appData.camera.camera1.move_down(appData.camera.speed);
             }
-
-        }
     }

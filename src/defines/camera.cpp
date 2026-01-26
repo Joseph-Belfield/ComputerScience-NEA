@@ -65,11 +65,11 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
     if ((glm::radians(totalPositionDelta.y) > glm::radians(-90.0f)) && (glm::radians(totalPositionDelta.y) < glm::radians(90.0f)))
     {
         // changes view direction by rotating camera around x-axis
-        viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.y), localAxisX); 
+        viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.y), -localAxisX); 
     }
 
-    // make it so that mouse delta y does not change when the user exceeds 90
-    
+    // TODO make it so that mouse delta y does not change when the user exceeds 90
+
     // sets current mouse position as old mouse position for next frame
     previousMousePosition = currentMousePosition;
 }

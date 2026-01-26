@@ -251,15 +251,18 @@ std::vector<glm::vec3> calculateReferencePlaneVertices(const GLuint stripCount)
 	// reserves enough space
 	vertices.reserve(stripCount * stripCount);
 
-	for (int i = 0; i <= stripCount; i++)
+	for (int x = 0; x <= stripCount; x++)
 	{
-		for (int j = 0; j <= stripCount; j++)
-		{
-			GLfloat x = ((GLfloat) i) / stripCount;
-			GLfloat z = ((GLfloat) j) / stripCount;
+		// for each x value, pushes a coord with the max and min z values
+		vertices.push_back(glm::vec3(x, 0, -stripCount / 2));
+		vertices.push_back(glm::vec3(x, 0, stripCount / 2));
+	}
 
-			vertices.push_back(glm::vec3(x, 0, z));
-		}
+	for (int z = 0; z <= stripCount; z++)
+	{
+		// for each x value, pushes a coord with the max and min z values
+		vertices.push_back(glm::vec3(-stripCount / 2, 0, z));
+		vertices.push_back(glm::vec3(stripCount / 2, 0, z));
 	}
 
 	return vertices;
@@ -267,23 +270,10 @@ std::vector<glm::vec3> calculateReferencePlaneVertices(const GLuint stripCount)
 
 void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLuint stripCount)
 {
-	for (int i = 0; i < stripCount; i++)
+	for (int i = 0; i < (2 * stripCount); i++)
 	{
-		for (int j = 0; j < stripCount; j++)
-		{
-			GLuint row1 = j * (stripCount + 1);
-			GLuint row2 = (j + 1) * (stripCount + 1);
-
-			indexData.push_back(row1 + i );
-			indexData.push_back(row1 + i + 1);
-			indexData.push_back(row1 + i + 1);
-			indexData.push_back(row2 + 1);
-
-			indexData.push_back(row2 + i + 1);
-			indexData.push_back(row2 + 1);
-			indexData.push_back(row2 + 1);
-			indexData.push_back(row1 + i);
-		}
+		indexData.push_back((2 * i));
+		indexData.push_back((2 * i) + 1);
 	}
 }
 
