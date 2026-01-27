@@ -244,8 +244,11 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	// clears the index
 	mesh.vertexData.clear();
 
-	// esnures vector is clear
+	// ensures vector is clear
 	mesh.indexData.clear();
+
+	// sets the drawing mode
+	mesh.mode = TRIANGLE;
 
 	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices								
 	for (int i = 0; i < vertices.size(); i++)											// fills vertexData
@@ -317,7 +320,7 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
 
-	mesh.drawType = 1;
+	mesh.mode = LINE;
 
 	std::vector<glm::vec3> vertices = calculateReferencePlaneVertices(stripCount);
 
@@ -446,7 +449,7 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	mesh.indexData.clear();
 
 	// draws triangles
-	mesh.drawType = 0;
+	mesh.mode = TRIANGLE;
 
 	std::vector<glm::vec3> vertices = calculateCylinderVertices(radius, height, sectorCount);
 	for (int i = 0; i < vertices.size(); i++)
@@ -472,7 +475,110 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	uniform.uScale = initScale;
 }
 
+
+std::vector<glm::vec3> calculateCubeVertices(GLfloat height)
+{
+	std::vector<glm::vec3> vertices;
+	GLfloat h = height / 2;
+
+	vertices.push_back(glm::vec3(h, h, h));		// front top left
+	vertices.push_back(glm::vec3(-h, h, h));	// front top right
+	vertices.push_back(glm::vec3(h, -h, h));	// front bottom left
+	vertices.push_back(glm::vec3(-h, -h, h));	// front bottom right
+
+	vertices.push_back(glm::vec3(h, h, -h));	// back top left
+	vertices.push_back(glm::vec3(-h, h, -h));	// back top right
+	vertices.push_back(glm::vec3(h, -h, -h));	// back bottom left
+	vertices.push_back(glm::vec3(-h, -h, -h));	// back bottom right
+
+	return vertices;
+}
+
+void calculateCubeIndexData(std::vector<GLuint> &indexData)
+{
+	// FRONT
+	indexData.push_back(1);
+	indexData.push_back(0);
+	indexData.push_back(2);
+
+	indexData.push_back(2);
+	indexData.push_back(3);
+	indexData.push_back(1);
+
+	// BACK
+	indexData.push_back(4);
+	indexData.push_back(5);
+	indexData.push_back(7);
+
+	indexData.push_back(7);
+	indexData.push_back(6);
+	indexData.push_back(4);
+
+	// TOP
+	indexData.push_back(5);
+	indexData.push_back(4);
+	indexData.push_back(0);
+
+	indexData.push_back(0);
+	indexData.push_back(1);
+	indexData.push_back(5);
+
+	// BASE
+	indexData.push_back(2);
+	indexData.push_back(3);
+	indexData.push_back(7);
+
+	indexData.push_back(7);
+	indexData.push_back(6);
+	indexData.push_back(2);
+
+	// LEFT
+	indexData.push_back(0);
+	indexData.push_back(4);
+	indexData.push_back(6);
+
+	indexData.push_back(6);
+	indexData.push_back(2);
+	indexData.push_back(0);
+
+	// RIGHT
+	indexData.push_back(3);
+	indexData.push_back(1);
+	indexData.push_back(5);
+
+	indexData.push_back(5);
+	indexData.push_back(7);
+	indexData.push_back(3);
+}
+
 Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocation, glm::vec3 initRotation, glm::vec3 initScale, std::string source_vertexShader, std::string source_fragmentShader)
 {
+	subclass = CUBE;
+	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
 
+	mesh.vertexData.clear();
+	mesh.indexData.clear();
+
+	mesh.mode = TRIANGLE;
+
+	std::vector<glm::vec3> vertices = calculateCubeVertices(height);
+	for (int i = 0; i < 8; i++)
+	{
+		mesh.vertexData.push_back(vertices[i].x);
+		mesh.vertexData.push_back(vertices[i].y);
+		mesh.vertexData.push_back(vertices[i].z);
+		mesh.vertexData.push_back(initColor.r);			// R
+		mesh.vertexData.push_back(initColor.g);			// G
+		mesh.vertexData.push_back(initColor.b);			// B
+	}
+
+	calculateCubeIndexData(mesh.indexData);
+
+	// VAO, VBO, IBO
+	vertex_specification(mesh);
+
+	// set up uniforms
+	uniform.uDisplacement = initLocation;
+	uniform.uRotate = initRotation;
+	uniform.uScale = initScale;
 }

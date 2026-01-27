@@ -8,7 +8,11 @@
 
 #include <vector>
 
-
+enum drawType
+{
+    TRIANGLE,
+    LINE
+};
 
 enum Subclass
 {
@@ -32,9 +36,7 @@ public:
     // data about the order vertices should be renderd in
     std::vector<GLuint> indexData;
 
-    // 0 for triangles
-    // 1 for lines
-    GLuint drawType = 0;
+    drawType mode = TRIANGLE;
 
     Shader objectShader;
 };
