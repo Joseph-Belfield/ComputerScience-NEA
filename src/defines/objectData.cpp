@@ -170,7 +170,7 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 		mesh.vertexData.push_back(initColor.r);			// R
 		mesh.vertexData.push_back(initColor.g);			// G
 		mesh.vertexData.push_back(initColor.b);			// B
-		mesh.vertexData.push_back(0.0f);				// A
+		mesh.vertexData.push_back(1.0f);				// A
 	}
 	
 
@@ -301,7 +301,7 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 		mesh.vertexData.push_back(initColor.r);			// R
 		mesh.vertexData.push_back(initColor.g);			// G
 		mesh.vertexData.push_back(initColor.b);			// B
-		mesh.vertexData.push_back(0.0f);				// A
+		mesh.vertexData.push_back(1.0f);				// A
 	}
 
 	// generate Vertex Array Objects 
@@ -368,4 +368,166 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	// set up uniforms
 	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
 	uniform.uScale = glm::vec3(5.0f);
+}
+
+
+
+
+std::vector<glm::vec3> calculateCylinderVertices(const GLfloat radius, const GLfloat length, const GLuint sectorCount)
+{
+	std::vector<glm::vec3> vertices;
+
+	// UPPER CIRCLE
+
+	// sets the first vertex as the centre of the upper circle 
+	vertices.push_back(glm::vec3(0.0f, length, 0.0f));
+
+	for (int i = 0; i < sectorCount; i++)
+	{
+		GLfloat x = radius * cosf(M_PI * ((GLfloat) i) / sectorCount);
+		GLfloat z = radius * sinf(M_PI * ((GLfloat) i) / sectorCount);
+
+		vertices.push_back(glm::vec3(x, length, z));
+	}
+
+	
+	// LOWER CIRCLE
+	for (int i = 0; i < sectorCount; i++)
+	{
+		GLfloat x = radius * cosf(M_PI * ((GLfloat) i) / sectorCount);
+		GLfloat z = radius * sinf(M_PI * ((GLfloat) i) / sectorCount);
+
+		vertices.push_back(glm::vec3(x, 0, z));
+	}
+
+	vertices.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	return vertices;
+}
+
+
+void calculateCylinderIndexData(std::vector<GLuint> indexData, GLuint sectorCount)
+{
+	// top circle
+	for (int i = 1; i <= sectorCount; i++)
+	{
+		indexData.push_back(1);
+		indexData.push_back(i);
+		indexData.push_back(i + 1);
+	}
+
+	// edges
+	for (int i = 1; i <= sectorCount; i++)
+	{
+		// second triangle of quad
+		indexData.push_back(i);
+		indexData.push_back(i + 1);
+		indexData.push_back(i + sectorCount + 1);
+
+		// second triangle of quad
+		indexData.push_back(i);
+		indexData.push_back(i + sectorCount + 1);
+		indexData.push_back(i + sectorCount);
+	}
+
+	// lower circle
+	for (int i = (1 + sectorCount); i < (1 + (2 * sectorCount)); i++)
+	{
+		indexData.push_back(2 + (2 * sectorCount));
+		indexData.push_back(i);
+		indexData.push_back(i + 1);
+	}
+}
+
+
+// Constructor for a cylinder object.
+//
+// - radius is the radius of the cylinder
+// - length is the length of the cylinder
+// - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
+Cylinder::Cylinder(const GLfloat radius, const GLfloat length, const GLuint sectorCount, const glm::vec4 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const GLfloat initScale)
+{
+	mesh.vertexData.clear();
+	mesh.indexData.clear();
+
+	// draws triangles
+	mesh.drawType = 0;
+
+	std::vector<glm::vec3> vertices = calculateCylinderVertices(radius, length, sectorCount);
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		mesh.vertexData.push_back(vertices[i].x);
+		mesh.vertexData.push_back(vertices[i].y);
+		mesh.vertexData.push_back(vertices[i].z);
+		mesh.vertexData.push_back(initColor.r);			// R
+		mesh.vertexData.push_back(initColor.g);			// G
+		mesh.vertexData.push_back(initColor.b);			// B
+		mesh.vertexData.push_back(1.0f);				// A
+	}
+
+	// generate Vertex Array Objects 
+	glGenVertexArrays(1, &(mesh.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
+	glBindVertexArray(mesh.vertexArrayObject);                 // selects the array as current
+
+
+	// generate Vertex Buffer Object for position
+	glGenBuffers(1, &(mesh.vertexBufferObject));               // generates buffer
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);    // sets buffer as current, specifies target
+	glBufferData
+	(
+		GL_ARRAY_BUFFER,                          							// specifies target
+		mesh.vertexData.size() * sizeof(GLfloat),      	 				   	// finds the size (in bytes) of vertex data
+		mesh.vertexData.data(),                       		  			  	// pointer to the array holding the data of the vector
+		GL_STATIC_DRAW                             							// sets intentions with data
+	);
+
+	// calculate index data for cylinder
+	calculateCylinderIndexData(mesh.indexData, sectorCount);
+
+	// set up Element/Index Buffer Object (EBO / IBO) - holds the index for the order in which vertices are drawn
+	glGenBuffers(1,&(mesh.indexBufferObject));                         // generate EBO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.indexBufferObject);   // sets buffer type as element buffer
+	glBufferData
+	(
+		GL_ELEMENT_ARRAY_BUFFER,                        		// target
+		mesh.indexData.size() * sizeof(GLuint),    		   		// size
+		mesh.indexData.data(),                        			// data
+		GL_STATIC_DRAW                                			// usage
+	);
+
+	
+	// setup position VAO
+	glEnableVertexAttribArray(0); // enables the 0th attribute - AKA. this is the first VAO
+	glVertexAttribPointer
+	(
+		0,                        // index into vector of VAOs
+		3,                        // pieces of data (per vertex: x, y, z)
+		GL_FLOAT,                 // data type
+		GL_FALSE,                 // normalized?
+		sizeof(GLfloat) * 7,      // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
+	);
+
+
+	// setup color VAO
+	glEnableVertexAttribArray(1); // enables the 1st attribute - AKA. this is the second VAO
+	glVertexAttribPointer
+	(
+		1,                                 // index into vector of VAOs
+		4,                                 // pieces of data (per vertex: r, g, b, a)
+		GL_FLOAT,                          // data type
+		GL_FALSE,                          // normalized?
+		sizeof(GLfloat) * 7,               // stride (byte offset) between firsts of same data (ie: between r1 and r2)       
+		(GLvoid*)(sizeof(GLfloat) * 3)     // pointer for offset - starting position for first of that data type (address)
+	);
+
+	// cleanup
+	glBindVertexArray(0);                		// unbind currently bound VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);     		// unbind currently bound VBO
+
+
+	// set up uniforms
+	uniform.uDisplacement = initLocation;
+	uniform.uRotate = initRotation;
+	uniform.uScale = glm::vec3(initScale);
 }
