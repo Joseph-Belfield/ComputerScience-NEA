@@ -63,7 +63,7 @@ struct cameraData
 {
   Camera camera1;
   GLfloat sense = 0.5f;
-  GLfloat speed = 1.0f;
+  GLfloat speed = 0.5f;
 };
 
 struct eventData

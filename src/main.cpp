@@ -21,14 +21,14 @@ int main()
 
   Sphere sphere(0.5f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
   ReferencePlane plane;
+  Cylinder tube;
 
-  app.window.objects = {&sphere, &plane};
+  app.window.objects = {&sphere, &plane, &tube};
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
 
   sphere.uniform.uDisplacement.z -= 5.0f;
-  sphere.uniform.uDisplacement.z += 5.0f;
 
   // 4. main run loop
   render::run_loop(app);
