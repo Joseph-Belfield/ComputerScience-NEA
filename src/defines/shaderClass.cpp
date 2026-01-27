@@ -42,7 +42,6 @@ std::string load_shader_from_file(const std::string& fileName)
 }
 
 
-
 // Compiles veretx and fragment shaders.
 // - Shader type is a (enum) OpenGL flag indicating the type of shader it is (vertex/fragment)
 // - Source is the GLSL code for a shader passed as a C++ string

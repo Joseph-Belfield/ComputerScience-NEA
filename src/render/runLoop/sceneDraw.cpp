@@ -24,7 +24,7 @@ void update_scene(appData &appData)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
     // selects program in use
-    appData.shader[0] -> use();
+    appData.program.defaultShader -> use();
 
     view_matrix(appData);                      // Makes a camera work!
     perspective_matrix(appData);               // creats illusion of perspective (size changes relative to camera)
@@ -35,7 +35,7 @@ void draw_objects(std::vector<Object*> objects, GLuint shaderProgram)
     for (int i = 0; i < objects.size(); i++)
     {
         if (objects[i] -> mesh.drawType == 0)
-        {
+        {   
             objects[i] -> draw_polygon(shaderProgram);
             if (objects[i] -> subclass == SPHERE)
             {

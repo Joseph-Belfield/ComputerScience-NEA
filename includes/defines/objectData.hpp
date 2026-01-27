@@ -4,7 +4,11 @@
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 
+#include "defines/shaderClass.hpp"
+
 #include <vector>
+
+
 
 enum Subclass
 {
@@ -44,7 +48,7 @@ struct uniformData
 	glm::vec3 uScale = glm::vec3(1.0f, 1.0f, 1.0f);
 
     // change in color values of object
-    glm::vec4 uColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec3 uColor = glm::vec3(1.0f, 0.0f, 0.0f);
 };
 
 // for each induvidual object
@@ -55,6 +59,7 @@ public:
 	uniformData uniform;
 
     Subclass subclass;
+    Shader objectShader;
 
     // constructor
     Object();

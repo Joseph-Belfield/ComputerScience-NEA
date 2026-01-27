@@ -41,13 +41,13 @@ namespace render
     {
         glDeleteBuffers(1, &(appData.window.objects[i] -> mesh.vertexBufferObject));
         glDeleteVertexArrays(1, &(appData.window.objects[i] -> mesh.vertexArrayObject));
+
+        glDeleteProgram(appData.window.objects[i] -> objectShader.programID);
     }
 
-    // delete graphics pipeline
-    for (int i = 0; i < appData.shader.size(); i++)
-    {
-        glDeleteProgram(appData.shader[i] -> programID);
-    }
+    // delete default shader
+    glDeleteProgram(appData.program.defaultShader -> programID);
+    
 
     // quits SDL
     SDL_Quit();

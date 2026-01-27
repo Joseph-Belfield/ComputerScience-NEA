@@ -20,16 +20,16 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
+  // 2. initialize the default shader
+  Shader shader("vertexShader.glsl", "fragmentShader.glsl");
+  app.program.defaultShader = &shader;
+
   Sphere sphere(1.0f, 27, 27, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
   Sphere sphere2(1.0f, 27, 27, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
   ReferencePlane plane;
   Cylinder tube(0.5f, 2.0f, 50, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(90.0f, 0.0f, 0.0f), glm::vec3(1.0f, 5.0f, 1.0f));
 
   app.window.objects = {&sphere, &plane, &sphere2, &tube};
-
-  // 2. set up shaders (at least, vertex ands fragment)
-  Shader objectShader("vertexShader.glsl", "fragmentShader.glsl");
-  app.shader.push_back(&objectShader);
 
   // 3. main run loop
   render::run_loop(app);

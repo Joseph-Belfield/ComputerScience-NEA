@@ -10,8 +10,8 @@ public:
     // shader program ID
     GLuint programID;
 
-    // constructor
-    Shader(std::string vertexFilename, std::string fragmentFilename);
+    // constructor with default values
+    Shader(std::string vertexFilename = "vertexShader.glsl", std::string fragmentFilename = "fragmentShader.glsl");
 
     // methods
     void use();     // use the shader

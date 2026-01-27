@@ -30,6 +30,9 @@ struct programData
 
   // sets GLSL version (matches OpenGL version)
   const char* version_glsl = "#version 410";
+
+  // holds a pointer to the default shader object for the program
+  Shader* defaultShader;
 };
 
 struct windowData
@@ -83,7 +86,5 @@ struct appData
 	ImGuiData ImGui;
 	cameraData camera;
   eventData event;
-
-  std::vector<Shader*> shader;
 };
 

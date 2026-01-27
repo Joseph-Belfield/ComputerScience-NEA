@@ -1,5 +1,7 @@
 #include "defines/objectData.hpp"
+
 #include "runLoop.hpp"
+#include "defines/shaderClass.hpp"
 
 #include "glad/gl.h"
 
@@ -36,7 +38,7 @@ void Object::uniform_modelMatrix(GLuint shaderProgram)
 
 void Object::uniform_color(GLuint shaderProgram)
 {
-
+	GLuint location_color = create_uniform_float4(shaderProgram, "uColor", glm::vec4(uniform.uColor, 1.0f));
 }
 
 void Object::draw_polygon(GLuint shaderProgram)

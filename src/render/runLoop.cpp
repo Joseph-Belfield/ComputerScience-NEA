@@ -39,7 +39,7 @@ namespace render
 
             update_scene(appData);
 
-            draw_objects(appData.window.objects, appData.shader[0] -> programID);
+            draw_objects(appData.window.objects, appData.program.defaultShader -> programID);
 
             draw_ImGui(appData);
 
