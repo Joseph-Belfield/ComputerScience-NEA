@@ -77,7 +77,7 @@ namespace render
         int init_GLAD = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
         error::check_GLAD(init_GLAD);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // sets whether gl should fill polygons or render just the lines
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // sets whether gl should fill polygons or render just the lines
 
         SDL_GL_MakeCurrent(appData.program.window, appData.program.context_OpenGL); // sets current window and context
         SDL_GL_SetSwapInterval(1); // Enable vsync

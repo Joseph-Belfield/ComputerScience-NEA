@@ -216,7 +216,7 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 {
 	subclass = SPHERE;
 
-	// clears the index data vecto
+	// clears the index
 	mesh.vertexData.clear();
 
 	// esnures vector is clear
@@ -228,9 +228,9 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 		mesh.vertexData.push_back(vertices.at(i).x);
 		mesh.vertexData.push_back(vertices.at(i).y);
 		mesh.vertexData.push_back(vertices.at(i).z);
-		mesh.vertexData.push_back(initColor.r);			// R
-		mesh.vertexData.push_back(initColor.g);			// G
-		mesh.vertexData.push_back(initColor.b);			// B
+		mesh.vertexData.push_back(initColor.r);				// R
+		mesh.vertexData.push_back(initColor.g);				// G
+		mesh.vertexData.push_back(initColor.b);				// B
 		mesh.vertexData.push_back(initColor.a);				// A
 	}
 
