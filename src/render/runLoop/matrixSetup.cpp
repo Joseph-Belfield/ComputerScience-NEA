@@ -60,7 +60,7 @@ GLuint create_uniform_float4(GLuint shaderProgram, std::string uniformName, glm:
 void view_matrix(appData &appData)
 {
     glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
-    GLuint location_viewMatrix = create_uniform_mat4(appData.program.defaultShader -> programID, "uViewMatrix", 1, false, viewMatrix);
+    GLuint location_viewMatrix = create_uniform_mat4(appData.program.defaultShader.programID, "uViewMatrix", 1, false, viewMatrix);
 }
 
 // Creates a projection matrix.
@@ -77,6 +77,6 @@ void perspective_matrix(appData &appData)
                                 100.0f                                                                     // far clipping plane (max. distance)
                             );         
 
-    GLuint location_perspective = create_uniform_mat4(appData.program.defaultShader -> programID, "uPerspective", 1, false, perspective);
+    GLuint location_perspective = create_uniform_mat4(appData.program.defaultShader.programID, "uPerspective", 1, false, perspective);
 }
 

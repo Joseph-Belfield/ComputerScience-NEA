@@ -21,9 +21,9 @@ Object::Object() {};
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void Object::uniform_modelMatrix(GLuint shaderProgram)
+void Object::uniform_modelMatrix()
 {
-    // create and adapt the matrix to adjust the following transformations
+    // movement
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
 
     // rotations
@@ -31,20 +31,22 @@ void Object::uniform_modelMatrix(GLuint shaderProgram)
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
 
+	// scale
     modelMatrix = glm::scale(modelMatrix, this -> uniform.uScale);
 
-    GLuint location_modelMatrix = create_uniform_mat4(shaderProgram, "uModelMatrix", 1, false, modelMatrix);
+	// location
+    GLuint location_modelMatrix = create_uniform_mat4(mesh.objectShader.programID, "uModelMatrix", 1, false, modelMatrix);
 }
 
-void Object::uniform_color(GLuint shaderProgram)
+void Object::uniform_color()
 {
-	GLuint location_color = create_uniform_float4(shaderProgram, "uColor", glm::vec4(uniform.uColor, 1.0f));
+	GLuint location_color = create_uniform_float4(mesh.objectShader.programID, "uColor", glm::vec4(uniform.uColor, 1.0f));
 }
 
-void Object::draw_polygon(GLuint shaderProgram)
+void Object::draw_polygon()
 {
 	// sets the objets model matrix
-	this -> uniform_modelMatrix(shaderProgram);
+	this -> uniform_modelMatrix();
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);
@@ -62,10 +64,10 @@ void Object::draw_polygon(GLuint shaderProgram)
     glBindVertexArray(0);
 }
 
-void Object::draw_lines(GLuint shaderProgram)
+void Object::draw_lines()
 {
 	// sets the objets model matrix
-	this -> uniform_modelMatrix(shaderProgram);
+	this -> uniform_modelMatrix();
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);
@@ -222,6 +224,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 	subclass = SPHERE;
+	mesh.objectShader.compile_and_link();
 
 	// clears the index
 	mesh.vertexData.clear();
@@ -293,6 +296,7 @@ void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLui
 ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GLfloat initScale, const GLuint stripCount)
 {
 	subclass = REFERENCE_PLANE;
+	mesh.objectShader.compile_and_link();
 
 	// ensures data vectors are clear
 	mesh.vertexData.clear();
@@ -421,6 +425,7 @@ void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCou
 Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
 {
 	subclass = CYLINDER;
+	mesh.objectShader.compile_and_link();
 
 	mesh.vertexData.clear();
 	mesh.indexData.clear();

@@ -32,7 +32,7 @@ struct programData
   const char* version_glsl = "#version 410";
 
   // holds a pointer to the default shader object for the program
-  Shader* defaultShader;
+  Shader defaultShader;
 };
 
 struct windowData

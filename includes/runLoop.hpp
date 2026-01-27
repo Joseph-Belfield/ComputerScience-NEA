@@ -43,7 +43,7 @@ void update_scene(appData &appData);
 
 // *************************************************
 
-void draw_objects(std::vector<Object*> objects, GLuint shaderProgram);
+void draw_objects(std::vector<Object*> objects);
 
 // *************************************************
 

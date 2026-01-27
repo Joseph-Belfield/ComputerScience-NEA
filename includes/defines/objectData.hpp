@@ -34,6 +34,8 @@ public:
     // 0 for triangles
     // 1 for lines
     GLuint drawType = 0;
+
+    Shader objectShader;
 };
 
 struct uniformData
@@ -59,17 +61,17 @@ public:
 	uniformData uniform;
 
     Subclass subclass;
-    Shader objectShader;
 
     // constructor
     Object();
 
     // uniform handling
-    void uniform_modelMatrix(GLuint shaderProgram);
-    void uniform_color(GLuint shaderProgram);
+    void uniform_modelMatrix();
+    void uniform_color();
 
-    void draw_polygon(GLuint shaderProgram);
-    void draw_lines(GLuint shaderProgram);
+    // draw functions
+    void draw_polygon();
+    void draw_lines();
 };
 
 class ReferencePlane: public Object

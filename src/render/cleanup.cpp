@@ -42,11 +42,11 @@ namespace render
         glDeleteBuffers(1, &(appData.window.objects[i] -> mesh.vertexBufferObject));
         glDeleteVertexArrays(1, &(appData.window.objects[i] -> mesh.vertexArrayObject));
 
-        glDeleteProgram(appData.window.objects[i] -> objectShader.programID);
+        glDeleteProgram(appData.window.objects[i] -> mesh.objectShader.programID);
     }
 
     // delete default shader
-    glDeleteProgram(appData.program.defaultShader -> programID);
+    glDeleteProgram(appData.program.defaultShader.programID);
     
 
     // quits SDL

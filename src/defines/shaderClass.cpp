@@ -22,8 +22,6 @@ std::string load_shader_from_file(const std::string& fileName)
     // if the file is opened successfully
     if (shaderFile.is_open())
     {
-        std::cout << "Shader file opened!" << std::endl;
-
         while(std::getline(shaderFile, line))   // go through each line of the file
         {
             result += line + "\n";              // concatinate new line into result string
@@ -91,15 +89,24 @@ std::string add_shaderFilepath(std::string fileName)
 
 Shader::Shader(std::string vertexFilename, std::string fragmentFilename)
 {
-    programID = glCreateProgram(); // creates an empty program to be filled with shaders
-
     // finds the full filepath from the file names for the shaders
     std::string vertexFilepath = add_shaderFilepath(vertexFilename);
     std::string fragmentFilepath = add_shaderFilepath(fragmentFilename);
 
     // gets the shader code from their files as strings
-    std::string source_vertexShader = load_shader_from_file(vertexFilepath);
-    std::string source_fragmentShader = load_shader_from_file(fragmentFilepath);
+    source_vertexShader = load_shader_from_file(vertexFilepath);
+    source_fragmentShader = load_shader_from_file(fragmentFilepath);
+}
+
+// Sets the shader object as the shader program in use.
+void Shader::use()
+{
+    glUseProgram(programID);
+}
+
+void Shader::compile_and_link()
+{
+    programID = glCreateProgram(); // creates an empty program to be filled with shaders
 
     // compile shaders
     GLuint vertexShader = compile_shader(GL_VERTEX_SHADER, source_vertexShader);
@@ -112,11 +119,4 @@ Shader::Shader(std::string vertexFilename, std::string fragmentFilename)
 
     // validate program - check for errors
     error::check_shaderProgram(programID);
-   
-}
-
-// Sets the shader object as the shader program in use.
-void Shader::use()
-{
-    glUseProgram(programID);
 }
