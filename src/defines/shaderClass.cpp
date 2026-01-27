@@ -104,6 +104,37 @@ void Shader::use()
     glUseProgram(programID);
 }
 
+// Changes the source of the vertex shader. Only works before shader compilation!
+void Shader::set_vertexSource(std::string vertexFilename)
+{
+    if (programID == 0)
+    {
+        std::string vertexFilepath = add_shaderFilepath(vertexFilename);
+        source_vertexShader = load_shader_from_file(vertexFilepath);
+    }
+    else
+    {
+        std::cout << "Vertex shader cannot be changed - shader program already compiled!" << std::endl;
+        exit(-1);
+    }
+}
+
+// Changes the source of the fragment shader. Only works before shader compilation!
+void Shader::set_fragmentSource(std::string fragmentFilename)
+{
+    if (programID == 0)
+    {
+        std::string fragmentFilepath = add_shaderFilepath(fragmentFilename);
+        source_fragmentShader = load_shader_from_file(fragmentFilepath);
+    }
+    else
+    {
+        std::cout << "Fragment shader cannot be changed - shader program already compiled!" << std::endl;
+        exit(-1);
+    }
+}
+
+// Compile and links current vertex and fragment shaders to a shader program.
 void Shader::compile_and_link()
 {
     programID = glCreateProgram(); // creates an empty program to be filled with shaders
