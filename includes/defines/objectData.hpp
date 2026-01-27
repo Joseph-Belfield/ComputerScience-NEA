@@ -65,19 +65,19 @@ public:
 class ReferencePlane: public Object
 {
 public:
-    ReferencePlane(GLfloat initHeight = -1.0f, glm::vec4 initColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 20);
+    ReferencePlane(GLfloat initHeight = -1.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 20);
 };
 
 class Sphere: public Object
 {
 public:
     // constructor
-	Sphere(const GLfloat radius = (0.5f), const GLuint stacks = (18), const GLuint sectors = (9), const glm::vec4 initColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), const glm::vec3 initLocation = glm::vec3(1.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f);  
+	Sphere(const GLfloat radius = (0.5f), const GLuint stacks = (18), const GLuint sectors = (9), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(1.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f);  
 };
 
 class Cylinder: public Object
 {
 public:
     // constructor 
-    Cylinder(const GLfloat radius = (0.5f), const GLfloat height = (2.0f), const GLuint sectors = (10), const glm::vec4 initColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 1.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f));
+    Cylinder(const GLfloat radius = (0.5f), const GLfloat height = (2.0f), const GLuint sectors = (10), const glm::vec3 initColor = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 1.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f));
 };

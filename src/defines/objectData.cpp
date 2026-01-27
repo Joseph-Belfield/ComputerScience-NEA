@@ -114,7 +114,7 @@ void vertex_specification(meshData &mesh)
 		3,                        // pieces of data (per vertex: x, y, z)
 		GL_FLOAT,                 // data type
 		GL_FALSE,                 // normalized?
-		sizeof(GLfloat) * 7,      // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+		sizeof(GLfloat) * 6,      // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
 		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
 	);
 
@@ -127,7 +127,7 @@ void vertex_specification(meshData &mesh)
 		4,                                 // pieces of data (per vertex: r, g, b, a)
 		GL_FLOAT,                          // data type
 		GL_FALSE,                          // normalized?
-		sizeof(GLfloat) * 7,               // stride (byte offset) between firsts of same data (ie: between r1 and r2)       
+		sizeof(GLfloat) * 6,               // stride (byte offset) between firsts of same data (ie: between r1 and r2)       
 		(GLvoid*)(sizeof(GLfloat) * 3)     // pointer for offset - starting position for first of that data type (address)
 	);
 
@@ -212,7 +212,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 // - initColor is the starting color of the object in RGBA values (from 0 -> 1)
 // - initLocation is the starting position of the sphere in world space (X, Y, Z)
 // - initScale is the initial scale of the sphere (defaults to 1)
-Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec4 initColor, glm::vec3 initLocation, GLfloat initScale)
+Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 	subclass = SPHERE;
 
@@ -231,7 +231,6 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 		mesh.vertexData.push_back(initColor.r);				// R
 		mesh.vertexData.push_back(initColor.g);				// G
 		mesh.vertexData.push_back(initColor.b);				// B
-		mesh.vertexData.push_back(initColor.a);				// A
 	}
 
 	// fills indexData with correct index information
@@ -284,7 +283,7 @@ void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLui
 // - initHeight sets the starting y-value of the plane
 // - initColor sets the starting color of the plane (only rgb -> alpha predetermined)
 // - initScale sets the starting distance between lines
-ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec4 initColor, GLfloat initScale, const GLuint stripCount)
+ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GLfloat initScale, const GLuint stripCount)
 {
 	subclass = REFERENCE_PLANE;
 
@@ -305,7 +304,6 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec4 initColor, GL
 		mesh.vertexData.push_back(initColor.r);			// R
 		mesh.vertexData.push_back(initColor.g);			// G
 		mesh.vertexData.push_back(initColor.b);			// B
-		mesh.vertexData.push_back(initColor.a);			// A
 	}
 
 	calculateReferencePlaneIndexData(mesh.indexData, stripCount);
@@ -413,7 +411,7 @@ void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCou
 // - radius is the radius of the cylinder
 // - length is the length of the cylinder
 // - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
-Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec4 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
+Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
 {
 	subclass = CYLINDER;
 
@@ -432,7 +430,6 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 		mesh.vertexData.push_back(initColor.r);			// R
 		mesh.vertexData.push_back(initColor.g);			// G
 		mesh.vertexData.push_back(initColor.b);			// B
-		mesh.vertexData.push_back(initColor.a);				// A
 	}
 
 

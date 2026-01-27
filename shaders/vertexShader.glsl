@@ -1,13 +1,13 @@
 #version 410 core
 
 layout(location=0) in vec3 position;
-layout(location=1) in vec4 vertexColors;
+layout(location=1) in vec3 vertexColors;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uPerspective;
 
-out vec4 v_vertexColors;
+out vec3 v_vertexColors;
 
 void main()
 {
