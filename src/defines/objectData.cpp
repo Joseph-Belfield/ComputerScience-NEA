@@ -405,10 +405,10 @@ std::vector<glm::vec3> calculateCylinderVertices(const GLfloat radius, const GLf
 }
 
 
-void calculateCylinderIndexData(std::vector<GLuint> indexData, GLuint sectorCount)
+void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCount)
 {
 	GLuint baseCentre = 0;
-	GLuint topCentre = sectorCount + 1;
+	GLuint topCentre = sectorCount + 2;
 
 	// i is the iterator, k is the value
 	for (int i = 0, k = 1; i < sectorCount; i++, k++)
@@ -436,6 +436,7 @@ void calculateCylinderIndexData(std::vector<GLuint> indexData, GLuint sectorCoun
 		}
 		else	// wrap around layer
 		{
+			
 			// BASE
 			indexData.push_back(baseCentre);
 			indexData.push_back(sectorCount);
@@ -454,6 +455,7 @@ void calculateCylinderIndexData(std::vector<GLuint> indexData, GLuint sectorCoun
 			indexData.push_back(topCentre + 1);
 			indexData.push_back(topCentre + sectorCount);
 			indexData.push_back(baseCentre + sectorCount);
+
 		}
 	}
 }
@@ -464,7 +466,7 @@ void calculateCylinderIndexData(std::vector<GLuint> indexData, GLuint sectorCoun
 // - radius is the radius of the cylinder
 // - length is the length of the cylinder
 // - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
-Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec4 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const GLfloat initScale)
+Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec4 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
 {
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
@@ -548,5 +550,5 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	// set up uniforms
 	uniform.uDisplacement = initLocation;
 	uniform.uRotate = initRotation;
-	uniform.uScale = glm::vec3(initScale);
+	uniform.uScale = initScale;
 }

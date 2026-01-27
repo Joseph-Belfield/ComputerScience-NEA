@@ -19,16 +19,14 @@ int main()
   render::init_OpenGL(app);
   render::init_ImGui(app);
 
-  Sphere sphere(0.5f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+  Sphere sphere(1.0f, 27, 27, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
   ReferencePlane plane;
-  Cylinder tube;
+  Cylinder tube(0.5f, 2.0f, 50, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 
   app.window.objects = {&sphere, &plane, &tube};
 
   // 3. set up shaders (at least, vertex ands fragment)
   render::create_graphics_pipeline(app);
-
-  sphere.uniform.uDisplacement.z -= 5.0f;
 
   // 4. main run loop
   render::run_loop(app);
