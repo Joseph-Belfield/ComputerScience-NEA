@@ -4,6 +4,12 @@
 
 #include <vector>
 
+enum Subclass
+{
+    SPHERE,
+    REFERENCE_PLANE,
+    CYLINDER
+};
 
 class meshData
 {
@@ -45,6 +51,8 @@ class Object
 public:
 	meshData mesh;
 	uniformData uniform;
+
+    Subclass subclass;
 
     // constructor
     Object();

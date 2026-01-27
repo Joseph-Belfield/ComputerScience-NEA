@@ -37,6 +37,10 @@ void draw_objects(std::vector<Object*> objects, GLuint shaderProgram)
         if (objects[i] -> mesh.drawType == 0)
         {
             objects[i] -> draw_polygon(shaderProgram);
+            if (objects[i] -> subclass == SPHERE)
+            {
+                objects[i] -> uniform.uRotate.y += 0.5f;
+            }
         }
         else if (objects[i] -> mesh.drawType == 1)
         {

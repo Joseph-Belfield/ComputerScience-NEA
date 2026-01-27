@@ -154,6 +154,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 // - initScale is the initial scale of the sphere (defaults to 1)
 Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec4 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
+	subclass = SPHERE;
 
 	// clears the index data vecto
 	mesh.vertexData.clear();
@@ -284,6 +285,8 @@ void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLui
 // - initScale sets the starting distance between lines
 ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec4 initColor, GLfloat initScale, const GLuint stripCount)
 {
+	subclass = REFERENCE_PLANE;
+
 	// ensures data vectors are clear
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
@@ -468,6 +471,8 @@ void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCou
 // - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
 Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec4 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
 {
+	subclass = CYLINDER;
+
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
 
