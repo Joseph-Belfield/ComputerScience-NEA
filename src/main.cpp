@@ -1,6 +1,8 @@
 #include "render.hpp"
 #include "defines/appData.hpp"
 #include "defines/objectData.hpp"
+#include "defines/shaderClass.hpp"
+#include "errorChecking.hpp"
 
 #include <iostream>
 #include <filesystem>
@@ -9,7 +11,6 @@
 
 int main() 
 {
-
   // create an object to handle all important data in the program
   appData app;
 
@@ -26,13 +27,14 @@ int main()
 
   app.window.objects = {&sphere, &plane, &sphere2, &tube};
 
-  // 3. set up shaders (at least, vertex ands fragment)
-  render::create_graphics_pipeline(app);
+  // 2. set up shaders (at least, vertex ands fragment)
+  Shader objectShader("vertexShader.glsl", "fragmentShader.glsl");
+  app.shader.push_back(&objectShader);
 
-  // 4. main run loop
+  // 3. main run loop
   render::run_loop(app);
 
-  // 5. cleans up
+  // 4. cleans up
   render::clean_ImGui();
   render::clean_SDL(app);  
 

@@ -21,11 +21,11 @@ add_executable(${PROJECT_NAME}
 
     src/defines/objectData.cpp
     src/defines/camera.cpp
+    src/defines/shaderClass.cpp
 
-    src/render/errorHandling.cpp
+    src/render/errorChecking.cpp
 
     src/render/init.cpp
-    src/render/graphicsPipeline.cpp
 
     src/render/runLoop/events.cpp
     src/render/runLoop/matrixSetup.cpp

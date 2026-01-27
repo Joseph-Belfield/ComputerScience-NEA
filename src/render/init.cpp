@@ -1,5 +1,6 @@
 #include "render.hpp"
 #include "defines/appData.hpp"
+#include "errorChecking.hpp"
 
 // *************************************************
 
@@ -112,7 +113,7 @@ namespace render
         if (appData.window.mainScale > 1.0f)
         {
             style.ScaleAllSizes(appData.window.mainScale); 
-        /*  Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
+         /* Bake a fixed style scale. (until we have a solution for dynamic style scaling, 
             changing this requires resetting Style + calling this again) makes this unnecessary. 
             We leave both here for documentation purpose) */
         }

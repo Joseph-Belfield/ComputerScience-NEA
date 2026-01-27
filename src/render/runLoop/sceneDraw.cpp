@@ -24,7 +24,7 @@ void update_scene(appData &appData)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // clears the OpenGL color and depth buffers
 
     // selects program in use
-    glUseProgram(appData.program.shaderProgram); 
+    appData.shader[0] -> use();
 
     view_matrix(appData);                      // Makes a camera work!
     perspective_matrix(appData);               // creats illusion of perspective (size changes relative to camera)

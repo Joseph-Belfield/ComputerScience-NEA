@@ -1,3 +1,5 @@
+#pragma once
+
 #include "glad/gl.h"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
@@ -57,7 +59,10 @@ public:
     // constructor
     Object();
 
-    void model_matrix(GLuint shaderProgram);
+    // uniform handling
+    void uniform_modelMatrix(GLuint shaderProgram);
+    void uniform_color(GLuint shaderProgram);
+
     void draw_polygon(GLuint shaderProgram);
     void draw_lines(GLuint shaderProgram);
 };

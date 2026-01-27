@@ -19,7 +19,7 @@ Object::Object() {};
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void Object::model_matrix(GLuint shaderProgram)
+void Object::uniform_modelMatrix(GLuint shaderProgram)
 {
     // create and adapt the matrix to adjust the following transformations
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
@@ -34,10 +34,15 @@ void Object::model_matrix(GLuint shaderProgram)
     GLuint location_modelMatrix = create_uniform_mat4(shaderProgram, "uModelMatrix", 1, false, modelMatrix);
 }
 
+void Object::uniform_color(GLuint shaderProgram)
+{
+
+}
+
 void Object::draw_polygon(GLuint shaderProgram)
 {
 	// sets the objets model matrix
-	this -> model_matrix(shaderProgram);
+	this -> uniform_modelMatrix(shaderProgram);
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);
@@ -58,7 +63,7 @@ void Object::draw_polygon(GLuint shaderProgram)
 void Object::draw_lines(GLuint shaderProgram)
 {
 	// sets the objets model matrix
-	this -> model_matrix(shaderProgram);
+	this -> uniform_modelMatrix(shaderProgram);
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);

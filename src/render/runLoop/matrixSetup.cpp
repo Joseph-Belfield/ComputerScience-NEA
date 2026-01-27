@@ -32,6 +32,24 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
         std::cout << "Could not find uniform - check spelling!" << std::endl;
         exit(-1);
     }
+
+    return uniformLocation;
+}
+
+GLuint create_uniform_float4(GLuint shaderProgram, std::string uniformName, glm::vec4 vec4)
+{
+    GLuint uniformLocation = glGetUniformLocation(shaderProgram, uniformName.c_str());
+    if (uniformLocation >= 0)
+    {
+        glUniform4f(uniformLocation, vec4.x, vec4.y, vec4.z, vec4.w);
+    }
+    else
+    {
+        std::cout << "Could not find uniform - check spelling!" << std::endl;
+        exit(-1);
+    }
+
+    return uniformLocation;
 }
 
 
@@ -42,7 +60,7 @@ GLuint create_uniform_mat4(GLuint shaderProgram, std::string uniformName, int am
 void view_matrix(appData &appData)
 {
     glm::mat4 viewMatrix = appData.camera.camera1.get_view_matrix();
-    GLuint location_viewMatrix = create_uniform_mat4(appData.program.shaderProgram, "uViewMatrix", 1, false, viewMatrix);
+    GLuint location_viewMatrix = create_uniform_mat4(appData.shader[0] -> programID, "uViewMatrix", 1, false, viewMatrix);
 }
 
 // Creates a projection matrix.
@@ -59,6 +77,6 @@ void perspective_matrix(appData &appData)
                                 100.0f                                                                     // far clipping plane (max. distance)
                             );         
 
-    GLuint location_perspective = create_uniform_mat4(appData.program.shaderProgram, "uPerspective", 1, false, perspective);
+    GLuint location_perspective = create_uniform_mat4(appData.shader[0] -> programID, "uPerspective", 1, false, perspective);
 }
 

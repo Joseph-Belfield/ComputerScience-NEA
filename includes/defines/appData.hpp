@@ -7,7 +7,9 @@
 #include "glm/vec3.hpp"
 
 #include "defines/camera.hpp"
+#include "defines/shaderClass.hpp"
 
+#include <string>
 #include <vector>
 
 // forward declarations
@@ -28,9 +30,6 @@ struct programData
 
   // sets GLSL version (matches OpenGL version)
   const char* version_glsl = "#version 410";
-
-  // unique ID for the graphics pipeline
-  GLuint shaderProgram = 0;
 };
 
 struct windowData
@@ -68,7 +67,7 @@ struct cameraData
 
 struct eventData
 {
-   // checks for events
+  // checks for events
   SDL_Event event;
 
   // allows to check if multiple keys are pressed at once, faster refresh
@@ -84,5 +83,7 @@ struct appData
 	ImGuiData ImGui;
 	cameraData camera;
   eventData event;
+
+  std::vector<Shader*> shader;
 };
 

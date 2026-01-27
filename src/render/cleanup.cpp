@@ -44,7 +44,10 @@ namespace render
     }
 
     // delete graphics pipeline
-    glDeleteProgram(appData.program.shaderProgram);
+    for (int i = 0; i < appData.shader.size(); i++)
+    {
+        glDeleteProgram(appData.shader[i] -> programID);
+    }
 
     // quits SDL
     SDL_Quit();
