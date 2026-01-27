@@ -14,7 +14,7 @@ public:
     std::string source_fragmentShader;
 
     // constructor with default values
-    Shader(std::string vertexFilename = "vertexShader.glsl", std::string fragmentFilename = "fragmentShader.glsl");
+    Shader(std::string vertexFilename = "default.vs", std::string fragmentFilename = "default.fs");
 
     // methods
     void use();     // use the shader

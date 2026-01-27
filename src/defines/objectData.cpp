@@ -85,6 +85,21 @@ void Object::draw_lines()
     glBindVertexArray(0);
 }
 
+void init_shaders(Shader& shaderObject,std::string source_vertexShader, std::string source_fragmentShader)
+{
+	if (source_vertexShader != "NULL")
+	{
+		shaderObject.set_vertexSource(source_vertexShader);
+	}
+
+	if (source_fragmentShader != "NULL")
+	{
+		shaderObject.set_fragmentSource(source_fragmentShader);
+	}
+
+	shaderObject.compile_and_link();
+}
+
 void vertex_specification(meshData &mesh)
 {
 	// generate Vertex Array Objects 
@@ -221,10 +236,10 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 // - initColor is the starting color of the object in RGBA values (from 0 -> 1)
 // - initLocation is the starting position of the sphere in world space (X, Y, Z)
 // - initScale is the initial scale of the sphere (defaults to 1)
-Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
+Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale, std::string source_vertexShader, std::string source_fragmentShader)
 {
 	subclass = SPHERE;
-	mesh.objectShader.compile_and_link();
+	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
 
 	// clears the index
 	mesh.vertexData.clear();
@@ -293,10 +308,10 @@ void calculateReferencePlaneIndexData(std::vector<GLuint>& indexData, const GLui
 // - initHeight sets the starting y-value of the plane
 // - initColor sets the starting color of the plane (only rgb -> alpha predetermined)
 // - initScale sets the starting distance between lines
-ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GLfloat initScale, const GLuint stripCount)
+ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GLfloat initScale, const GLuint stripCount, std::string source_vertexShader, std::string source_fragmentShader)
 {
 	subclass = REFERENCE_PLANE;
-	mesh.objectShader.compile_and_link();
+	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
 
 	// ensures data vectors are clear
 	mesh.vertexData.clear();
@@ -422,10 +437,10 @@ void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCou
 // - radius is the radius of the cylinder
 // - length is the length of the cylinder
 // - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
-Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
+Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale, std::string source_vertexShader, std::string source_fragmentShader)
 {
 	subclass = CYLINDER;
-	mesh.objectShader.compile_and_link();
+	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
 
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
@@ -455,4 +470,9 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	uniform.uDisplacement = initLocation;
 	uniform.uRotate = initRotation;
 	uniform.uScale = initScale;
+}
+
+Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocation, glm::vec3 initRotation, glm::vec3 initScale, std::string source_vertexShader, std::string source_fragmentShader)
+{
+
 }
