@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glad/gl.h"
+#include "glm/mat4x4.hpp"
 
 #include <string>
 
@@ -14,7 +15,7 @@ public:
     std::string source_fragmentShader;
 
     // constructor with default values
-    Shader(std::string vertexFilename = "default.vs", std::string fragmentFilename = "default.fs");
+    Shader(std::string vertexFilename = "version0.vs", std::string fragmentFilename = "version0.fs");
 
     // methods
     void use();     // use the shader
@@ -23,4 +24,8 @@ public:
     void set_fragmentSource(std::string fragmentFilename);      // change the source of the fragment
 
     void compile_and_link();    // compile and link shader programs to shader program
+
+    void set_float1(const std::string uniformName, float x);
+    void set_float4(const std::string uniformName, float x, float y, float z, float w);
+    void set_mat4(const std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix);
 };

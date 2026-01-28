@@ -21,7 +21,7 @@ Object::Object() {};
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-void Object::uniform_modelMatrix()
+glm::mat4 Object::update_modelMatrix()
 {
     // movement
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
@@ -34,19 +34,20 @@ void Object::uniform_modelMatrix()
 	// scale
     modelMatrix = glm::scale(modelMatrix, this -> uniform.uScale);
 
-	// location
-    GLuint location_modelMatrix = create_uniform_mat4(mesh.objectShader.programID, "uModelMatrix", 1, false, modelMatrix);
-}
-
-void Object::uniform_color()
-{
-	GLuint location_color = create_uniform_float4(mesh.objectShader.programID, "uColor", glm::vec4(uniform.uColor, 1.0f));
+	return modelMatrix;
 }
 
 void Object::draw_polygon()
 {
+	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
+	// mesh.objectShader.use();
+
 	// sets the objets model matrix
-	this -> uniform_modelMatrix();
+	glm::mat4 modelMatrix = update_modelMatrix();
+	mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
+
+	// change the objects opacity
+	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);
@@ -55,7 +56,7 @@ void Object::draw_polygon()
     glDrawElements
     (
         GL_TRIANGLES,                       // shape
-        this -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
@@ -66,8 +67,15 @@ void Object::draw_polygon()
 
 void Object::draw_lines()
 {
+	// using this object's shader
+	// mesh.objectShader.use();
+
 	// sets the objets model matrix
-	this -> uniform_modelMatrix();
+	glm::mat4 modelMatrix = update_modelMatrix();
+	mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
+
+	// change the objects opacity
+	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
 
 	// choose VAO and VBO
     glBindVertexArray(this -> mesh.vertexArrayObject);
@@ -76,7 +84,7 @@ void Object::draw_lines()
     glDrawElements
     (
         GL_LINES,                     	    // shape
-        this -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  

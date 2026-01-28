@@ -18,7 +18,6 @@ void update_scene(appData &appData)
     // set size of window for OpenGL
     glViewport(0, 0, (int)(appData.window.window_width), (int)(appData.window.window_height));
 
-
     // background color
     glClearColor(appData.window.clearColor.x, appData.window.clearColor.y, appData.window.clearColor.z, appData.window.clearColor.w);                   // sets background color
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     // clears the OpenGL color and depth buffers
@@ -26,8 +25,8 @@ void update_scene(appData &appData)
     // selects program in use
     appData.program.defaultShader.use();
 
-    view_matrix(appData);                      // Makes a camera work!
-    perspective_matrix(appData);               // creats illusion of perspective (size changes relative to camera)
+    update_viewMatrix(appData);                      // Makes a camera work!
+    update_perspectiveMatrix(appData);               // creats illusion of perspective (size changes relative to camera)
 }
 
 void draw_objects(std::vector<Object*> objects)

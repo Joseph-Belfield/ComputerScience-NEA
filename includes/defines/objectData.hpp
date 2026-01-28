@@ -54,6 +54,8 @@ struct uniformData
 
     // change in color values of object
     glm::vec3 uColor = glm::vec3(1.0f, 0.0f, 0.0f);
+
+    float uOpacity = 1.0f;
 };
 
 // for each induvidual object
@@ -69,8 +71,7 @@ public:
     Object();
 
     // uniform handling
-    void uniform_modelMatrix();
-    void uniform_color();
+    glm::mat4 update_modelMatrix();
 
     // draw functions
     void draw_polygon();

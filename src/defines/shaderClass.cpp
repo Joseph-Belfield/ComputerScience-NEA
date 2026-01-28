@@ -2,6 +2,8 @@
 #include "errorChecking.hpp"
 
 #include "glad/gl.h"
+#include "glm/mat4x4.hpp"
+
 
 #include <string>
 #include <iostream>
@@ -150,4 +152,21 @@ void Shader::compile_and_link()
 
     // validate program - check for errors
     error::check_shaderProgram(programID);
+}
+
+void Shader::set_float1(const std::string uniformName, float x)
+{
+    glUniform1f(glGetUniformLocation(programID, uniformName.c_str()), x);
+}
+
+// creates a 4-float vector uniform for the shader program
+void Shader::set_float4(const std::string uniformName, float x, float y, float z, float w)
+{   
+    glUniform4f(glGetUniformLocation(programID, uniformName.c_str()), x, y, z, w);
+}
+
+// creates a 4x4 float matrix uniform for the shader program
+void Shader::set_mat4(const std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix)
+{
+    glUniformMatrix4fv(glGetUniformLocation(programID, uniformName.c_str()), amount, enableTranspose, &matrix[0][0]);
 }
