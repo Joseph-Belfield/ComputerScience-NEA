@@ -37,6 +37,8 @@ namespace render
 
             // ********************** DO STUFF HERE **********************            
 
+            appData.camera.camera1.update_deltaTime();
+
             update_scene(appData);
 
             draw_objects(appData.window.objects);

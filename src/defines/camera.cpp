@@ -29,6 +29,19 @@ glm::mat4 Camera::get_view_matrix() const
     );
 }
 
+
+void Camera::update_deltaTime()
+{
+    // get time of current frame
+    GLuint currentFrameTime = SDL_GetPerformanceCounter();
+    
+    // find difference
+    deltaTime = (float)((currentFrameTime - lastFrameTime) * 1000 / (float)SDL_GetPerformanceFrequency()); 
+
+    // set current frame as previous frame
+    lastFrameTime = currentFrameTime;
+}
+
 // A function that allows the camera to follow mouse movement.
 void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
 {
@@ -77,11 +90,11 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
 // forward relative to the X-Z plane -> will not change Y position
 void Camera::move_forward(float speed)
 {
-    eyePosition += (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed);
+    eyePosition += (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed * (deltaTime / 100));
 }
 void Camera::move_backward(float speed)
 {
-    eyePosition -= (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed);
+    eyePosition -= (glm::vec3(viewDirection.x, 0, viewDirection.z) * speed * (deltaTime / 100));
 }
 
 // cannot change Y as there is no Z rotation on the camera
@@ -89,22 +102,22 @@ void Camera::move_left(float speed)
 {
     // get the view matrix by getting the normal vector (right-hand rule) and subtracting it to eyePos.
     glm::vec3 rightVector = glm::cross(viewDirection, upVector);
-    eyePosition -= (rightVector * speed);
+    eyePosition -= (rightVector * speed * (deltaTime / 100));
 }
 void Camera::move_right(float speed)
 {
     // get the view matrix by getting the normal vector (right-hand rule) and adding it to eyePos.
     glm::vec3 rightVector = glm::cross(viewDirection, upVector);
-    eyePosition += (rightVector * speed);
+    eyePosition += (rightVector * speed * (deltaTime / 100));
 }
 
 // forward relative to the X-Z plane -> will not change Y position
 void Camera::move_up(float speed)
 {
-    eyePosition += (upVector * speed);
+    eyePosition += (upVector * speed * (deltaTime / 100));
 }
 void Camera::move_down(float speed)
 {
-    eyePosition -= (upVector * speed);
+    eyePosition -= (upVector * speed * (deltaTime / 100));
 }
 

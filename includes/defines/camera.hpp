@@ -16,10 +16,15 @@ class Camera
         glm::vec2 previousMousePosition;
         glm::vec2 initialMousePosition;
 
+        float deltaTime = 0.0f;         // delta time in milliseconds
+        uint lastFrameTime = 0.0f;
+
     public:
         Camera();   // constructor
 
         glm::mat4 get_view_matrix() const;
+
+        void update_deltaTime();
 
         void mouseLook(int mousePositionX, int mousePositionY, appData &appData);
 
