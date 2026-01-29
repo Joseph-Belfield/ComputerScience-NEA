@@ -22,6 +22,8 @@ namespace render
 
     void init_ImGui(appData &appData);
 
+    void init_graphics(appData &appData);
+
     // *************************************************
 
     void run_loop(appData &appData);

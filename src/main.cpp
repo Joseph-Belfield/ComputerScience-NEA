@@ -8,20 +8,15 @@
 #include <filesystem>
 #include <vector>
 
-
 int main() 
 {
   // create an object to handle all important data in the program
   appData app;
 
   // 1. initialize libraries
-  render::init_SDL(app);
-  render::set_OpenGL_Attributes();
-  render::init_OpenGL(app);
-  render::init_ImGui(app);
+  render::init_graphics(app);
 
-  // 2. initialize the default shader
-  app.program.defaultShader.compile_and_link();
+  
 
   Sphere sphere(1.0f, 27, 27, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
   Sphere sphere2(1.0f, 27, 27, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);

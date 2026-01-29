@@ -135,4 +135,16 @@ namespace render
         ImGui_ImplSDL3_InitForOpenGL(appData.program.window, appData.program.context_OpenGL);
         ImGui_ImplOpenGL3_Init(appData.program.version_glsl);
     }
+
+    void init_graphics(appData &appData)
+    {
+        // init libraries
+        init_SDL(appData);
+        set_OpenGL_Attributes();
+        init_OpenGL(appData);
+        init_ImGui(appData);
+
+        // initialize the default shader
+        appData.program.defaultShader.compile_and_link();
+    }
 }
