@@ -1,7 +1,7 @@
-#include "defines/render/objectData.hpp"
+#include "render/objectData.hpp"
 
-#include "runLoop.hpp"
-#include "defines/render/shaderClass.hpp"
+#include "render/runLoop.hpp"
+#include "render/shaderClass.hpp"
 
 #include "glad/gl.h"
 

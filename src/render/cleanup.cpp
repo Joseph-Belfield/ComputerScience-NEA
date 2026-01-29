@@ -1,6 +1,6 @@
-#include "render.hpp"
-#include "defines/appData.hpp"
-#include "defines/render/objectData.hpp"
+#include "render/render.hpp"
+#include "appData.hpp"
+#include "render/objectData.hpp"
 
 // *************************************************
 

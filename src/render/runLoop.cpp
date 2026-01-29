@@ -1,8 +1,8 @@
-#include "render.hpp"
+#include "render/render.hpp"
 
-#include "runLoop.hpp"
-#include "defines/appData.hpp"
-#include "defines/render/objectData.hpp"
+#include "render/runLoop.hpp"
+#include "appData.hpp"
+#include "render/objectData.hpp"
 
 #include "SDL3/SDL.h"           // SDL main library
 #include "SDL3/SDL_opengl.h"    // SDL OpenGL integration

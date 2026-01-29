@@ -1,5 +1,5 @@
-#include "render.hpp"
-#include "defines/appData.hpp"
+#include "render/render.hpp"
+#include "appData.hpp"
 #include "errorChecking.hpp"
 
 // *************************************************

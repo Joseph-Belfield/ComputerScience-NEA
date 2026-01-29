@@ -1,6 +1,6 @@
-#include "defines/render/camera.hpp"
+#include "render/camera.hpp"
 
-#include "defines/appData.hpp"
+#include "appData.hpp"
 
 #include "glm/glm.hpp"                       // main GLM library
 
