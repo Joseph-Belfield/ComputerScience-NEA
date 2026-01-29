@@ -6,8 +6,8 @@
 #include "imgui/imgui.h"
 #include "glm/vec3.hpp"
 
-#include "defines/camera.hpp"
-#include "defines/shaderClass.hpp"
+#include "defines/render/camera.hpp"
+#include "defines/render/shaderClass.hpp"
 
 #include <string>
 #include <vector>

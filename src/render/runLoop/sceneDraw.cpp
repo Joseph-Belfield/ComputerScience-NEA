@@ -1,7 +1,7 @@
 #include "runLoop.hpp"
 
 #include "defines/appData.hpp"
-#include "defines/objectData.hpp"
+#include "defines/render/objectData.hpp"
 
 #include "glad/gl.h"            // OpenGL extension loader
 

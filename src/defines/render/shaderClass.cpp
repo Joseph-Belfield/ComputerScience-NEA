@@ -1,4 +1,4 @@
-#include "defines/shaderClass.hpp"
+#include "defines/render/shaderClass.hpp"
 #include "errorChecking.hpp"
 
 #include "glad/gl.h"

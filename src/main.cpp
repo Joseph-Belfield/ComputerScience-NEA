@@ -1,7 +1,7 @@
 #include "render.hpp"
 #include "defines/appData.hpp"
-#include "defines/objectData.hpp"
-#include "defines/shaderClass.hpp"
+#include "defines/render/objectData.hpp"
+#include "defines/render/shaderClass.hpp"
 #include "errorChecking.hpp"
 
 #include <iostream>

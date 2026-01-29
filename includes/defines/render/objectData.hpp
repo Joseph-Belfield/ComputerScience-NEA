@@ -4,7 +4,7 @@
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 
-#include "defines/shaderClass.hpp"
+#include "defines/render/shaderClass.hpp"
 
 #include <vector>
 

@@ -19,9 +19,9 @@ add_executable(${PROJECT_NAME}
     src/main.cpp 
     src/gl.c
 
-    src/defines/objectData.cpp
-    src/defines/camera.cpp
-    src/defines/shaderClass.cpp
+    src/defines/render/objectData.cpp
+    src/defines/render/camera.cpp
+    src/defines/render/shaderClass.cpp
 
     src/render/errorChecking.cpp
 

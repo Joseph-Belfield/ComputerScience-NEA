@@ -1,8 +1,8 @@
 #include "runLoop.hpp"
 
 #include "defines/appData.hpp"
-#include "defines/objectData.hpp"
-#include "defines/camera.hpp"
+#include "defines/render/objectData.hpp"
+#include "defines/render/camera.hpp"
 
 #include "glm/glm.hpp"                       // main GLM library
 #include "glm/vec3.hpp"                      // GLM vec3 class and methods - for position data
