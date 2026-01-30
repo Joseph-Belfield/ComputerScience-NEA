@@ -37,26 +37,27 @@ glm::mat4 Object::update_modelMatrix()
 	return modelMatrix;
 }
 
-void Object::draw_polygon()
+
+void draw_polygon(Object* target)
 {
 	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
 	// mesh.objectShader.use();
 
 	// sets the objets model matrix
-	glm::mat4 modelMatrix = update_modelMatrix();
-	mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
+	glm::mat4 modelMatrix = target -> update_modelMatrix();
+	target -> mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
 
 	// change the objects opacity
 	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
 
 	// choose VAO and VBO
-    glBindVertexArray(this -> mesh.vertexArrayObject);
+    glBindVertexArray(target -> mesh.vertexArrayObject);
 
     // draw
     glDrawElements
     (
         GL_TRIANGLES,                       // shape
-        mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        target -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
@@ -65,26 +66,26 @@ void Object::draw_polygon()
     glBindVertexArray(0);
 }
 
-void Object::draw_lines()
+void draw_lines(Object* target)
 {
 	// using this object's shader
 	// mesh.objectShader.use();
 
 	// sets the objets model matrix
-	glm::mat4 modelMatrix = update_modelMatrix();
-	mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
+	glm::mat4 modelMatrix = target -> update_modelMatrix();
+	target -> mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
 
 	// change the objects opacity
 	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
 
 	// choose VAO and VBO
-    glBindVertexArray(this -> mesh.vertexArrayObject);
+    glBindVertexArray(target -> mesh.vertexArrayObject);
 
     // draw
     glDrawElements
     (
         GL_LINES,                     	    // shape
-        mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        target -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
@@ -92,6 +93,20 @@ void Object::draw_lines()
     // unbind VAO after shape drawn
     glBindVertexArray(0);
 }
+
+
+void Object::draw()
+{
+	if (subclass == REFERENCE_PLANE)
+	{
+		draw_lines(this);
+	}
+	else 
+	{
+		draw_polygon(this);
+	}
+}
+
 
 void init_shaders(Shader& shaderObject,std::string source_vertexShader, std::string source_fragmentShader)
 {
@@ -255,9 +270,6 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	// ensures vector is clear
 	mesh.indexData.clear();
 
-	// sets the drawing mode
-	mesh.mode = TRIANGLE;
-
 	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices								
 	for (int i = 0; i < vertices.size(); i++)											// fills vertexData
 	{
@@ -328,7 +340,6 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
 
-	mesh.mode = LINE;
 
 	std::vector<glm::vec3> vertices = calculateReferencePlaneVertices(stripCount);
 
@@ -456,8 +467,6 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
 
-	// draws triangles
-	mesh.mode = TRIANGLE;
 
 	std::vector<glm::vec3> vertices = calculateCylinderVertices(radius, height, sectorCount);
 	for (int i = 0; i < vertices.size(); i++)
@@ -566,8 +575,6 @@ Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocati
 
 	mesh.vertexData.clear();
 	mesh.indexData.clear();
-
-	mesh.mode = TRIANGLE;
 
 	std::vector<glm::vec3> vertices = calculateCubeVertices(height);
 	for (int i = 0; i < 8; i++)

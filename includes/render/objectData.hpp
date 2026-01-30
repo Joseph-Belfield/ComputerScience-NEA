@@ -36,8 +36,6 @@ public:
     // data about the order vertices should be renderd in
     std::vector<GLuint> indexData;
 
-    drawType mode = TRIANGLE;
-
     Shader objectShader;
 };
 
@@ -74,8 +72,7 @@ public:
     glm::mat4 update_modelMatrix();
 
     // draw functions
-    void draw_polygon();
-    void draw_lines();
+    void draw();
 };
 
 class ReferencePlane: public Object

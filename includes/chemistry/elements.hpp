@@ -1,24 +1,13 @@
-// Element enum, ties atomic number and element name. 
-enum Name
-{
-    HYDROGEN = 1,
-    HELIUM,
-    LITHIUM,
-    BERYLLIUM, 
-    BORON,
-    PHOSPHORUS,
-    CARBON,
-    NITROGEN,
-    OXYGEN,
-    FLUORINE,
-    NEON
-};
 
+
+#include <string>
 
 // Holds important information about each element. 
 struct Element
 {
-    const Name name;
+    const std::string name;
     float neutrons;
     char periodicBlock;
+
+    float atomicRadius;
 };

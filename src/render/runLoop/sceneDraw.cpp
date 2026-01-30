@@ -33,17 +33,10 @@ void draw_objects(std::vector<Object*> objects)
 {
     for (int i = 0; i < objects.size(); i++)
     {
-        if (objects[i] -> mesh.mode == TRIANGLE)
-        {   
-            objects[i] -> draw_polygon();
-            if (objects[i] -> subclass == SPHERE)
-            {
-                objects[i] -> uniform.uRotate.y += 0.5f;
-            }
-        }
-        else if (objects[i] -> mesh.mode == LINE)
+        objects[i] -> draw();
+        if (objects[i] -> subclass == SPHERE)
         {
-            objects[i] -> draw_lines();
+            objects[i] -> uniform.uRotate.y += 5.0f;
         }
     }   
 }
