@@ -1,17 +1,6 @@
-#ifndef ATOM
-    #include "atom.hpp"
-    #define ATOM
-#endif
+#include "chemistry/atom.hpp"
 
-#ifndef VECTOR
-    #include <vector>
-    #define VECTOR
-#endif
-
-#ifndef STRING
-    #include <string>
-    #define STRING
-#endif
+#include <vector>
 
 // prefefining atom so that it can be referenced by molecule
 struct Atom;
@@ -21,22 +10,18 @@ class Molecule
 {
 public: 
     std::vector<Atom*> atoms;     // vector of pointers to atoms in molecule
-
     std::string name = "";
 
-    // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
-    Molecule(Atom* firstAtom)
-    {
-        firstAtom -> parent = this;
-        atoms.push_back(firstAtom);
-    }
 
-    Molecule(std::vector<Atom*>* atomVector)
-    {
-        for (int i = 0; atomVector -> size(); i++)
-        {
-            (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
-            atoms.push_back((*atomVector)[i]); // adds a copy of the atom from the pointer to the vector atoms
-        }
-    }
+    // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
+    Molecule(Atom* firstAtom);
+    Molecule(std::vector<Atom*>* atomVector);
+
+
+    // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
+    void addBond(Atom* atom1, Atom* atom2);
+    Molecule* removeBond(Atom* atom1, Atom* atom2);
+
+    int find_atom(Atom* targetAtom);
+    void find_molecule_tree(Atom* currentAtom);
 };

@@ -1,30 +1,25 @@
-#ifndef ATOM
-    #include "atom.hpp"
-    #define ATOM
-#endif
+#include "chemistry/molecule.hpp"
 
-#ifndef MOLECULE
-    #include "molecule.hpp"
-    #define MOLECULE
-#endif
+#include <string>
+#include <iostream>
 
-#ifndef VECTOR
-    #include <vector>
-    #define VECTOR
-#endif
+Molecule::Molecule(Atom* firstAtom)
+{
+    firstAtom -> parent = this;
+    atoms.push_back(firstAtom);
+}
 
-#ifndef STRING
-    #include <string>
-    #define STRING
-#endif
-
-#ifndef IOSTREAM
-    #include <iostream>
-    #define IOSTREAM
-#endif
+Molecule::Molecule(std::vector<Atom*>* atomVector)
+{
+    for (int i = 0; atomVector -> size(); i++)
+    {
+        (*atomVector)[i] -> parent = this;  // dereferences atom vector, then gets the atom i and changes its parent
+        atoms.push_back((*atomVector)[i]);  // adds a copy of the atom from the pointer to the vector atoms
+    }
+}
 
 // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
-void addBond(Atom* atom1, Atom* atom2)
+void Molecule::addBond(Atom* atom1, Atom* atom2)
 {
     if (atom1 -> parent == atom2 -> parent) // if the atoms share a parent (are in the same molecule)
     {
@@ -62,12 +57,12 @@ void addBond(Atom* atom1, Atom* atom2)
     }
 }
 
-int atomSearch(std::vector<Atom*>* atoms, Atom* targetAtom)
+int Molecule::find_atom(Atom* targetAtom)
 {
     int count = 0;
-    for (int i = 0; i < atoms -> size(); i++)
+    for (int i = 0; i < atoms.size(); i++)
     {
-        if (atoms -> at(i) == targetAtom)
+        if (atoms[i] == targetAtom)
         {
             count++;
         }
@@ -77,15 +72,15 @@ int atomSearch(std::vector<Atom*>* atoms, Atom* targetAtom)
 }
 
 // fills vector with pointers to any atom connected to atom1's tree
-void findMoleculeTree(Atom* currentAtom, std::vector<Atom*>* moleculeVector)
+void Molecule::find_molecule_tree(Atom* currentAtom)
 {
     // checks number of times the current atom is in the molecule vector
-    int atomAccountedFor = atomSearch(moleculeVector, currentAtom);
+    int atomAccountedFor = find_atom(currentAtom);
 
     // if the atom isn't found, add the atom - just adds parameter atom at start of function run
     if (atomAccountedFor == 0)
     {
-        moleculeVector -> push_back(currentAtom);
+       // moleculeVector -> push_back(currentAtom);
     }
 
     // if that atom is found more than once, throw an error message
@@ -97,9 +92,9 @@ void findMoleculeTree(Atom* currentAtom, std::vector<Atom*>* moleculeVector)
     // for each atom bonded to current atom
     for (int i = 0; currentAtom -> bonds.size(); i++)
     {
-        if (atomSearch(moleculeVector, currentAtom -> bonds[i]) == 0) // if the atom doesn't appear in the molecule list
+        if (find_atom(currentAtom -> bonds[i]) == 0) // if the atom doesn't appear in the molecule list
         {
-            findMoleculeTree(currentAtom -> bonds[i], moleculeVector);  // recurse the function, passing in the new branch and the molecule list as parameters
+            find_molecule_tree(currentAtom -> bonds[i]);  // recurse the function, passing in the new branch and the molecule list as parameters
         }
     }
     
@@ -107,7 +102,7 @@ void findMoleculeTree(Atom* currentAtom, std::vector<Atom*>* moleculeVector)
 }
 
 // will remove a bond between two atoms, and if applicable, split a larger molecule into two smaller parts
-Molecule* removeBond(Atom* atom1, Atom* atom2)
+Molecule* Molecule::removeBond(Atom* atom1, Atom* atom2)
 {
     // maintains if atom2 has been found in atom1's bonds
     bool foundA = false;
@@ -143,7 +138,7 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
     std::vector<Atom*>* molecule1_atomVector;
     
     // fills molecule1_atomVector with all atoms attatched to atom1
-    findMoleculeTree(atom1, molecule1_atomVector);
+    find_molecule_tree(atom1);
 
     // checks each atom in the vector of atoms in the molecule atom1
     for (int i = 0; molecule1_atomVector -> size(); i++)
@@ -167,7 +162,7 @@ Molecule* removeBond(Atom* atom1, Atom* atom2)
 
         // creates a new molecule vector for atom2's molecule and fills it
         std::vector<Atom*>* molecule2_atomVector;
-        findMoleculeTree(atom2, molecule2_atomVector);
+        find_molecule_tree(atom2);
 
         // initializes molecule2 from it's atom vector
         Molecule molecule2(molecule2_atomVector);
