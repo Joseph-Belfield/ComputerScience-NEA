@@ -25,7 +25,7 @@ class Atom
 { 
 public:
 
-// _______________ ATTRIBS ______________
+ // _______________ ATTRIBS ______________
 
     // atom's element
     Element element;
@@ -45,11 +45,15 @@ public:
 
     // the visual object representing the atom
     Sphere atomObject;
+    Cylinder bondObject;
 
  // _______________ METHODS ______________
 
     // constructor!
     Atom(Element element);
 
+    
+
     void draw_atom();
+    void draw_bond(Atom* target);
 };

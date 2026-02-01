@@ -26,6 +26,9 @@ glm::mat4 Object::update_modelMatrix()
     // movement
     glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
 
+	// translates the objects coordinates as well
+	coordinates = modelMatrix * coordinates;
+
     // rotations
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
     modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y

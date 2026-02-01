@@ -39,3 +39,22 @@ void Atom::draw_atom()
 {
     atomObject.draw();
 }
+
+
+glm::vec3 find_bondVector(Atom* atom1, Atom* atom2)
+{
+    
+}
+
+// draws all bonds connected to an atom
+void Atom::draw_bond(Atom* target)
+{
+    // have a reference cylinder
+    // move and scale it, draw it, then move back and revert changes
+    // repeat until no more bonds
+
+    for (int i = 0; i < bonds.size(); i++)
+    {
+        
+    }
+}

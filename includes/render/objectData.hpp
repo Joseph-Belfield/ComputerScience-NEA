@@ -63,7 +63,11 @@ public:
 	meshData mesh;
 	uniformData uniform;
 
+    // type of object
     Subclass subclass;
+
+    // coordinates of object in 3D space
+    glm::vec4 coordinates = glm::vec4(0.0f);
 
     // constructor
     Object();
@@ -91,8 +95,11 @@ public:
 class Cylinder: public Object
 {
 public:
+    // the vector that represents the cylinder in 3D space (from bottom to top, through centre)
+    glm::vec3 directionVector;
+
     // constructor 
-    Cylinder(const GLfloat radius = (0.5f), const GLfloat height = (2.0f), const GLuint sectors = (10), const glm::vec3 initColor = glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 1.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f), std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");
+    Cylinder(const GLfloat radius = (0.25f), const GLfloat height = (2.0f), const GLuint sectors = (50), const glm::vec3 initColor = glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f), std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");
 };
 
 class Cube: public Object
