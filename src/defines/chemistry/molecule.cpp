@@ -165,15 +165,16 @@ Molecule* Molecule::removeBond(Atom* atom1, Atom* atom2)
         find_molecule_tree(atom2);
 
         // initializes molecule2 from it's atom vector
-        Molecule molecule2(molecule2_atomVector);
+        Molecule* molecule2 = new Molecule(molecule2_atomVector);
 
         // for all atoms in molecule, set molecule2 as their parent
-        for (int i = 0; i < molecule2.atoms.size(); i++)
+        for (int i = 0; i < molecule2 -> atoms.size(); i++)
         {
-            molecule2.atoms.at(i) -> parent = &molecule2;
+            molecule2 -> atoms.at(i) -> parent = molecule2;
         }
 
-        return &molecule2;
+        return molecule2;
+        // fix this later -> add a destructor somewhere
     }
 }
 
@@ -184,35 +185,60 @@ void Molecule::draw_atom(glm::vec3 position)
     atomObject.uniform.uDisplacement += position;
 }
 
-void Molecule::draw_bond(glm::vec3 position, glm::vec3 rotation)
+
+glm::vec3 calculate_bondRotation(glm::vec3 direction)
 {
-    bondObject.uniform.uDisplacement += position;
-    bondObject.uniform.uRotate += rotation;
+    float x = acosf(glm::dot(glm::normalize(direction), glm::vec3(1.0f, 0.0f, 0.0f))); 
+    float y = acosf(glm::dot(glm::normalize(direction), glm::vec3(0.0f, 1.0f, 0.0f))); 
+    float z = acosf(glm::dot(glm::normalize(direction), glm::vec3(0.0f, 0.0f, 1.0f))); 
+
+    return glm::vec3(x, y, z);
+}
+
+
+void Molecule::draw_bond(glm::vec3 atomPosition, glm::vec3 direction)
+{
+    glm::vec3 bondPosition = atomPosition + ((bondObject.uniform.uScale.y / 2) * direction);  // position + (theta * direction)
+    bondObject.uniform.uDisplacement += bondPosition;
+
+    glm::vec3 bondRotation = calculate_bondRotation(direction); // rotation given around x, y and z planes
+    bondObject.uniform.uRotate += bondRotation;
 
     bondObject.draw();
 
-    bondObject.uniform.uDisplacement -= position;
-    bondObject.uniform.uRotate -= rotation;
+    bondObject.uniform.uDisplacement -= bondPosition;
+    bondObject.uniform.uRotate -= bondRotation;
 }
 
-void Molecule::draw(glm::vec3 position, glm::vec3 angles, Atom* previous)
+void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current, uint counter)
 {
 
-    // for i in atom.bonds
+    // draw atom at position
+    draw_atom(position);
 
-        // draw atom at position
-        draw_atom(position);
+    // every time an atom is drawn, increments. if counter matches number of atoms, return.
+    if (counter++ >= atoms.size())
+    {
+        return;
+    }
 
-        // location of centre of bond = positionVector + ((theta) * directionVector)
-        glm::vec3 bondPosition = position + ((bondObject.uniform.uScale.y / 2) * (angles * glm::vec3(0.0f, 1.0f, 0.0f)));
-        draw_bond(bondPosition, angles);
+    for (int i = 0; i < current -> maxBonds; i++)
+    {
+        if (i <= current -> bonds.size())
+        {
+            // draw the bond
+            draw_bond(position, direction);     
 
-        // bondObject.draw();
-        // -> the first bond has now been drawn
-
-        // bondObject.position = original
-        // -> revert all those changes!
-
-        //
-
+            // recursively draw the atom attatched to the end of the bond
+            glm::vec3 nextPosition = position + (bondObject.uniform.uScale.y * direction);
+            draw(nextPosition, direction, current -> bonds[i]); 
+            
+            // change direction for next atom
+            switch(i)
+            {
+                case(0):
+                    direction = glm::vec3(1.0f, -1.0f, -1.0f);
+            };
+        }  
+    }
 }
