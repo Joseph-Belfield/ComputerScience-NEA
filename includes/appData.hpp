@@ -8,6 +8,7 @@
 
 #include "render/camera.hpp"
 #include "render/shaderClass.hpp"
+#include "chemistry/molecule.hpp"
 
 #include <string>
 #include <vector>
@@ -86,5 +87,7 @@ struct appData
 	ImGuiData ImGui;
 	cameraData camera;
   eventData event;
+
+  Molecule* molecule;
 };
 

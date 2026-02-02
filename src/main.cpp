@@ -4,6 +4,9 @@
 #include "render/shaderClass.hpp"
 #include "errorChecking.hpp"
 
+#include "chemistry/atom.hpp"
+#include "chemistry/molecule.hpp"
+
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -26,6 +29,10 @@ int main()
   cube.uniform.uDisplacement.y += 5.0f;
 
   app.window.objects = {&sphere, &plane, &sphere2, &tube, &cube};
+
+  Atom atom1(CARBON);
+  Molecule molecule(&atom1);
+  app.molecule = &molecule;
 
   // 3. main run loop
   render::run_loop(app);

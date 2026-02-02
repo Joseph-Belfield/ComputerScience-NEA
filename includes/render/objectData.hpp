@@ -89,7 +89,7 @@ class Sphere: public Object
 {
 public:
     // constructor
-	Sphere(const GLfloat radius = (0.5f), const GLuint stacks = (18), const GLuint sectors = (9), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(1.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f, std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");  
+	Sphere(const GLfloat radius = (1.0f), const GLuint stacks = (50), const GLuint sectors = (25), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f, std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");  
 };
 
 class Cylinder: public Object

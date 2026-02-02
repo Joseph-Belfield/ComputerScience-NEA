@@ -38,5 +38,6 @@ void draw_objects(std::vector<Object*> objects)
         {
             objects[i] -> uniform.uRotate.y += 5.0f;
         }
+
     }   
 }

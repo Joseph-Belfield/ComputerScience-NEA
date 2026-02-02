@@ -176,3 +176,43 @@ Molecule* Molecule::removeBond(Atom* atom1, Atom* atom2)
         return &molecule2;
     }
 }
+
+void Molecule::draw_atom(glm::vec3 position)
+{
+    atomObject.uniform.uDisplacement += position;
+    atomObject.draw();
+    atomObject.uniform.uDisplacement += position;
+}
+
+void Molecule::draw_bond(glm::vec3 position, glm::vec3 rotation)
+{
+    bondObject.uniform.uDisplacement += position;
+    bondObject.uniform.uRotate += rotation;
+
+    bondObject.draw();
+
+    bondObject.uniform.uDisplacement -= position;
+    bondObject.uniform.uRotate -= rotation;
+}
+
+void Molecule::draw(glm::vec3 position, glm::vec3 angles, Atom* previous)
+{
+
+    // for i in atom.bonds
+
+        // draw atom at position
+        draw_atom(position);
+
+        // location of centre of bond = positionVector + ((theta) * directionVector)
+        glm::vec3 bondPosition = position + ((bondObject.uniform.uScale.y / 2) * (angles * glm::vec3(0.0f, 1.0f, 0.0f)));
+        draw_bond(bondPosition, angles);
+
+        // bondObject.draw();
+        // -> the first bond has now been drawn
+
+        // bondObject.position = original
+        // -> revert all those changes!
+
+        //
+
+}

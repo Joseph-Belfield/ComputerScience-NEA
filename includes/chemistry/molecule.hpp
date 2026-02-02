@@ -1,3 +1,5 @@
+#pragma once
+
 #include "chemistry/atom.hpp"
 
 #include <vector>
@@ -12,6 +14,10 @@ public:
     std::vector<Atom*> atoms;     // vector of pointers to atoms in molecule
     std::string name = "";
 
+    // the 3D shapes which will be drawn to represent atoms and bonds
+    Sphere atomObject;
+    Cylinder bondObject;
+
 
     // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
     Molecule(Atom* firstAtom);
@@ -24,4 +30,10 @@ public:
 
     int find_atom(Atom* targetAtom);
     void find_molecule_tree(Atom* currentAtom);
+
+
+    void draw_atom(glm::vec3 position);                             // draws atom at set location
+    void draw_bond(glm::vec3 position, glm::vec3 rotation);         // draws bond at set location and rotation (from upVector)
+
+    void draw(glm::vec3 position = glm::vec3(0.0f), glm::vec3 angles = glm::vec3(0.0f, 1.0f, 0.0f), Atom* previous = nullptr);
 };

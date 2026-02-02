@@ -42,6 +42,7 @@ namespace render
             update_scene(appData);
 
             draw_objects(appData.window.objects);
+            appData.molecule -> draw();
 
             draw_ImGui(appData);
 

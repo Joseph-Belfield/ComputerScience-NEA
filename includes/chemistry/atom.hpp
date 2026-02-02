@@ -43,17 +43,9 @@ public:
     std::vector<Atom*> bonds;   // vector of pointers to atoms
     Molecule* parent = nullptr;  // pointer to molecule atom is in
 
-    // the visual object representing the atom
-    Sphere atomObject;
-    Cylinder bondObject;
 
  // _______________ METHODS ______________
 
     // constructor!
     Atom(Element element);
-
-    
-
-    void draw_atom();
-    void draw_bond(Atom* target);
 };
