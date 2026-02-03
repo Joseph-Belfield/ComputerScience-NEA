@@ -1,5 +1,7 @@
 #include "chemistry/molecule.hpp"
 
+#include "glm/gtc/matrix_transform.hpp"
+
 #include <string>
 #include <iostream>
 
@@ -234,6 +236,13 @@ void Molecule::draw_bond(glm::vec3 atomPosition, glm::vec3 direction)
     effectively, find the transformations on the atom, revert it, generate the points, then reapply
 */
 
+glm::vec3 get_perpendicular(glm::vec3 initial)
+{
+    glm::vec4 tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(1.0f, 0.0f, 0.0f)) * glm::vec4(initial, 0);
+    glm::vec3 arbitrayVector = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
+
+    return glm::cross(initial, arbitrayVector);
+}
 
 
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
@@ -247,38 +256,28 @@ void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
     // draw atom at position
     draw_atom(position);
 
-    // iterate through for the maximum number of bonds the atom should have (prevents too many bonds being drawn)
-    for (int i = 0; i < current -> maxBonds; i++)
-    {
-        // if the atom has i bonds, draw a bond for i
-        if (i <= current -> bonds.size())
-        {
-            // draw the bond
-            draw_bond(position, direction);     
+    // draw first bond
+        draw_bond(position, direction);   
+        
+    // make draw second bond
+        glm::vec3 perpVector = get_perpendicular(direction);
+        perpVector = glm::normalize(perpVector);
 
-            // recursively draw the atom attatched to the end of the bond
-            glm::vec3 nextPosition = position + (bondObject.uniform.uScale.y * direction);
-            draw(nextPosition, direction, current -> bonds[i]); 
-            
-            // change direction (of the bond) for the next bond
-            switch(i)
-            {
-                case(0):
-                    direction = glm::vec3(1.0f, -1.0f, -1.0f);
-                    break;
+        glm::vec4 tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(109.45f), perpVector) * glm::vec4(direction, 0);
+        glm::vec3 initialDirection = direction;
+        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
 
-                case(1):
-                    // 2
-                    break;
+        draw_bond(position, direction);
 
-                case(2):    
-                    // 3
-                    break;
+    // draw third bond
+        tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(120.0f), initialDirection) * glm::vec4(direction, 0);
+        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
 
-                case(3):
-                    // 4
-                    break;
-            };
-        }  
-    }
+        draw_bond(position, direction);
+
+    // draw fourth bond
+        tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(120.0f), initialDirection) * glm::vec4(direction, 0);
+        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
+
+        draw_bond(position, direction);
 }

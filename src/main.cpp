@@ -19,17 +19,6 @@ int main()
   // 1. initialize libraries
   render::init_graphics(app);
 
-  
-
-  Sphere sphere(1.0f, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
-  Sphere sphere2(1.0f, 50, 50, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(-2.0f, 0.0f, 0.0f), 1.0f);
-  ReferencePlane plane;
-  Cylinder tube(0.25f, 2.0f, 50, glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 90.0f), glm::vec3(1.0f, 2.0f, 1.0f));
-  Cube cube;
-  cube.uniform.uDisplacement.y += 5.0f;
-
-  app.window.objects = {&sphere, &plane, &sphere2, &tube, &cube};
-
   Atom atom1(CARBON);
   Molecule molecule(&atom1);
   app.molecule = &molecule;
