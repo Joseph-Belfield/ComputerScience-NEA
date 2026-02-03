@@ -210,20 +210,47 @@ void Molecule::draw_bond(glm::vec3 atomPosition, glm::vec3 direction)
     bondObject.uniform.uRotate -= bondRotation;
 }
 
-void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current, uint counter)
+
+/*
+ - position is the centre of the sphere. imagine it as the position in world space
+ - direction is the direction of the bond/vertex from this central position. this is local to the sphere.
+
+ - find 4 equidistant points around the centre of the sphere is the same math as:
+    -> finding 4 equidistant points on a sphere
+    -> finding the 4 vertices of a tetrahedron
+
+ - given all direction vectors should be unit vectors anyway, we can use the math needed to find 4 vertices of a unit sphere
+    -> sphere, radius 1
+    -> centre, C = (x,y,z)
+    -> vertex 1, V1 = normalize(x1, y1, z1)
+
+    -> V2 can be gotten by rotating V1 109.45 degrees around a perpendicular axis
+        >> can be found with the cross product of V1 and any non-perpendicular vector
+
+    -> V2, V3 and V4 all lie on a plane perpendicular to V1, and are eqidistant from each other
+        >> can I just rotate V2 60 degrees (per point) around V1 to get the other vertices?
+    -> talked to miss
+
+    effectively, find the transformations on the atom, revert it, generate the points, then reapply
+*/
+
+
+
+void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
 {
+    // means it is the first iteration 
+    if (current == nullptr)
+    {
+        // first iteration edge case code here + setup code?
+    }
 
     // draw atom at position
     draw_atom(position);
 
-    // every time an atom is drawn, increments. if counter matches number of atoms, return.
-    if (counter++ >= atoms.size())
-    {
-        return;
-    }
-
+    // iterate through for the maximum number of bonds the atom should have (prevents too many bonds being drawn)
     for (int i = 0; i < current -> maxBonds; i++)
     {
+        // if the atom has i bonds, draw a bond for i
         if (i <= current -> bonds.size())
         {
             // draw the bond
@@ -233,11 +260,24 @@ void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current, uint
             glm::vec3 nextPosition = position + (bondObject.uniform.uScale.y * direction);
             draw(nextPosition, direction, current -> bonds[i]); 
             
-            // change direction for next atom
+            // change direction (of the bond) for the next bond
             switch(i)
             {
                 case(0):
                     direction = glm::vec3(1.0f, -1.0f, -1.0f);
+                    break;
+
+                case(1):
+                    // 2
+                    break;
+
+                case(2):    
+                    // 3
+                    break;
+
+                case(3):
+                    // 4
+                    break;
             };
         }  
     }
