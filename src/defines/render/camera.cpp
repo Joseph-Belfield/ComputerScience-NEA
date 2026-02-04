@@ -44,7 +44,7 @@ void Camera::update_deltaTime()
 }
 
 // A function that allows the camera to follow mouse movement.
-void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
+void Camera::mouseLook(int mousePositionX, int mousePositionY, float sensitivity)
 {
     // store current mouse position
     glm::vec2 currentMousePosition = glm::vec2(mousePositionX, mousePositionY);
@@ -64,7 +64,7 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, appData &appData)
     glm::vec2 totalPositionDelta = initialMousePosition - currentMousePosition;
     
     // modifies how fast turning is
-    positionDelta = positionDelta * appData.camera.sense;
+    positionDelta = positionDelta * sensitivity;
 
 
     // changes the view direction by rotating camera around the y-axis (upVector)

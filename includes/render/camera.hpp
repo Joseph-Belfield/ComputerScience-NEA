@@ -26,7 +26,7 @@ class Camera
 
         void update_deltaTime();
 
-        void mouseLook(int mousePositionX, int mousePositionY, appData &appData);
+        void mouseLook(int mousePositionX, int mousePositionY, float sensitivity);
 
         void move_forward(float speed);
         void move_backward(float speed);

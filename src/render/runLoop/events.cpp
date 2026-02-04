@@ -58,7 +58,7 @@ void check_events(appData &appData)
                     // relative changes in position from centre each frame monitored
                     mouseX += appData.event.event.motion.xrel;
                     mouseY += appData.event.event.motion.yrel;
-                    appData.camera.camera1.mouseLook(mouseX, mouseY, appData);
+                    appData.camera.camera1.mouseLook(mouseX, mouseY, appData.camera.sense);
                 }
             }
         }

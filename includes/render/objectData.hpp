@@ -73,7 +73,7 @@ public:
     Object();
 
     // draw functions
-    void draw(Camera &camera, float windowWidth = 1280.0f, float windowHeight = 800.0f);
+    void draw(Camera &camera, float windowWidth, float windowHeight);
 };
 
 class ReferencePlane: public Object
