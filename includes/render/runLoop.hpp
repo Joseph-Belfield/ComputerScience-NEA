@@ -8,24 +8,12 @@
 
 // forward declare classes, structs 
 struct appData;
-struct Object;
-
+class Object;
+class Camera;
 
 // *************************************************
 
 void check_events(appData &appData);
-
-// *************************************************
-
-// Creates a view matrix.
-// - The scene is viewed as if through a camera for the viewer.
-// - The view matrix rotates objects around the viewer to form the illusion of a a camera.
-void update_viewMatrix(appData &appData);
-
-// Creates a projection matrix.
-// - The projection matrix creates the illusion of perspective
-// - It does this by changing a point's coordinates according to distance from the camera (Z-value)
-void update_perspectiveMatrix(appData &appData);
 
 // *************************************************
 
@@ -37,7 +25,7 @@ void update_scene(appData &appData);
 
 // *************************************************
 
-void draw_objects(std::vector<Object*> objects);
+void draw_objects(std::vector<Object*> objects, Camera &camera, float width, float height);
 
 // *************************************************
 

@@ -5,6 +5,10 @@
 
 #include <string>
 
+// predefines
+class Camera;
+
+
 class Shader
 {
 public:
@@ -13,6 +17,9 @@ public:
 
     std::string source_vertexShader;
     std::string source_fragmentShader;
+
+    // stores whether the shader has been compiled or not
+    bool compiled = false;
 
     // constructor with default values
     Shader(std::string vertexFilename = "version0.vs", std::string fragmentFilename = "version0.fs");
@@ -28,4 +35,8 @@ public:
     void set_float1(const std::string uniformName, float x);
     void set_float4(const std::string uniformName, float x, float y, float z, float w);
     void set_mat4(const std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix);
+
+    void set_model(glm::vec3 displacement, glm::vec3 rotation, glm::vec3 scale);
+    void set_perspective(float width, float height);
+    void set_view(Camera &camera);
 };

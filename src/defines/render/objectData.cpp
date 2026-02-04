@@ -2,6 +2,7 @@
 
 #include "render/runLoop.hpp"
 #include "render/shaderClass.hpp"
+#include "render/camera.hpp"
 
 #include "glad/gl.h"
 
@@ -12,6 +13,7 @@
 
 #include <vector>
 #include <math.h>
+#include <iostream>
 
 
 Object::Object() {};
@@ -21,46 +23,31 @@ Object::Object() {};
 // - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
 //
 // The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
-glm::mat4 Object::update_modelMatrix()
+
+
+
+void draw_polygon(Object* object, float width, float height, Camera& camera)
 {
-    // movement
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), this -> uniform.uDisplacement); // movement
-
-	// translates the objects coordinates as well
-	coordinates = modelMatrix * coordinates;
-
-    // rotations
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.x), glm::vec3(1.0f, 0.0f, 0.0f));  // X
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Y
-    modelMatrix = glm::rotate(modelMatrix ,glm::radians(this -> uniform.uRotate.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Z
-
-	// scale
-    modelMatrix = glm::scale(modelMatrix, this -> uniform.uScale);
-
-	return modelMatrix;
-}
-
-
-void draw_polygon(Object* target)
-{
-	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
-	// mesh.objectShader.use();
-
-	// sets the objets model matrix
-	glm::mat4 modelMatrix = target -> update_modelMatrix();
-	target -> mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
 
 	// change the objects opacity
 	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
 
+	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
+	object -> mesh.objectShader.use();
+
+	// sets the uniforms for the shader program (must be set each time new program is called!)
+	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
+	object -> mesh.objectShader.set_perspective(width, height);
+	object -> mesh.objectShader.set_view(camera);
+
 	// choose VAO and VBO
-    glBindVertexArray(target -> mesh.vertexArrayObject);
+    glBindVertexArray(object -> mesh.vertexArrayObject);
 
     // draw
     glDrawElements
     (
         GL_TRIANGLES,                       // shape
-        target -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        object -> mesh.indexData.size(),    // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
@@ -69,26 +56,24 @@ void draw_polygon(Object* target)
     glBindVertexArray(0);
 }
 
-void draw_lines(Object* target)
+void draw_lines(Object* object, float width, float height, Camera& camera)
 {
-	// using this object's shader
-	// mesh.objectShader.use();
+	// sets the shader program
+	object -> mesh.objectShader.use();
 
-	// sets the objets model matrix
-	glm::mat4 modelMatrix = target -> update_modelMatrix();
-	target -> mesh.objectShader.set_mat4("uModel", 1, false, modelMatrix);
-
-	// change the objects opacity
-	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
+	// sets the uniforms for the shader program
+	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
+	object -> mesh.objectShader.set_perspective(width, height);
+	object -> mesh.objectShader.set_view(camera);
 
 	// choose VAO and VBO
-    glBindVertexArray(target -> mesh.vertexArrayObject);
+    glBindVertexArray(object -> mesh.vertexArrayObject);
 
     // draw
     glDrawElements
     (
         GL_LINES,                     	    // shape
-        target -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
+        object -> mesh.indexData.size(),      // number of vertices drawn to (count repeats)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
@@ -98,15 +83,20 @@ void draw_lines(Object* target)
 }
 
 
-void Object::draw()
+void Object::draw(Camera &camera, float windowWidth, float windowHeight)
 {
+	if (!mesh.objectShader.compiled)
+	{
+		mesh.objectShader.compile_and_link();
+	}
+
 	if (subclass == REFERENCE_PLANE)
 	{
-		draw_lines(this);
+		draw_lines(this, windowWidth, windowHeight, camera);
 	}
 	else 
 	{
-		draw_polygon(this);
+		draw_polygon(this, windowWidth, windowHeight, camera);
 	}
 }
 
@@ -135,10 +125,10 @@ void vertex_specification(meshData &mesh)
 
 	// generate Vertex Buffer Object for position
 	glGenBuffers(1, &(mesh.vertexBufferObject));               // generates buffer
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);    // sets buffer as current, specifies target
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);    // sets buffer as current, specifies object
 	glBufferData
 	(
-		GL_ARRAY_BUFFER,                          							// specifies target
+		GL_ARRAY_BUFFER,                          							// specifies object
 		mesh.vertexData.size() * sizeof(GLfloat),      	 				   	// finds the size (in bytes) of vertex data
 		mesh.vertexData.data(),                       		  			  	// pointer to the array holding the data of the vector
 		GL_STATIC_DRAW                             							// sets intentions with data
@@ -149,7 +139,7 @@ void vertex_specification(meshData &mesh)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.indexBufferObject);   // sets buffer type as element buffer
 	glBufferData
 	(
-		GL_ELEMENT_ARRAY_BUFFER,                        		// target
+		GL_ELEMENT_ARRAY_BUFFER,                        		// object
 		mesh.indexData.size() * sizeof(GLuint),    		   		// size
 		mesh.indexData.data(),                        			// data
 		GL_STATIC_DRAW                                			// usage

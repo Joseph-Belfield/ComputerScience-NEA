@@ -180,36 +180,38 @@ Molecule* Molecule::removeBond(Atom* atom1, Atom* atom2)
     }
 }
 
-void Molecule::draw_atom(glm::vec3 position)
+void draw_atom(Object* atom, glm::vec3 position, Camera &camera, float windowWidth, float windowHeight)
 {
-    atomObject.uniform.uDisplacement += position;
-    atomObject.draw();
-    atomObject.uniform.uDisplacement += position;
+    atom -> uniform.uDisplacement += position;
+    atom -> draw(camera, windowWidth, windowHeight);
+    atom -> uniform.uDisplacement += position;
 }
 
-
-glm::vec3 calculate_bondRotation(glm::vec3 direction)
+void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2, Camera &camera, float windowWidth, float windowHeight)
 {
-    float x = acosf(glm::dot(glm::normalize(direction), glm::vec3(1.0f, 0.0f, 0.0f))); 
-    float y = acosf(glm::dot(glm::normalize(direction), glm::vec3(0.0f, 1.0f, 0.0f))); 
-    float z = acosf(glm::dot(glm::normalize(direction), glm::vec3(0.0f, 0.0f, 1.0f))); 
+    // move centre of bond to centre of space between points
+    glm::vec3 direction = position2 - position1;        // AB = B - A
+    glm::vec3 bondPosition = position1 + (0.5f * direction);        // R = P + (l * D)
+    bond -> uniform.uDisplacement += bondPosition;
 
-    return glm::vec3(x, y, z);
-}
+    // rotate bond accordingly
+    float difference_x = position2.x - position1.x;
+    float difference_y = position2.y - position1.y;
+    float difference_z = position2.z - position1.z;
 
+    // probably a divide by 0 error
+    float rotationAbout_x = atanf(difference_y / difference_z);
+    float rotationAbout_y = atanf(difference_z / difference_x);
 
-void Molecule::draw_bond(glm::vec3 atomPosition, glm::vec3 direction)
-{
-    glm::vec3 bondPosition = atomPosition + ((bondObject.uniform.uScale.y / 2) * direction);  // position + (theta * direction)
-    bondObject.uniform.uDisplacement += bondPosition;
+    glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
+    bond -> uniform.uRotate += totalRotation;
 
-    glm::vec3 bondRotation = calculate_bondRotation(direction); // rotation given around x, y and z planes
-    bondObject.uniform.uRotate += bondRotation;
+    // draw bond
+    bond -> draw(camera, windowWidth, windowHeight);
 
-    bondObject.draw();
-
-    bondObject.uniform.uDisplacement -= bondPosition;
-    bondObject.uniform.uRotate -= bondRotation;
+    // reset bond position
+    bond -> uniform.uDisplacement -= bondPosition;
+    bond -> uniform.uDisplacement -= totalRotation;
 }
 
 
@@ -234,6 +236,11 @@ void Molecule::draw_bond(glm::vec3 atomPosition, glm::vec3 direction)
     -> talked to miss
 
     effectively, find the transformations on the atom, revert it, generate the points, then reapply
+
+
+
+ - to draw the bonds, I want a function which when given two coordinates in 3D space draws a bond between them.
+    
 */
 
 glm::vec3 get_perpendicular(glm::vec3 initial)
@@ -245,8 +252,12 @@ glm::vec3 get_perpendicular(glm::vec3 initial)
 }
 
 
-void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
+void Molecule::draw(Camera &camera, float windowWidth, float windowHeight, glm::vec3 position, glm::vec3 direction, Atom* current)
 {
+    // begin by normalizing direction and setting the distance
+    direction = glm::normalize(direction);
+    float lambda = 5.0f;
+
     // means it is the first iteration 
     if (current == nullptr)
     {
@@ -254,30 +265,10 @@ void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
     }
 
     // draw atom at position
-    draw_atom(position);
+    draw_atom(&atomObject, position, camera, windowWidth, windowHeight);
 
     // draw first bond
-        draw_bond(position, direction);   
-        
-    // make draw second bond
-        glm::vec3 perpVector = get_perpendicular(direction);
-        perpVector = glm::normalize(perpVector);
+    glm::vec3 nextPosition = position + (lambda * direction);
+    draw_bond(&bondObject, glm::vec3(0.0f), glm::vec3(5.0f, 5.0f, 5.0f), camera, windowWidth, windowHeight);
 
-        glm::vec4 tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(109.45f), perpVector) * glm::vec4(direction, 0);
-        glm::vec3 initialDirection = direction;
-        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
-
-        draw_bond(position, direction);
-
-    // draw third bond
-        tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(120.0f), initialDirection) * glm::vec4(direction, 0);
-        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
-
-        draw_bond(position, direction);
-
-    // draw fourth bond
-        tempVector = glm::rotate(glm::mat4(1.0f), glm::radians(120.0f), initialDirection) * glm::vec4(direction, 0);
-        direction = glm::vec3(tempVector.x, tempVector.y, tempVector.z);
-
-        draw_bond(position, direction);
 }

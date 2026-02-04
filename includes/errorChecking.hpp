@@ -19,4 +19,5 @@ namespace error
 
     void check_OpenGL_error();
     void check_boundVAO();
+    void check_currentShader();
 }

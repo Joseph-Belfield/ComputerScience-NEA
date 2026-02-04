@@ -7,6 +7,9 @@
 
 #include <vector>
 
+// predefines
+class Camera;
+
 void update_scene(appData &appData)
 {
     // disables
@@ -25,18 +28,20 @@ void update_scene(appData &appData)
     // selects program in use
     appData.program.defaultShader.use();
 
-    update_viewMatrix(appData);                      // Makes a camera work!
-    update_perspectiveMatrix(appData);               // creats illusion of perspective (size changes relative to camera)
+    appData.program.defaultShader.set_perspective((float)appData.window.window_width, (float)appData.window.window_height);
+    appData.program.defaultShader.set_view(appData.camera.camera1);
 }
 
-void draw_objects(std::vector<Object*> objects)
+void draw_objects(std::vector<Object*> objects, Camera &camera, float width, float height)
 {
     for (int i = 0; i < objects.size(); i++)
     {
-        objects[i] -> draw();
+        // draw the object
+        objects[i] -> draw(camera, width, height);
+
         if (objects[i] -> subclass == SPHERE)
         {
-            objects[i] -> uniform.uRotate.y += 5.0f;
+            // objects[i] -> uniform.uRotate.y += 5.0f;
         }
 
     }   

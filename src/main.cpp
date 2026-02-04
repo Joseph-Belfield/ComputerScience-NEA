@@ -19,9 +19,13 @@ int main()
   // 1. initialize libraries
   render::init_graphics(app);
 
+  Sphere sphere;
+  app.window.objects = {&sphere};
+
   Atom atom1(CARBON);
   Molecule molecule(&atom1);
   app.molecule = &molecule;
+
 
   // 3. main run loop
   render::run_loop(app);

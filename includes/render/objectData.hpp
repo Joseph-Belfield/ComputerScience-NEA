@@ -72,11 +72,8 @@ public:
     // constructor
     Object();
 
-    // uniform handling
-    glm::mat4 update_modelMatrix();
-
     // draw functions
-    void draw();
+    void draw(Camera &camera, float windowWidth = 1280.0f, float windowHeight = 800.0f);
 };
 
 class ReferencePlane: public Object

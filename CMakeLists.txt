@@ -29,7 +29,6 @@ add_executable(${PROJECT_NAME}
     src/render/errorChecking.cpp
     src/render/init.cpp
     src/render/runLoop/events.cpp
-    src/render/runLoop/matrixSetup.cpp
     src/render/runLoop/ImGuiDraw.cpp
     src/render/runLoop/sceneDraw.cpp
     src/render/runLoop.cpp

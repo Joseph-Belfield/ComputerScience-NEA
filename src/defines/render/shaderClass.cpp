@@ -1,8 +1,10 @@
 #include "render/shaderClass.hpp"
 #include "errorChecking.hpp"
+#include "render/camera.hpp"
 
 #include "glad/gl.h"
 #include "glm/mat4x4.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 
 #include <string>
@@ -147,11 +149,14 @@ void Shader::compile_and_link()
 
     // attatch shaders to program object
     glAttachShader(programID, vertexShader);    // attatches vertex shader to the object
-    glAttachShader(programID, fragmentShader);
+    glAttachShader(programID, fragmentShader);  // attatches fragment shader to the object
     glLinkProgram(programID);   // links shaders together within object
 
     // validate program - check for errors
     error::check_shaderProgram(programID);
+
+    // sets compiled as true so it can be checked later 
+    compiled = true;
 }
 
 void Shader::set_float1(const std::string uniformName, float x)
@@ -169,4 +174,42 @@ void Shader::set_float4(const std::string uniformName, float x, float y, float z
 void Shader::set_mat4(const std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix)
 {
     glUniformMatrix4fv(glGetUniformLocation(programID, uniformName.c_str()), amount, enableTranspose, &matrix[0][0]);
+}
+
+void Shader::set_model(glm::vec3 displacement, glm::vec3 rotation, glm::vec3 scale)
+{
+    // movement
+    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), displacement); // movement
+
+    // rotations
+    modelMatrix = glm::rotate(modelMatrix , rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));  // X
+    modelMatrix = glm::rotate(modelMatrix , rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));  // Y
+    modelMatrix = glm::rotate(modelMatrix , rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));  // Z
+
+	// scale
+    modelMatrix = glm::scale(modelMatrix, scale);
+
+    // sends the model matrix to the GPU
+    set_mat4("uModel", 1, false, modelMatrix);
+}
+
+void Shader::set_perspective(float width, float height)
+{
+    // projection matrix (in perspective)
+    glm::mat4 perspective = glm::perspective      // create perspective matrix
+                            (
+                                glm::radians(90.0f),                                                       // FOV (radians)
+                                (width / height),     // aspect ratio
+                                0.1f,                                                                      // near clipping plane (min. distance)
+                                100.0f                                                                     // far clipping plane (max. distance)
+                            );  
+
+    set_mat4("uPerspective", 1, false, perspective);
+}
+
+void Shader::set_view(Camera &camera)
+{
+    glm::mat4 viewMatrix = camera.get_view_matrix();
+
+    set_mat4("uView", 1, false, viewMatrix);
 }

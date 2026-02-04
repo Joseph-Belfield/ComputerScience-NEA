@@ -31,9 +31,5 @@ public:
     int find_atom(Atom* targetAtom);
     void find_molecule_tree(Atom* currentAtom);
 
-
-    void draw_atom(glm::vec3 position);                             // draws atom at set location
-    void draw_bond(glm::vec3 position, glm::vec3 rotation);         // draws bond at set location and rotation (from upVector)
-
-    void draw(glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
+    void draw(Camera &camera, float windowWidth, float windowHeight, glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
 };

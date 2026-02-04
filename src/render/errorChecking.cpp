@@ -68,7 +68,7 @@ namespace error
     {
         int result;
         glGetShaderiv(shader, GL_COMPILE_STATUS, &result);  // gets compile status, stores in result
-        if (result == GL_FALSE)                                   // error checking <3
+        if (result == GL_FALSE)                             // error checking <3
         {
             int length;                                                     
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);           // find the length of the error message
@@ -105,6 +105,7 @@ namespace error
         {
             glGetProgramInfoLog(program, 512, NULL, errorLog);
             std::cout << "Program link error: " << errorLog << std::endl;
+            exit(-1);
         }
     }
 
@@ -158,5 +159,17 @@ namespace error
         GLint boundVAO = 0;
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundVAO);
         std::cout << "Bound VAO: " << boundVAO << std::endl;
+    }
+
+    void check_currentShader()
+    {
+        GLint currentProgram;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+        std::cout << "Current shader program ID: " << currentProgram << std::endl;
+        if (currentProgram == 0)
+        {
+            std::cout << "ERROR: No shader program in use!" << std::endl;
+            exit(-1);
+        }
     }
 }
