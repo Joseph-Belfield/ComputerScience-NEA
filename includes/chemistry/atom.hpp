@@ -40,7 +40,7 @@ public:
     int electrons;
 
     uint maxBonds;
-    std::vector<Atom*> bonds;   // vector of pointers to atoms
+    std::vector<Atom*> bonds = {nullptr};   // vector of pointers to atoms
     Molecule* parent = nullptr;  // pointer to molecule atom is in
 
 

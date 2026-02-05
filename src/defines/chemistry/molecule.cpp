@@ -4,6 +4,7 @@
 
 #include <string>
 #include <iostream>
+#include <cmath>
 
 Molecule::Molecule(Atom* firstAtom)
 {
@@ -191,15 +192,28 @@ void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2, Camera &c
 {
     // move centre of bond to centre of space between points
     glm::vec3 direction = position2 - position1;        // AB = B - A
-    glm::vec3 bondPosition = position1 + (0.5f * direction);        // R = P + (l * D)
+    glm::vec3 bondPosition = position1 + (0.5f * direction);        // R = AB + (l * (AB))
     bond -> uniform.uDisplacement = bondPosition;
 
     // rotate bond accordingly
+    float rotationAbout_x = std::acosf(direction.y / glm::length(direction));   // latitude
+    if (abs(direction.y) == glm::length(direction))
+    {
+        rotationAbout_x = 0.0f;
+    }
+
+    // imagine a cartesian graph, where z is the x axis, and x is the y axis (looking down)
     glm::vec2 xz = glm::vec2(direction.x, direction.z); // about y
-
-    float rotationAbout_x = acosf(glm::length(xz) / glm::length(direction));
-    float rotationAbout_y = acosf(xz.y / glm::length(xz));
-
+    float rotationAbout_y = std::acosf(direction.z / glm::length(xz));          // longitude
+    if (direction.x < 0)
+    {
+        rotationAbout_y = (2 * M_PI) - rotationAbout_y;
+    }
+    else if (glm::length(xz) == 0)  // catch a divide by 0 error
+    {
+        rotationAbout_y = 0.0f;
+    }
+       
     glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
     bond -> uniform.uRotate = totalRotation;
 
@@ -266,13 +280,22 @@ void Molecule::draw(Camera &camera, float windowWidth, float windowHeight, glm::
         // first iteration edge case code here + setup code?
     }
 
-    glm::vec3 position2 = glm::vec3(5.0f, 5.0f, 0.0f);
+    glm::vec3 tetrahedralDirections[4] = {glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, -1.0f, 0.0f), glm::vec3(-1.0f, -1.0f, -sqrt(3.0f)), glm::vec3(-1.0f, -1.0f, sqrt(3.0f))};
+    glm::vec3 nextPosition;
+
 
     // draw atom at position
     draw_atom(&atomObject, position, camera, windowWidth, windowHeight);
-    draw_atom(&atomObject, position2, camera, windowWidth, windowHeight);
 
-    // draw first bond
-    glm::vec3 nextPosition = position + (lambda * direction);
-    draw_bond(&bondObject, position, position2, camera, windowWidth, windowHeight);
+    // draws up to the maximum number of bonds on the atom
+    for (int i = 0; i < 4; i++)
+    {
+        if (current -> bonds.size() <= i && current -> bonds[0] != nullptr)   // if there is a bond there
+        {
+            nextPosition = position + (lambda * glm::normalize(tetrahedralDirections[i]));
+            draw_bond(&bondObject, position, nextPosition, camera, windowWidth, windowHeight);
+        }
+    }
+
+
 }
