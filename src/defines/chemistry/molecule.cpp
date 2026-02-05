@@ -182,9 +182,9 @@ Molecule* Molecule::removeBond(Atom* atom1, Atom* atom2)
 
 void draw_atom(Object* atom, glm::vec3 position, Camera &camera, float windowWidth, float windowHeight)
 {
-    atom -> uniform.uDisplacement += position;
+    atom -> uniform.uDisplacement = position;
     atom -> draw(camera, windowWidth, windowHeight);
-    atom -> uniform.uDisplacement += position;
+    atom -> uniform.uDisplacement = glm::vec3(0.0f);
 }
 
 void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2, Camera &camera, float windowWidth, float windowHeight)
@@ -192,26 +192,28 @@ void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2, Camera &c
     // move centre of bond to centre of space between points
     glm::vec3 direction = position2 - position1;        // AB = B - A
     glm::vec3 bondPosition = position1 + (0.5f * direction);        // R = P + (l * D)
-    bond -> uniform.uDisplacement += bondPosition;
+    bond -> uniform.uDisplacement = bondPosition;
 
     // rotate bond accordingly
-    float difference_x = position2.x - position1.x;
-    float difference_y = position2.y - position1.y;
-    float difference_z = position2.z - position1.z;
+    glm::vec2 xz = glm::vec2(direction.x, direction.z); // about y
 
-    // probably a divide by 0 error
-    float rotationAbout_x = atanf(difference_y / difference_z);
-    float rotationAbout_y = atanf(difference_z / difference_x);
+    float rotationAbout_x = acosf(glm::length(xz) / glm::length(direction));
+    float rotationAbout_y = acosf(xz.y / glm::length(xz));
 
     glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
-    bond -> uniform.uRotate += totalRotation;
+    bond -> uniform.uRotate = totalRotation;
+
+    // set the bond's scale correctly
+    float scale = glm::length(position2 - position1);
+    bond -> uniform.uScale.y = scale;
 
     // draw bond
     bond -> draw(camera, windowWidth, windowHeight);
 
     // reset bond position
-    bond -> uniform.uDisplacement -= bondPosition;
-    bond -> uniform.uDisplacement -= totalRotation;
+    bond -> uniform.uDisplacement = glm::vec3(0.0f);
+    bond -> uniform.uRotate = glm::vec3(0.0f);
+    bond -> uniform.uScale.y = 1.0f;
 }
 
 
@@ -233,7 +235,7 @@ void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2, Camera &c
 
     -> V2, V3 and V4 all lie on a plane perpendicular to V1, and are eqidistant from each other
         >> can I just rotate V2 60 degrees (per point) around V1 to get the other vertices?
-    -> talked to miss
+    -> talked to Miss Ogun
 
     effectively, find the transformations on the atom, revert it, generate the points, then reapply
 
@@ -264,11 +266,13 @@ void Molecule::draw(Camera &camera, float windowWidth, float windowHeight, glm::
         // first iteration edge case code here + setup code?
     }
 
+    glm::vec3 position2 = glm::vec3(5.0f, 5.0f, 0.0f);
+
     // draw atom at position
     draw_atom(&atomObject, position, camera, windowWidth, windowHeight);
+    draw_atom(&atomObject, position2, camera, windowWidth, windowHeight);
 
     // draw first bond
     glm::vec3 nextPosition = position + (lambda * direction);
-    draw_bond(&bondObject, glm::vec3(0.0f), glm::vec3(5.0f, 5.0f, 5.0f), camera, windowWidth, windowHeight);
-
+    draw_bond(&bondObject, position, position2, camera, windowWidth, windowHeight);
 }

@@ -20,7 +20,9 @@ int main()
   render::init_graphics(app);
 
   Sphere sphere;
-  app.window.objects = {&sphere};
+  Cylinder cylinder;
+  cylinder.uniform.uDisplacement.x += 5.0f;
+  // app.window.objects = {&sphere, &cylinder};
 
   Atom atom1(CARBON);
   Molecule molecule(&atom1);

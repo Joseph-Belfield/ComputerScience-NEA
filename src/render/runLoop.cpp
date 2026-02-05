@@ -30,9 +30,6 @@ namespace render
 
             check_events(appData);
 
-            // refreshes window size for if window is resized mid program
-            SDL_GetWindowSize(appData.program.window, &appData.window.window_width, &appData.window.window_height);
-
             // starts a new frame for OpenGL, SDL and ImGui
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplSDL3_NewFrame();

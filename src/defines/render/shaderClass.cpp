@@ -178,16 +178,20 @@ void Shader::set_mat4(const std::string uniformName, int amount, bool enableTran
 
 void Shader::set_model(glm::vec3 displacement, glm::vec3 rotation, glm::vec3 scale)
 {
-    // movement
-    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), displacement); // movement
+
+    // scale
+    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
 
     // rotations
-    modelMatrix = glm::rotate(modelMatrix , rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));  // X
-    modelMatrix = glm::rotate(modelMatrix , rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));  // Y
-    modelMatrix = glm::rotate(modelMatrix , rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));  // Z
+    glm::mat4 rotationMatrix_x = glm::rotate(glm::mat4(1.0f), rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));  // X
+    glm::mat4 rotationMatrix_y = glm::rotate(glm::mat4(1.0f), rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));  // Y
+    glm::mat4 rotationMatrix_z = glm::rotate(glm::mat4(1.0f), rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));  // Z
+    glm::mat4 rotationMatrix = rotationMatrix_z * rotationMatrix_y * rotationMatrix_x;
 
-	// scale
-    modelMatrix = glm::scale(modelMatrix, scale);
+    // movement
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), displacement); // movement
+
+    glm::mat4 modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 
     // sends the model matrix to the GPU
     set_mat4("uModel", 1, false, modelMatrix);
