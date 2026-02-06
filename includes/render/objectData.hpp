@@ -56,12 +56,22 @@ struct uniformData
     float uOpacity = 1.0f;
 };
 
+struct drawData
+{
+    Camera* camera = nullptr;
+    float width = 0.0f;
+    float height = 0.0f;
+
+    bool init = false;
+};
+
 // for each induvidual object
 class Object
 {
 public:
 	meshData mesh;
 	uniformData uniform;
+    drawData drawInfo;
 
     // type of object
     Subclass subclass;
@@ -69,11 +79,14 @@ public:
     // coordinates of object in 3D space
     glm::vec4 coordinates = glm::vec4(0.0f);
 
-    // constructor
+    // default constructor
     Object();
 
+    // initializes info needed for drawing
+    void init_drawInfo(Camera* camera, float width, float height);
+
     // draw functions
-    void draw(Camera &camera, float windowWidth, float windowHeight);
+    void draw();
 };
 
 class ReferencePlane: public Object

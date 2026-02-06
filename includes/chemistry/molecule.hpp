@@ -7,6 +7,11 @@
 // prefefining atom so that it can be referenced by molecule
 struct Atom;
 
+struct bondAngles
+{
+    glm::vec3 tetrahedral[4] = {glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, -1.0f, 0.0f), glm::vec3(-1.0f, -1.0f, -sqrt(3.0f)), glm::vec3(-1.0f, -1.0f, sqrt(3.0f))};
+};
+
 // A class for effectively anything rendered - functional groups will be a subclass
 class Molecule
 {
@@ -18,10 +23,12 @@ public:
     Sphere atomObject;
     Cylinder bondObject;
 
+    // holds all the bond angles
+    bondAngles angles;
 
     // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
     Molecule(Atom* firstAtom);
-    Molecule(std::vector<Atom*>* atomVector);
+    Molecule(std::vector<Atom*> &atomVector);
 
 
     // will join 2 molecules together at set atoms, or add another bond between atoms in a molecule 
@@ -31,5 +38,6 @@ public:
     int find_atom(Atom* targetAtom);
     void find_molecule_tree(Atom* currentAtom);
 
-    void draw(Camera &camera, float windowWidth, float windowHeight, glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
+    void init_drawInfo(Camera* camera, float width, float height);
+    void draw(glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
 };

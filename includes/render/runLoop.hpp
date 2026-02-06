@@ -25,7 +25,7 @@ void update_scene(appData &appData);
 
 // *************************************************
 
-void draw_objects(std::vector<Object*> objects, Camera &camera, float width, float height);
+void draw_objects(std::vector<Object*> objects, Camera* camera, float width, float height);
 
 // *************************************************
 

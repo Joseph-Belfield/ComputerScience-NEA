@@ -211,9 +211,9 @@ void Shader::set_perspective(float width, float height)
     set_mat4("uPerspective", 1, false, perspective);
 }
 
-void Shader::set_view(Camera &camera)
+void Shader::set_view(Camera* camera)
 {
-    glm::mat4 viewMatrix = camera.get_view_matrix();
+    glm::mat4 viewMatrix = camera -> get_view_matrix();
 
     set_mat4("uView", 1, false, viewMatrix);
 }

@@ -38,5 +38,5 @@ public:
 
     void set_model(glm::vec3 displacement, glm::vec3 rotation, glm::vec3 scale);
     void set_perspective(float width, float height);
-    void set_view(Camera &camera);
+    void set_view(Camera* camera);
 };

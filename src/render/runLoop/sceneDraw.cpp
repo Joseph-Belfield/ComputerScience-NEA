@@ -29,20 +29,24 @@ void update_scene(appData &appData)
     appData.program.defaultShader.use();
 
     appData.program.defaultShader.set_perspective((float)appData.window.window_width, (float)appData.window.window_height);
-    appData.program.defaultShader.set_view(appData.camera.camera1);
+    appData.program.defaultShader.set_view(&appData.camera.camera1);
 }
 
-void draw_objects(std::vector<Object*> objects, Camera &camera, float width, float height)
+void draw_objects(std::vector<Object*> objects, Camera* camera, float width, float height)
 {
     for (int i = 0; i < objects.size(); i++)
     {
         // draw the object
-        objects[i] -> draw(camera, width, height);
+        if (!objects[i] -> drawInfo.init)
+        {
+            objects[i] -> init_drawInfo(camera, width, height);
+        }
+
+        objects[i] -> draw();
 
         if (objects[i] -> subclass == SPHERE)
         {
             // objects[i] -> uniform.uRotate.y += 5.0f;
         }
-
     }   
 }

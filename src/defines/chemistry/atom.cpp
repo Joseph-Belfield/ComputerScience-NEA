@@ -9,7 +9,7 @@ Atom::Atom(Element element)
     {
         case(HYDROGEN):
             element = HYDROGEN;
-            atomicRadius = 1.0f;
+            atomicRadius = 0.48f;
             color = glm::vec3(0.9f);
             maxBonds = 1;
             break;
@@ -24,7 +24,7 @@ Atom::Atom(Element element)
 
         case(OXYGEN):
             element = OXYGEN;
-            atomicRadius = 1.0f;
+            atomicRadius = 0.95f;
             color = glm::vec3(0.0f, 0.0f, 0.9f);
             maxBonds = 2;
             bondAngle = 104.5f;

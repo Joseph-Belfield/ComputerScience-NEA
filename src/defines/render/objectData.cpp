@@ -15,18 +15,18 @@
 #include <math.h>
 #include <iostream>
 
-
 Object::Object() {};
 
-// Creates a model matrix.
-// - Objects begin in local space, where they are created on their own set of axis
-// - The model matrix moves objects from local space to world space, where objects are all held relative to one shared set of axis
-//
-// The model matrix is also edited accordingly to change an objects position/rotation in world space accordingly.
+void Object::init_drawInfo(Camera* camera, float width, float height)
+{
+	drawInfo.camera = camera;
+	drawInfo.width = width;
+	drawInfo.height = height;
+	
+	drawInfo.init = true;
+}
 
-
-
-void draw_polygon(Object* object, float width, float height, Camera& camera)
+void draw_polygon(Object* object)
 {
 
 	// change the objects opacity
@@ -37,8 +37,8 @@ void draw_polygon(Object* object, float width, float height, Camera& camera)
 
 	// sets the uniforms for the shader program (must be set each time new program is called!)
 	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
-	object -> mesh.objectShader.set_perspective(width, height);
-	object -> mesh.objectShader.set_view(camera);
+	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
+	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
 
 	// choose VAO and VBO
     glBindVertexArray(object -> mesh.vertexArrayObject);
@@ -56,15 +56,15 @@ void draw_polygon(Object* object, float width, float height, Camera& camera)
     glBindVertexArray(0);
 }
 
-void draw_lines(Object* object, float width, float height, Camera& camera)
+void draw_lines(Object* object)
 {
 	// sets the shader program
 	object -> mesh.objectShader.use();
 
 	// sets the uniforms for the shader program
 	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
-	object -> mesh.objectShader.set_perspective(width, height);
-	object -> mesh.objectShader.set_view(camera);
+	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
+	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
 
 	// choose VAO and VBO
     glBindVertexArray(object -> mesh.vertexArrayObject);
@@ -83,20 +83,27 @@ void draw_lines(Object* object, float width, float height, Camera& camera)
 }
 
 
-void Object::draw(Camera &camera, float windowWidth, float windowHeight)
+void Object::draw()
 {
+	// ensure shader is initialized
 	if (!mesh.objectShader.compiled)
 	{
 		mesh.objectShader.compile_and_link();
 	}
+	// ensure info needed for drawing has been passed to the object
+	if (!drawInfo.init)
+	{
+		std::cout << "Draw info not initialized!" << std::endl;
+		exit(-1);
+	}
 
 	if (subclass == REFERENCE_PLANE)
 	{
-		draw_lines(this, windowWidth, windowHeight, camera);
+		draw_lines(this);
 	}
 	else 
 	{
-		draw_polygon(this, windowWidth, windowHeight, camera);
+		draw_polygon(this);
 	}
 }
 

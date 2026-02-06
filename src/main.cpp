@@ -19,13 +19,13 @@ int main()
   // 1. initialize libraries
   render::init_graphics(app);
 
-  Sphere sphere;
-  Cylinder cylinder;
-  cylinder.uniform.uDisplacement.x += 5.0f;
-  // app.window.objects = {&sphere, &cylinder};
-
   Atom atom1(CARBON);
-  Molecule molecule(&atom1);
+  Atom atom2(OXYGEN);
+  atom1.bonds.push_back(&atom2);
+  atom2.bonds.push_back(&atom1);
+
+  std::vector<Atom*> atoms = {&atom1, &atom2};
+  Molecule molecule(atoms);
   app.molecule = &molecule;
 
 
