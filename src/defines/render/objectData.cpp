@@ -28,21 +28,6 @@ void Object::init_drawInfo(Camera* camera, float width, float height)
 
 void draw_polygon(Object* object)
 {
-
-	// change the objects opacity
-	// mesh.objectShader.set_float1("uOpacity", uniform.uOpacity);
-
-	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
-	object -> mesh.objectShader.use();
-
-	// sets the uniforms for the shader program (must be set each time new program is called!)
-	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
-	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
-	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
-
-	// choose VAO and VBO
-    glBindVertexArray(object -> mesh.vertexArrayObject);
-
     // draw
     glDrawElements
     (
@@ -51,24 +36,10 @@ void draw_polygon(Object* object)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
-
-    // unbind VAO after shape drawn
-    glBindVertexArray(0);
 }
 
 void draw_lines(Object* object)
 {
-	// sets the shader program
-	object -> mesh.objectShader.use();
-
-	// sets the uniforms for the shader program
-	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
-	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
-	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
-
-	// choose VAO and VBO
-    glBindVertexArray(object -> mesh.vertexArrayObject);
-
     // draw
     glDrawElements
     (
@@ -77,8 +48,26 @@ void draw_lines(Object* object)
         GL_UNSIGNED_INT,                    // data type
         (void*)0                            // offset into index array for first element (triangle vertex order)
     );  
+}
 
-    // unbind VAO after shape drawn
+void setup_draw(Object* object)
+{
+	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
+	object -> mesh.objectShader.use();
+
+	// sets the uniforms for the shader program (must be set each time new program is called!)
+	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
+	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
+	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
+	object -> mesh.objectShader.set_float4("uColor", object -> uniform.uColor.x, object -> uniform.uColor.y, object -> uniform.uColor.z, object -> uniform.uColor.w);
+
+	// choose VAO and VBO
+    glBindVertexArray(object -> mesh.vertexArrayObject);
+}
+
+void cleanup_draw()
+{
+	// unbind VAO after shape drawn
     glBindVertexArray(0);
 }
 
@@ -97,6 +86,9 @@ void Object::draw()
 		exit(-1);
 	}
 
+	// set up uniforms, VAO, etc 
+	setup_draw(this);
+
 	if (subclass == REFERENCE_PLANE)
 	{
 		draw_lines(this);
@@ -105,6 +97,9 @@ void Object::draw()
 	{
 		draw_polygon(this);
 	}
+
+	// clean up VAO
+	cleanup_draw();
 }
 
 void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
@@ -203,22 +198,10 @@ void vertex_specification(meshData &mesh)
 		3,                        // pieces of data (per vertex: x, y, z)
 		GL_FLOAT,                 // data type
 		GL_FALSE,                 // normalized?
-		sizeof(GLfloat) * 6,      // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+		0,      				  // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
 		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
 	);
 
-
-	// setup color VAO
-	glEnableVertexAttribArray(1); // enables the 1st attribute - AKA. this is the second VAO
-	glVertexAttribPointer
-	(
-		1,                                 // index into vector of VAOs
-		4,                                 // pieces of data (per vertex: r, g, b, a)
-		GL_FLOAT,                          // data type
-		GL_FALSE,                          // normalized?
-		sizeof(GLfloat) * 6,               // stride (byte offset) between firsts of same data (ie: between r1 and r2)       
-		(GLvoid*)(sizeof(GLfloat) * 3)     // pointer for offset - starting position for first of that data type (address)
-	);
 
 	// cleanup
 	glBindVertexArray(0);                		// unbind currently bound VAO
@@ -318,9 +301,6 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 		mesh.vertexData.push_back(vertices.at(i).x);
 		mesh.vertexData.push_back(vertices.at(i).y);
 		mesh.vertexData.push_back(vertices.at(i).z);
-		mesh.vertexData.push_back(initColor.r);				// R
-		mesh.vertexData.push_back(initColor.g);				// G
-		mesh.vertexData.push_back(initColor.b);				// B
 	}
 
 	// fills indexData with correct index information
@@ -332,6 +312,7 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	// set up uniforms
 	uniform.uDisplacement = initLocation;
 	uniform.uScale = glm::vec3(initScale);
+	uniform.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -391,9 +372,6 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 		mesh.vertexData.push_back(vertices[i].x);
 		mesh.vertexData.push_back(vertices[i].y);
 		mesh.vertexData.push_back(vertices[i].z);
-		mesh.vertexData.push_back(initColor.r);			// R
-		mesh.vertexData.push_back(initColor.g);			// G
-		mesh.vertexData.push_back(initColor.b);			// B
 	}
 
 	calculateReferencePlaneIndexData(mesh.indexData, stripCount);
@@ -403,6 +381,7 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	// set up uniforms
 	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
 	uniform.uScale = glm::vec3(5.0f);
+	uniform.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -516,9 +495,6 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 		mesh.vertexData.push_back(vertices[i].x);
 		mesh.vertexData.push_back(vertices[i].y);
 		mesh.vertexData.push_back(vertices[i].z);
-		mesh.vertexData.push_back(initColor.r);			// R
-		mesh.vertexData.push_back(initColor.g);			// G
-		mesh.vertexData.push_back(initColor.b);			// B
 	}
 
 
@@ -532,6 +508,7 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	uniform.uDisplacement = initLocation;
 	uniform.uRotate = initRotation;
 	uniform.uScale = initScale;
+	uniform.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -624,9 +601,6 @@ Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocati
 		mesh.vertexData.push_back(vertices[i].x);
 		mesh.vertexData.push_back(vertices[i].y);
 		mesh.vertexData.push_back(vertices[i].z);
-		mesh.vertexData.push_back(initColor.r);			// R
-		mesh.vertexData.push_back(initColor.g);			// G
-		mesh.vertexData.push_back(initColor.b);			// B
 	}
 
 	calculateCubeIndexData(mesh.indexData);
@@ -638,4 +612,5 @@ Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocati
 	uniform.uDisplacement = initLocation;
 	uniform.uRotate = initRotation;
 	uniform.uScale = initScale;
+	uniform.uColor = glm::vec4(initColor, 1.0f);
 }

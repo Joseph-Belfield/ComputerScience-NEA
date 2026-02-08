@@ -18,17 +18,27 @@ public:
     std::string source_vertexShader;
     std::string source_fragmentShader;
 
+    // defaults to base shaders
+    uint versionVertex = 0;
+    uint versionFragment = 0;
+
     // stores whether the shader has been compiled or not
     bool compiled = false;
 
     // constructor with default values
-    Shader(std::string vertexFilename = "version0.vs", std::string fragmentFilename = "version0.fs");
+    Shader(std::string vertexFilename = "version1.vs", std::string fragmentFilename = "version1.fs");
+
+    // secondary constructor that chooses shader's based on their version (must be manually updated)
+    Shader(const uint version_vertex, const uint vertsion_fragment);
 
     // methods
     void use();     // use the shader
 
     void set_vertexSource(std::string vertexFilename);          // change the source of the vertex
     void set_fragmentSource(std::string fragmentFilename);      // change the source of the fragment
+
+    // gets the versions of the shaders
+    void get_shaderVersions();
 
     void compile_and_link();    // compile and link shader programs to shader program
 

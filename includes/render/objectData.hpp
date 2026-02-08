@@ -51,9 +51,7 @@ struct uniformData
 	glm::vec3 uScale = glm::vec3(1.0f, 1.0f, 1.0f);
 
     // change in color values of object
-    glm::vec3 uColor = glm::vec3(1.0f, 0.0f, 0.0f);
-
-    float uOpacity = 1.0f;
+    glm::vec4 uColor = glm::vec4(1.0f);
 };
 
 struct drawData

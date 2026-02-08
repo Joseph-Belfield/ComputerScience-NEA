@@ -102,6 +102,26 @@ Shader::Shader(std::string vertexFilename, std::string fragmentFilename)
     source_fragmentShader = load_shader_from_file(fragmentFilepath);
 }
 
+Shader::Shader(const uint version_vertex, const uint version_fragment)
+{
+    switch(version_vertex)
+    {
+        case(0):
+            source_vertexShader = load_shader_from_file(add_shaderFilepath("version0.vs"));
+            break;
+    }
+
+    switch(version_fragment)
+    {
+        case(0):
+            source_fragmentShader = load_shader_from_file(add_shaderFilepath("version0.fs"));
+            break;
+        case(1):
+            source_fragmentShader = load_shader_from_file(add_shaderFilepath("version1.fs"));
+            break;
+    }
+}
+
 // Sets the shader object as the shader program in use.
 void Shader::use()
 {
@@ -138,6 +158,12 @@ void Shader::set_fragmentSource(std::string fragmentFilename)
     }
 }
 
+void Shader::get_shaderVersions()
+{
+    versionVertex = int(source_vertexShader[-4]);
+    versionFragment = int(source_fragmentShader[-4]);
+}
+
 // Compile and links current vertex and fragment shaders to a shader program.
 void Shader::compile_and_link()
 {
@@ -146,6 +172,9 @@ void Shader::compile_and_link()
     // compile shaders
     GLuint vertexShader = compile_shader(GL_VERTEX_SHADER, source_vertexShader);
     GLuint fragmentShader = compile_shader(GL_FRAGMENT_SHADER, source_fragmentShader);
+
+    // gets the shader versions for the draw stage
+    get_shaderVersions();
 
     // attatch shaders to program object
     glAttachShader(programID, vertexShader);    // attatches vertex shader to the object

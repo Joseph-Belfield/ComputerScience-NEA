@@ -58,6 +58,9 @@ void Molecule::draw_CH4(glm::vec3 position)
     float lambda = 3.0f;
     glm::vec3 nextPosition;
 
+    atomObject.uniform.uColor = glm::vec4(1.0f, 0.0f, 0.0, 1.0f);
+    bondObject.uniform.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+
     // draw atom at position
     draw_atom(&atomObject, position);
     
