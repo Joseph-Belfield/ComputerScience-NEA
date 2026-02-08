@@ -107,6 +107,48 @@ void Object::draw()
 	}
 }
 
+void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
+{
+	// move location of cylinder to centre of space between points
+    glm::vec3 direction = position2 - position1;        // AB = B - A
+    glm::vec3 location = position1 + (0.5f * direction);        // R = AB + (l * (AB))
+    uniform.uDisplacement = location;
+
+    // rotate cylinder accordingly
+    float rotationAbout_x = std::acosf(direction.y / glm::length(direction));   // latitude
+    if (abs(direction.y) == glm::length(direction))
+    {
+        rotationAbout_x = 0.0f;
+    }
+
+    // imagine a cartesian graph, where z is the x axis, and x is the y axis (looking down)
+    glm::vec2 xz = glm::vec2(direction.x, direction.z); // about y
+    float rotationAbout_y = std::acosf(direction.z / glm::length(xz));          // longitude
+    if (direction.x < 0)
+    {
+        rotationAbout_y = (2 * M_PI) - rotationAbout_y;
+    }
+    else if (glm::length(xz) == 0)  // catch a divide by 0 error
+    {
+        rotationAbout_y = 0.0f;
+    }
+       
+    glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
+    uniform.uRotate = totalRotation;
+
+    // set the cylinder's scale correctly
+    float scale = glm::length(position2 - position1);
+    uniform.uScale.y = scale;
+
+    // draw
+    draw();
+
+    // reset object position
+    uniform.uDisplacement = glm::vec3(0.0f);
+    uniform.uRotate = glm::vec3(0.0f);
+    uniform.uScale.y = 1.0f;
+}
+
 
 void init_shaders(Shader& shaderObject,std::string source_vertexShader, std::string source_fragmentShader)
 {

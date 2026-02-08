@@ -4,9 +4,9 @@ in vec3 v_vertexColors;
 
 out vec4 finalColor;
 
-uniform uOpacity;
+uniform vec4 uColor;
 
 void main()
 {
-	finalColor = vec4(v_vertexColors, uOpacity);
+	finalColor = uColor;
 }	

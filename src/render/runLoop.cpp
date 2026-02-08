@@ -42,8 +42,9 @@ namespace render
             update_scene(appData);
 
             draw_objects(appData.window.objects, &appData.camera.camera1, appData.window.window_width, appData.window.window_height);
-            
-            appData.molecule -> draw(appData.camera.camera1, appData.window.window_width, appData.window.window_height);
+
+            appData.molecule -> init_drawInfo(&appData.camera.camera1, appData.window.window_width, appData.window.window_height);
+            appData.molecule -> draw_CH4();
 
             draw_ImGui(appData);
 

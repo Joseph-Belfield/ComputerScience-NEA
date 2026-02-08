@@ -30,46 +30,9 @@ void draw_atom(Object* atom, glm::vec3 position)
     atom -> uniform.uDisplacement = glm::vec3(0.0f);
 }
 
-void draw_bond(Object* bond, glm::vec3 position1, glm::vec3 position2)
+void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 {
-    // move centre of bond to centre of space between points
-    glm::vec3 direction = position2 - position1;        // AB = B - A
-    glm::vec3 bondPosition = position1 + (0.5f * direction);        // R = AB + (l * (AB))
-    bond -> uniform.uDisplacement = bondPosition;
-
-    // rotate bond accordingly
-    float rotationAbout_x = std::acosf(direction.y / glm::length(direction));   // latitude
-    if (abs(direction.y) == glm::length(direction))
-    {
-        rotationAbout_x = 0.0f;
-    }
-
-    // imagine a cartesian graph, where z is the x axis, and x is the y axis (looking down)
-    glm::vec2 xz = glm::vec2(direction.x, direction.z); // about y
-    float rotationAbout_y = std::acosf(direction.z / glm::length(xz));          // longitude
-    if (direction.x < 0)
-    {
-        rotationAbout_y = (2 * M_PI) - rotationAbout_y;
-    }
-    else if (glm::length(xz) == 0)  // catch a divide by 0 error
-    {
-        rotationAbout_y = 0.0f;
-    }
-       
-    glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
-    bond -> uniform.uRotate = totalRotation;
-
-    // set the bond's scale correctly
-    float scale = glm::length(position2 - position1);
-    bond -> uniform.uScale.y = scale;
-
-    // draw bond
-    bond -> draw();
-
-    // reset bond position
-    bond -> uniform.uDisplacement = glm::vec3(0.0f);
-    bond -> uniform.uRotate = glm::vec3(0.0f);
-    bond -> uniform.uScale.y = 1.0f;
+    bond -> draw_between(position1, position2);
 }
 
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
@@ -88,4 +51,20 @@ void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
 
     // draw atom at position
     draw_atom(&atomObject, position);
+}
+
+void Molecule::draw_CH4(glm::vec3 position)
+{
+    float lambda = 3.0f;
+    glm::vec3 nextPosition;
+
+    // draw atom at position
+    draw_atom(&atomObject, position);
+    
+    for (int i = 0; i < 4; i++)
+    {
+        nextPosition = position + (lambda * glm::normalize(angles.tetrahedral[i]));
+        draw_bond(&bondObject, position, nextPosition);
+        draw_atom(&atomObject, nextPosition);
+    }
 }

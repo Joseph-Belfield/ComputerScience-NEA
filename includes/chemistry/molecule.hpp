@@ -40,4 +40,5 @@ public:
 
     void init_drawInfo(Camera* camera, float width, float height);
     void draw(glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
+    void draw_CH4(glm::vec3 position = glm::vec3(0.0f));
 };
