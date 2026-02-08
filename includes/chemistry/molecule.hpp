@@ -12,6 +12,15 @@ struct bondAngles
     glm::vec3 tetrahedral[4] = {glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, -1.0f, 0.0f), glm::vec3(-1.0f, -1.0f, -sqrt(3.0f)), glm::vec3(-1.0f, -1.0f, sqrt(3.0f))};
 };
 
+enum Compound
+{
+    WATER,
+    METHANE,
+    ETHANE,
+    PROPANE,
+    CYCLOHEXANE,
+};
+
 // A class for effectively anything rendered - functional groups will be a subclass
 class Molecule
 {
@@ -25,6 +34,7 @@ public:
 
     // holds all the bond angles
     bondAngles angles;
+    float bondLength = 3.0f;
 
     // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
     Molecule(Atom* firstAtom);
@@ -39,6 +49,12 @@ public:
     void find_molecule_tree(Atom* currentAtom);
 
     void init_drawInfo(Camera* camera, float width, float height);
+
+    void set_atomElement(Element element);
+
+    // automatically draws the full molecule (in work)
     void draw(glm::vec3 position = glm::vec3(0.0f), glm::vec3 direction = glm::vec3(0.0f, 1.0f, 0.0f), Atom* current = nullptr);
-    void draw_CH4(glm::vec3 position = glm::vec3(0.0f));
+
+    // draws the chosen molecule
+    void draw(Compound compound);
 };

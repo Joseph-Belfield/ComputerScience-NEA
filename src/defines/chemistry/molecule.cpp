@@ -35,11 +35,46 @@ void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
     bond -> draw_between(position1, position2);
 }
 
+void Molecule::set_atomElement(Element element)
+{
+    switch(element)
+    {
+        case(HYDROGEN):
+            atomObject.uniform.uScale = glm::vec3(0.69f);
+            atomObject.uniform.uColor = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+            break;
+
+        case(CARBON):
+            atomObject.uniform.uScale = glm::vec3(1.0f);
+            atomObject.uniform.uColor = glm::vec4(0.9f, 0.0f, 0.0f, 1.0f);
+            break;
+
+        case(NITROGEN):
+            atomObject.uniform.uScale = glm::vec3(0.70f);
+            atomObject.uniform.uColor = glm::vec4(0.0f, 0.9f, 0.9f, 1.0f);
+            break;
+
+        case(OXYGEN):
+            atomObject.uniform.uScale = glm::vec3(0.66f);
+            atomObject.uniform.uColor = glm::vec4(0.0f, 0.0f, 0.9f, 1.0f);
+            break;
+        
+        case(FLUORINE):
+            atomObject.uniform.uScale = glm::vec3(0.64f);
+            atomObject.uniform.uColor = glm::vec4(1.0f, 0.02f, 0.44f, 1.0f);
+            break;
+
+        case(CHLORINE):
+            atomObject.uniform.uScale = glm::vec3(1.41f);
+            atomObject.uniform.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
+            break;
+    }
+}
+
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
 {
     // begin by normalizing direction and setting the distance
     direction = glm::normalize(direction);
-    float lambda = 5.0f;
 
     // means it is the first iteration 
     if (current == nullptr)
@@ -47,27 +82,50 @@ void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
         current = atoms[0];
     }
     
-    glm::vec3 nextPosition = position + (lambda * glm::normalize(angles.tetrahedral[0]));
+    glm::vec3 nextPosition = position + (bondLength * glm::normalize(angles.tetrahedral[0]));
 
     // draw atom at position
     draw_atom(&atomObject, position);
 }
 
-void Molecule::draw_CH4(glm::vec3 position)
+void Molecule::draw(Compound compound)
 {
-    float lambda = 3.0f;
-    glm::vec3 nextPosition;
-
-    atomObject.uniform.uColor = glm::vec4(1.0f, 0.0f, 0.0, 1.0f);
+    glm::vec3 currentPos = glm::vec3(0.0f);
+    glm::vec3 nextPos;
     bondObject.uniform.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
-    // draw atom at position
-    draw_atom(&atomObject, position);
-    
-    for (int i = 0; i < 4; i++)
+    switch(compound)
     {
-        nextPosition = position + (lambda * glm::normalize(angles.tetrahedral[i]));
-        draw_bond(&bondObject, position, nextPosition);
-        draw_atom(&atomObject, nextPosition);
+        case(WATER):
+
+            set_atomElement(OXYGEN);
+            draw_atom(&atomObject, currentPos);
+
+            break;
+        
+        case(METHANE):
+
+            set_atomElement(CARBON);
+            draw_atom(&atomObject, currentPos);
+
+            for (int i = 0; i < 4; i++)
+            {
+                set_atomElement(HYDROGEN);
+
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
+
+                draw_bond(&bondObject, currentPos, nextPos);        
+                draw_atom(&atomObject, nextPos);
+            }
+            break;
+
+        case(ETHANE):
+            break;
+
+        case(PROPANE):
+            break;
+
+        case(CYCLOHEXANE):
+            break;
     }
 }

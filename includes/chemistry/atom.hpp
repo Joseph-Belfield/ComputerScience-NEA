@@ -10,14 +10,11 @@ class Molecule;
 enum Element
 {
     HYDROGEN = 1,
-    HELIUM,
-    LITHIUM,
-    BERYLLIUM,
-    BORON,
-    CARBON,
-    NITROGEN,
-    OXYGEN,
-    FLUORINE
+    CARBON = 6,
+    NITROGEN = 7,
+    OXYGEN = 8,
+    FLUORINE = 9,
+    CHLORINE = 17
 };
 
 // Atom class, holds essential details for atoms. 
