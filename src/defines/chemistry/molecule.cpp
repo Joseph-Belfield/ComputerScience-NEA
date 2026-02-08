@@ -69,6 +69,16 @@ void Molecule::set_atomElement(Element element)
             atomObject.uniform.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
             break;
     }
+
+    // ensures the bond length stays reasonable
+    if (bondLength > 4 * atomObject.uniform.uScale.x)
+    {
+        bondLength = 3 * atomObject.uniform.uScale.x;
+    }
+    else if (bondLength < 2 * atomObject.uniform.uScale.x)
+    {
+        bondLength = 3 * atomObject.uniform.uScale.x;
+    }
 }
 
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
@@ -92,19 +102,35 @@ void Molecule::draw(Compound compound)
 {
     glm::vec3 currentPos = glm::vec3(0.0f);
     glm::vec3 nextPos;
+
     bondObject.uniform.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
     switch(compound)
     {
         case(WATER):
-
+        {
             set_atomElement(OXYGEN);
             draw_atom(&atomObject, currentPos);
 
-            break;
-        
-        case(METHANE):
+            float bondAngle = (104.5f / 360.0f) * (2 * M_PI);
+            for (int i = 0; i < 2; i++)
+            {
+                set_atomElement(HYDROGEN);
 
+                // get the rotation for the atoms
+                glm::vec4 tempVec = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * glm::rotate(glm::mat4(1.0f), (bondAngle / 2) - (i * bondAngle), glm::vec3(0.0f, 0.0f, 1.0f));
+                glm::vec3 directionVec = glm::vec3(tempVec);
+
+                nextPos = currentPos + (bondLength * glm::normalize(directionVec));
+
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            break;
+        }
+        case(METHANE):
+        {
             set_atomElement(CARBON);
             draw_atom(&atomObject, currentPos);
 
@@ -118,14 +144,18 @@ void Molecule::draw(Compound compound)
                 draw_atom(&atomObject, nextPos);
             }
             break;
-
+        }
         case(ETHANE):
+        {
             break;
-
+        }
         case(PROPANE):
+        {
             break;
-
+        }
         case(CYCLOHEXANE):
+        { 
             break;
-    }
+        }
+    }   
 }
