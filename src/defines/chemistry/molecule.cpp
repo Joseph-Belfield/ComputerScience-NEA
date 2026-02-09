@@ -71,7 +71,7 @@ void Molecule::set_atomElement(Element element)
     }
 
     // ensures the bond length stays reasonable
-    if (bondLength > 4 * atomObject.uniform.uScale.x)
+    if (bondLength > 5 * atomObject.uniform.uScale.x)
     {
         bondLength = 3 * atomObject.uniform.uScale.x;
     }
@@ -143,14 +143,100 @@ void Molecule::draw(Compound compound)
                 draw_bond(&bondObject, currentPos, nextPos);        
                 draw_atom(&atomObject, nextPos);
             }
+
             break;
         }
         case(ETHANE):
         {
+            // draw the first carbon
+            set_atomElement(CARBON);
+            draw_atom(&atomObject, currentPos);
+
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+
+            // draw the second carbon
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            for (int i = 0; i < 2; i++)
+            {
+                set_atomElement(HYDROGEN);
+
+                // allows for first iteration around carbon 1, second iteration around carbon 2
+                currentPos = (float)i * (bondLength * glm::normalize(angles.tetrahedral[3]));
+
+                for (int j = 0; j < 3; j++)
+                {
+                    if (i == 0)
+                    {
+                        nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[j]));
+                    }
+                    else 
+                    {
+                        nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[j]));
+                    }
+
+                    draw_bond(&bondObject, currentPos, nextPos);
+                    draw_atom(&atomObject, nextPos);
+                }
+            }
+
             break;
         }
         case(PROPANE):
         {
+            // draw the first carbon
+            set_atomElement(CARBON);
+            draw_atom(&atomObject, currentPos);
+
+            set_atomElement(HYDROGEN);
+            for (int i = 0; i < 2; i++)
+            {
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // draw the second carbon
+            set_atomElement(CARBON);
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+    
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            glm::vec3 tempPos = currentPos;
+            currentPos = nextPos;
+
+            set_atomElement(HYDROGEN);
+            for (int i = 0; i < 3; i++)
+            {
+                nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // draw the third carbon
+            set_atomElement(CARBON);
+            currentPos = tempPos;
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
+
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            currentPos = nextPos;
+
+            set_atomElement(HYDROGEN);
+            for (int i = 0; i < 2; i++)
+            {
+                nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[3]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
             break;
         }
         case(CYCLOHEXANE):
