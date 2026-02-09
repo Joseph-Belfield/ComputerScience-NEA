@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
     src/defines/render/objectData.cpp
     src/defines/render/camera.cpp
     src/defines/render/shaderClass.cpp
+    src/defines/render/userInterfaceClass.cpp
 
     src/defines/chemistry/atom.cpp
     src/defines/chemistry/molecule.cpp

@@ -231,13 +231,13 @@ void Molecule::draw(Compound compound)
         }
         case(CYCLOHEXANE):
         { 
-            bondLength = 3.0f;
-
             // first
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             draw_atom(&atomObject, currentPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             for (int i = 0; i < 2; i++)
             {
                 nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
@@ -247,11 +247,13 @@ void Molecule::draw(Compound compound)
 
             // second
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             currentPos = nextPos;
             for (int i = 0, k = 0; i < 2; i++, k += 2)
             {
@@ -262,11 +264,13 @@ void Molecule::draw(Compound compound)
 
             // third 
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[1]));
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             currentPos = nextPos;
             for (int i = 0, k = 0; i < 2; i++, k += 3)
             {
@@ -277,11 +281,13 @@ void Molecule::draw(Compound compound)
 
             // fourth 
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             currentPos = nextPos;
             for (int i = 0; i < 2; i++)
             {
@@ -292,11 +298,13 @@ void Molecule::draw(Compound compound)
 
             // fifth
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[3]));
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             currentPos = nextPos;
             for (int i = 0, k = 0; i < 2; i++, k += 2)
             {
@@ -307,11 +315,13 @@ void Molecule::draw(Compound compound)
 
             // sixth
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[1]));
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             currentPos = nextPos;
             for (int i = 0, k = 0; i < 2; i++, k += 3)
             {
@@ -322,6 +332,7 @@ void Molecule::draw(Compound compound)
 
             // complete ring
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[2]));
             draw_bond(&bondObject, currentPos, nextPos);
 
