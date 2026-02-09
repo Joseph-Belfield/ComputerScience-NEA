@@ -1,25 +1,47 @@
 #pragma once
 
+#include "imgui/imgui.h"
+
 #include <string>
 
 class Window
 {
 public:
-    std::string name = "template";
-    bool visible = false;
-    ImGuiWindowFlags flags;
-    
-    Window(std::string name, ImGuiWindowFlags flags, bool show = false);
+    Window(std::string name = "template", ImGuiWindowFlags flags = 0, bool show = false);
 
     // draw the window (this frame)
     void draw();
+    void hide();
+
+    void change_name(std::string newName);
 
     // add things to windows
-    void add_text(const std::string text);    // set string value at time
-    void add_text(std::string* text);   // reference to another string in the code
+    void set_text(const std::string text);    // set string value at time
 
-    void add_slider(float* value, float min = 0, float max = 1);
+    void set_slider(float* value, std::string name, float min = 0, float max = 1);
+    void set_sliderRange(float min, float max);
+
+    void set_colorPicker();
 
 private:
+    std::string name;
+    bool visible;
+    ImGuiWindowFlags flags;
+
+    bool showText = false;
+    bool showSlider = false;
+    bool showColorPicker = false;
+
+    std::string text;
+
+    float* slider = nullptr;
+    std::string sliderName;
+    float min;
+    float max;
+
     void drawContents();
+
+    void use_text();
+    void use_slider();
+    void use_colorPicker();
 };

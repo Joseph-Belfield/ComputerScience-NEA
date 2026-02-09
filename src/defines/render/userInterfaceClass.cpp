@@ -24,7 +24,55 @@ void Window::draw()
     ImGui::End();
 }
 
-void Window::add_text(const std::string text)
+void Window::hide()
 {
-
+    visible = false;
 }
+
+void Window::change_name(std::string newName)
+{
+    name = newName;
+}
+
+void Window::set_text(std::string newText)
+{
+    text = newText;
+
+    showText = true;
+}
+
+void Window::set_slider(float* value, std::string name, float minimum, float maximum)
+{
+    slider = value;
+    sliderName = name;
+    min = minimum;
+    max = maximum;
+
+    showSlider = true;
+}
+
+void Window::drawContents()
+{
+    if (showText)
+    {
+        use_text();
+    }
+    if (showSlider)
+    {
+        use_slider();
+    }
+}
+
+void Window::use_text()
+{
+    const char* temp = text.c_str();
+
+    ImGui::Text(temp);
+}
+
+void Window::use_slider()
+{
+    ImGui::SliderFloat(sliderName.c_str(), slider, min, max);
+}
+
+

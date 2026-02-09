@@ -1,6 +1,7 @@
 #include "render/runLoop.hpp"
 
 #include "appData.hpp"
+#include "render/userInterfaceClass.hpp"
 #include "render/objectData.hpp"
 
 
@@ -80,4 +81,8 @@ void draw_ImGui(appData &appData)
         ImGui::ColorEdit3("Color", (float*)&(appData.window.clearColor));
         ImGui::End();
     }
+
+    appData.ImGui.demo.change_name("Demo Window!");
+    appData.ImGui.demo.set_slider(&appData.camera.speed, "Speed", 0.0f, 10.0f);
+    appData.ImGui.demo.draw();
 }

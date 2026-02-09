@@ -8,6 +8,7 @@
 
 #include "render/camera.hpp"
 #include "render/shaderClass.hpp"
+#include "render/userInterfaceClass.hpp"
 #include "chemistry/molecule.hpp"
 
 #include <string>
@@ -60,6 +61,8 @@ public:
   bool show_colorPicker = false;
   bool show_sineGraph = false;
   bool show_scrolling = false;
+
+  Window demo;
 };
 
 struct cameraData
