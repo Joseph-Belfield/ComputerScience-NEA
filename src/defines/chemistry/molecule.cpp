@@ -69,16 +69,6 @@ void Molecule::set_atomElement(Element element)
             atomObject.uniform.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
             break;
     }
-
-    // ensures the bond length stays reasonable
-    if (bondLength > 5 * atomObject.uniform.uScale.x)
-    {
-        bondLength = 3 * atomObject.uniform.uScale.x;
-    }
-    else if (bondLength < 2 * atomObject.uniform.uScale.x)
-    {
-        bondLength = 3 * atomObject.uniform.uScale.x;
-    }
 }
 
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
@@ -241,6 +231,100 @@ void Molecule::draw(Compound compound)
         }
         case(CYCLOHEXANE):
         { 
+            bondLength = 3.0f;
+
+            // first
+            set_atomElement(CARBON);
+            draw_atom(&atomObject, currentPos);
+
+            set_atomElement(HYDROGEN);
+            for (int i = 0; i < 2; i++)
+            {
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // second
+            set_atomElement(CARBON);
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            set_atomElement(HYDROGEN);
+            currentPos = nextPos;
+            for (int i = 0, k = 0; i < 2; i++, k += 2)
+            {
+                nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[k]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // third 
+            set_atomElement(CARBON);
+            nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[1]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            set_atomElement(HYDROGEN);
+            currentPos = nextPos;
+            for (int i = 0, k = 0; i < 2; i++, k += 3)
+            {
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[k]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // fourth 
+            set_atomElement(CARBON);
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            set_atomElement(HYDROGEN);
+            currentPos = nextPos;
+            for (int i = 0; i < 2; i++)
+            {
+                nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // fifth
+            set_atomElement(CARBON);
+            nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[3]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            set_atomElement(HYDROGEN);
+            currentPos = nextPos;
+            for (int i = 0, k = 0; i < 2; i++, k += 2)
+            {
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[k]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // sixth
+            set_atomElement(CARBON);
+            nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[1]));
+            draw_bond(&bondObject, currentPos, nextPos);
+            draw_atom(&atomObject, nextPos);
+
+            set_atomElement(HYDROGEN);
+            currentPos = nextPos;
+            for (int i = 0, k = 0; i < 2; i++, k += 3)
+            {
+                nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[k]));
+                draw_bond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+            }
+
+            // complete ring
+            set_atomElement(CARBON);
+            nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[2]));
+            draw_bond(&bondObject, currentPos, nextPos);
+
             break;
         }
     }   

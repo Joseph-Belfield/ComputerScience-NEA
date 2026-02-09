@@ -44,7 +44,7 @@ namespace render
             draw_objects(appData.window.objects, &appData.camera.camera1, appData.window.window_width, appData.window.window_height);
 
             appData.molecule -> init_drawInfo(&appData.camera.camera1, appData.window.window_width, appData.window.window_height);
-            appData.molecule -> draw(PROPANE);
+            appData.molecule -> draw(CYCLOHEXANE);
             draw_ImGui(appData);
 
             // render

@@ -37,8 +37,7 @@ public:
     void set_vertexSource(std::string vertexFilename);          // change the source of the vertex
     void set_fragmentSource(std::string fragmentFilename);      // change the source of the fragment
 
-    // gets the versions of the shaders
-    void get_shaderVersions();
+    void get_shaderVersions();  // gets the versions of the shaders
 
     void compile_and_link();    // compile and link shader programs to shader program
 

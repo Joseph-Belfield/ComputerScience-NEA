@@ -231,10 +231,10 @@ void Shader::set_perspective(float width, float height)
     // projection matrix (in perspective)
     glm::mat4 perspective = glm::perspective      // create perspective matrix
                             (
-                                glm::radians(90.0f),                                                       // FOV (radians)
+                                glm::radians(90.0f),  // FOV (radians)
                                 (width / height),     // aspect ratio
-                                0.1f,                                                                      // near clipping plane (min. distance)
-                                100.0f                                                                     // far clipping plane (max. distance)
+                                0.1f,                 // near clipping plane (min. distance)
+                                100.0f                // far clipping plane (max. distance)
                             );  
 
     set_mat4("uPerspective", 1, false, perspective);
