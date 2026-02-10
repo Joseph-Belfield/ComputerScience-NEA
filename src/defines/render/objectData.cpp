@@ -371,6 +371,29 @@ std::vector<glm::vec3> calculateSphereVertices(const float radius, const GLuint 
 	return vertices;
 }
 
+std::vector<glm::vec3> calculateSphereNormals(const float radius, const GLuint stackCount, const GLuint sectorCount)
+{
+	std::vector<glm::vec3> normals;		// vector to hold normals
+	float lengthInv = 1.0f / radius;	// vertex normal
+
+	float nx;
+	float ny;
+	float nz;
+
+	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stackCount, sectorCount);
+		
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		nx = vertices[i].x * lengthInv;
+		ny = vertices[i].y * lengthInv;
+		nz = vertices[i].z * lengthInv;
+
+		normals.push_back(glm::vec3(nx, ny, nz));
+	}
+
+	return normals;
+}
+
 void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stacks, const GLuint sectors)
 {	
 	GLint vertex1, vertex2;
@@ -414,7 +437,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 Sphere::Sphere(std::string source_vertexShader, std::string source_fragmentShader, const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 	subclass = SPHERE;
-	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
+	init_shaders(mesh.objectShader, "version2.vs", "version2.fs");
 
 	// clears the index
 	mesh.vertexData.clear();
@@ -422,19 +445,24 @@ Sphere::Sphere(std::string source_vertexShader, std::string source_fragmentShade
 	// ensures vector is clear
 	mesh.indexData.clear();
 
-	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices								
+	std::vector<glm::vec3> vertices = calculateSphereVertices(radius, stacks, sectors); // generates vertices	
+	std::vector<glm::vec3> normals = calculateSphereNormals(radius, stacks, sectors);  	// generates normals							
 	for (int i = 0; i < vertices.size(); i++)											// fills vertexData
 	{
-		mesh.vertexData.push_back(vertices.at(i).x);
-		mesh.vertexData.push_back(vertices.at(i).y);
-		mesh.vertexData.push_back(vertices.at(i).z);
+		mesh.vertexData.push_back(vertices[i].x);
+		mesh.vertexData.push_back(vertices[i].y);
+		mesh.vertexData.push_back(vertices[i].z);
+
+		mesh.vertexData.push_back(normals[i].x);
+		mesh.vertexData.push_back(normals[i].y);
+		mesh.vertexData.push_back(normals[i].z);
 	}
 
 	// fills indexData with correct index information
 	calculateSphereIndexData(mesh.indexData, stacks, sectors);
 
 	// sets up VAO, VBO and IBO
-	vertex_specification(mesh);
+	vertex_specification(mesh, false, true);
 
 	// set up uniforms
 	uniform.vert.location = initLocation;

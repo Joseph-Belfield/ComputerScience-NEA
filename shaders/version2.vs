@@ -14,7 +14,8 @@ uniform vec3 uLightPos;
 void main()
 {
     vNormal = aNormal;
-    vFragPos = vec3(uModel * vec4(aPosition, 1.0f))
+    vFragPos = vec3(uModel * vec4(aPosition, 1.0f));
 
-    gl_Position = uPerspective * uView * uModel * vec4(aPosition, 1.0f);;
+    vec4 finalPosition = uPerspective * uView * uModel * vec4(aPosition, 1.0f);
+    gl_Position = finalPosition;
 }
