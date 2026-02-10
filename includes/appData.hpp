@@ -92,5 +92,6 @@ struct appData
   eventData event;
 
   Molecule* molecule;
+  Compound displayedMolecule = WATER;
 };
 

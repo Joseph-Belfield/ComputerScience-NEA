@@ -1,6 +1,7 @@
 #include "render/runLoop.hpp"
 
 #include "appData.hpp"
+#include "chemistry/molecule.hpp"
 #include "render/userInterfaceClass.hpp"
 #include "render/objectData.hpp"
 
@@ -9,69 +10,75 @@
 #include "backends/imgui_impl_sdl3.h"           // ImGui SDL integration
 #include "backends/imgui_impl_opengl3.h"        // ImGui OpenGL integration
 
-
+void update_molecule(Compound& compound, int molecule)
+{
+    switch(molecule)
+    {
+        case(0):
+        {
+            compound = WATER;
+            break;
+        }
+        case(1):
+        {
+            compound = METHANE;
+            break;
+        }
+        case(2):
+        {
+            compound = ETHANE;
+            break;
+        }
+        case(3):
+        {
+            compound = PROPANE;
+            break;
+        }
+        case(4):
+        {
+            compound = CYCLOHEXANE;
+            break;
+        }
+    }
+}
 
 void draw_ImGui(appData &appData)
 {
+    static int currentItem = 0;
+
     if (appData.ImGui.show_mainWindow)
     {
-        ImGui::Begin("Main Window", &(appData.ImGui.show_mainWindow), ImGuiWindowFlags_MenuBar);  
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("Options"))
-            {
-                if (ImGui::MenuItem("Change Background Color")) {appData.ImGui.show_colorPicker = true;}
-                if (ImGui::MenuItem("Sine Graph")) {appData.ImGui.show_sineGraph = true;}
-                if (ImGui::MenuItem("Scrolling")) {appData.ImGui.show_scrolling = true;}
-
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMenuBar();
-        }
-
-        if (ImGui::Button("Hello World"))
-        {
-            appData.ImGui.show_helloWorld = !appData.ImGui.show_helloWorld;
-        }
-
+        ImGui::Begin("Main Window", &(appData.ImGui.show_mainWindow));  
+        
         ImGui::SliderFloat("Sensitivity", &(appData.camera.sense), 0.01f, 2.0f);
         ImGui::SliderFloat("Speed", &(appData.camera.speed), 0.01f, 5.0f);
 
-        ImGui::End();
-    }
-
-
-    if (appData.ImGui.show_helloWorld)
-    {
-        ImGui::Text("Hello World!");
-    }
-
-    if (appData.ImGui.show_sineGraph)
-    {
-        ImGui::Begin("Sine Graph", &(appData.ImGui.show_sineGraph));
-        float samples[100];
-        for (int i = 0; i < 100; i++)
+        if (ImGui::Button("Background Color"))
         {
-        samples[i] = sinf(i * 0.2f + ImGui::GetTime() * 1.5f);
+            appData.ImGui.show_colorPicker = !appData.ImGui.show_colorPicker;
         }
-        ImGui::PlotLines("Samples", samples, 100);
+
+        const char* items[] = {"WATER", "METHANE", "ETHANE", "PROPANE", "CYCLOHEXANE"};
+        const char* combo_preview_value = items[currentItem];
+        if (ImGui::BeginCombo("Molecules", combo_preview_value))
+        {
+            for (int n = 0; n < IM_COUNTOF(items); n++)
+            {
+                const bool is_selected = (currentItem == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                    currentItem = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::End();
     }
 
-    if (appData.ImGui.show_scrolling)
-    {
-        // window contents in scrolling region
-        ImGui::Begin("Scrolling", &(appData.ImGui.show_scrolling));
-        ImGui::TextColored(ImVec4(1,1,0,1), "Important Stuff");
-        ImGui::BeginChild("Scrolling");
-        for (int i = 0; i < 15; i++)
-        {
-        ImGui::Text("Some text");
-        }
-        ImGui::EndChild();
-        ImGui::End();
-    }
+    update_molecule(appData.displayedMolecule, currentItem);
 
     if (appData.ImGui.show_colorPicker)
     {
@@ -81,8 +88,4 @@ void draw_ImGui(appData &appData)
         ImGui::ColorEdit3("Color", (float*)&(appData.window.clearColor));
         ImGui::End();
     }
-
-    appData.ImGui.demo.change_name("Demo Window!");
-    appData.ImGui.demo.set_slider(&appData.camera.speed, "Speed", 0.0f, 10.0f);
-    appData.ImGui.demo.draw();
 }

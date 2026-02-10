@@ -182,14 +182,15 @@ void Molecule::draw(Compound compound)
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
-            bondLength = 2.0f;
             for (int i = 0; i < 2; i++)
             {
                 set_atomElement(HYDROGEN);
 
                 // allows for first iteration around carbon 1, second iteration around carbon 2
+                bondLength = 3.0f;
                 currentPos = (float)i * (bondLength * glm::normalize(angles.tetrahedral[3]));
 
+                bondLength = 2.0f;
                 for (int j = 0; j < 3; j++)
                 {
                     if (i == 0)
