@@ -56,7 +56,7 @@ struct FragmentUniforms
     // version 2
     glm::vec3 objectColor = glm::vec3(1.0f);             // color of the object (defaults to white)
     glm::vec3 lightColor = glm::vec3(1.0f);              // color of the light (defaults to white)
-    float ambienceStrength = 0.1f;                       // amount of ambient light
+    float ambienceStrength = 0.5f;                       // amount of ambient light
     glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.0f);    // position of the light source
     float specularStrength = 0.5f;                       // strength of specular lighting
 
@@ -108,7 +108,7 @@ class Sphere: public Object
 {
 public:
     // constructor
-	Sphere(std::string source_vertexShader = "version1.vs", std::string source_fragmentShader = "version1.fs", const GLfloat radius = (1.0f), const GLuint stacks = (50), const GLuint sectors = (25), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f);  
+	Sphere(std::string source_vertexShader = "version2.vs", std::string source_fragmentShader = "version2.fs", const GLfloat radius = (1.0f), const GLuint stacks = (50), const GLuint sectors = (25), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f);  
 };
 
 class Cylinder: public Object

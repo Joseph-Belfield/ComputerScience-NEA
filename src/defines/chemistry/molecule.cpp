@@ -54,34 +54,36 @@ void Molecule::set_atomElement(Element element)
     {
         case(HYDROGEN):
             atomObject.uniform.vert.scale = glm::vec3(0.69f);
-            atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(0.9f, 0.9f, 0.9f);
             break;
 
         case(CARBON):
             atomObject.uniform.vert.scale = glm::vec3(1.0f);
-            atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.0f, 0.0f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(0.9f, 0.0f, 0.0f);
             break;
 
         case(NITROGEN):
             atomObject.uniform.vert.scale = glm::vec3(0.70f);
-            atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.9f, 0.9f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(0.0f, 0.9f, 0.9f);
             break;
 
         case(OXYGEN):
             atomObject.uniform.vert.scale = glm::vec3(0.66f);
-            atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.0f, 0.9f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(0.0f, 0.0f, 0.9f);
             break;
         
         case(FLUORINE):
             atomObject.uniform.vert.scale = glm::vec3(0.64f);
-            atomObject.uniform.frag.uColor = glm::vec4(1.0f, 0.02f, 0.44f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(1.0f, 0.02f, 0.44f);
             break;
 
         case(CHLORINE):
             atomObject.uniform.vert.scale = glm::vec3(1.41f);
-            atomObject.uniform.frag.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
+            atomObject.uniform.frag.objectColor = glm::vec3(0.35f, 0.9f, 0.1f);
             break;
     }
+
+    atomObject.uniform.frag.uColor = glm::vec4(atomObject.uniform.frag.objectColor, 1.0f);
 }
 
 void Molecule::draw(glm::vec3 position, glm::vec3 direction, Atom* current)
@@ -105,6 +107,8 @@ void Molecule::draw(Compound compound)
 {
     glm::vec3 currentPos = glm::vec3(0.0f);
     glm::vec3 nextPos;
+    glm::vec3 centre;   // centre of molecule (for lighting)
+    int majorCount;     // number of large central atoms!
 
     bondObject.uniform.frag.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
@@ -112,10 +116,15 @@ void Molecule::draw(Compound compound)
     {
         case(WATER):
         {
+            majorCount = 1; // 1 oxygen
+
             set_atomElement(OXYGEN);
             draw_atom(&atomObject, currentPos);
 
+            centre += currentPos;
+
             float bondAngle = (104.5f / 360.0f) * (2 * M_PI);
+            bondLength = 1.5f;
             for (int i = 0; i < 2; i++)
             {
                 set_atomElement(HYDROGEN);
@@ -134,9 +143,14 @@ void Molecule::draw(Compound compound)
         }
         case(METHANE):
         {
+            majorCount = 1; // 1 carbon
+
             set_atomElement(CARBON);
             draw_atom(&atomObject, currentPos);
 
+            centre += currentPos;
+
+            bondLength = 2.0f;
             for (int i = 0; i < 4; i++)
             {
                 set_atomElement(HYDROGEN);
@@ -151,16 +165,24 @@ void Molecule::draw(Compound compound)
         }
         case(ETHANE):
         {
+            majorCount = 2; // 1 carbon
+
             // draw the first carbon
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             draw_atom(&atomObject, currentPos);
 
+            centre += currentPos;
+
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+
+            centre += nextPos;
 
             // draw the second carbon
             draw_bond(&bondObject, currentPos, nextPos);
             draw_atom(&atomObject, nextPos);
 
+            bondLength = 2.0f;
             for (int i = 0; i < 2; i++)
             {
                 set_atomElement(HYDROGEN);
@@ -188,10 +210,15 @@ void Molecule::draw(Compound compound)
         }
         case(PROPANE):
         {
+            majorCount = 3; // 3 carbons
+
             // draw the first carbon
             set_atomElement(CARBON);
             draw_atom(&atomObject, currentPos);
 
+            centre += currentPos;
+
+            bondLength = 2.0f;
             set_atomElement(HYDROGEN);
             for (int i = 0; i < 2; i++)
             {
@@ -202,6 +229,7 @@ void Molecule::draw(Compound compound)
 
             // draw the second carbon
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
     
             draw_bond(&bondObject, currentPos, nextPos);
@@ -210,7 +238,10 @@ void Molecule::draw(Compound compound)
             glm::vec3 tempPos = currentPos;
             currentPos = nextPos;
 
+            centre += currentPos;
+
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             for (int i = 0; i < 3; i++)
             {
                 nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
@@ -220,6 +251,7 @@ void Molecule::draw(Compound compound)
 
             // draw the third carbon
             set_atomElement(CARBON);
+            bondLength = 3.0f;
             currentPos = tempPos;
             nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
 
@@ -228,7 +260,10 @@ void Molecule::draw(Compound compound)
 
             currentPos = nextPos;
 
+            centre += currentPos;
+
             set_atomElement(HYDROGEN);
+            bondLength = 2.0f;
             for (int i = 0; i < 2; i++)
             {
                 nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
@@ -244,11 +279,14 @@ void Molecule::draw(Compound compound)
         }
         case(CYCLOHEXANE):
         { 
+            majorCount = 6; // 6 carbons
+
             // first
             set_atomElement(CARBON);
             bondLength = 3.0f;
             draw_atom(&atomObject, currentPos);
 
+            centre += currentPos;
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             for (int i = 0; i < 2; i++)
@@ -268,6 +306,7 @@ void Molecule::draw(Compound compound)
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             currentPos = nextPos;
+            centre += currentPos;
             for (int i = 0, k = 0; i < 2; i++, k += 2)
             {
                 nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[k]));
@@ -285,6 +324,7 @@ void Molecule::draw(Compound compound)
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             currentPos = nextPos;
+            centre += currentPos;
             for (int i = 0, k = 0; i < 2; i++, k += 3)
             {
                 nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[k]));
@@ -302,6 +342,7 @@ void Molecule::draw(Compound compound)
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             currentPos = nextPos;
+            centre += currentPos;
             for (int i = 0; i < 2; i++)
             {
                 nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[i]));
@@ -319,6 +360,7 @@ void Molecule::draw(Compound compound)
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             currentPos = nextPos;
+            centre += currentPos;
             for (int i = 0, k = 0; i < 2; i++, k += 2)
             {
                 nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[k]));
@@ -336,6 +378,7 @@ void Molecule::draw(Compound compound)
             set_atomElement(HYDROGEN);
             bondLength = 2.0f;
             currentPos = nextPos;
+            centre += currentPos;
             for (int i = 0, k = 0; i < 2; i++, k += 3)
             {
                 nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[k]));
@@ -348,8 +391,10 @@ void Molecule::draw(Compound compound)
             bondLength = 3.0f;
             nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[2]));
             draw_bond(&bondObject, currentPos, nextPos);
-
             break;
         }
     }   
+
+    centre /= majorCount;
+    atomObject.uniform.frag.lightPos = glm::vec3(centre.x, 5.0f, centre.z);
 }

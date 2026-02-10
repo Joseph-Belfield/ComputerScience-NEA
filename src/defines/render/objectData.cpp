@@ -438,7 +438,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 Sphere::Sphere(std::string source_vertexShader, std::string source_fragmentShader, const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 	subclass = SPHERE;
-	init_shaders(mesh.objectShader, "version2.vs", "version2.fs");
+	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
 
 	// clears the index
 	mesh.vertexData.clear();
@@ -468,7 +468,9 @@ Sphere::Sphere(std::string source_vertexShader, std::string source_fragmentShade
 	// set up uniforms
 	uniform.vert.location = initLocation;
 	uniform.vert.scale = glm::vec3(initScale);
+
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
+	uniform.frag.objectColor = initColor;
 }
 
 
@@ -664,7 +666,9 @@ Cylinder::Cylinder(std::string source_vertexShader, std::string source_fragmentS
 	uniform.vert.location = initLocation;
 	uniform.vert.rotation = initRotation;
 	uniform.vert.scale = initScale;
+	
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
+	uniform.frag.objectColor = initColor;
 }
 
 

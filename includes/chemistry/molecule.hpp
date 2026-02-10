@@ -34,7 +34,7 @@ public:
 
     // holds all the bond angles
     bondAngles angles;
-    float bondLength = 4.0f;
+    float bondLength = 3.0f;
 
     // Constructor class. Enter the first atom of the molecule, will tell child who parent, will tell parent who child.
     Molecule(Atom* firstAtom);
