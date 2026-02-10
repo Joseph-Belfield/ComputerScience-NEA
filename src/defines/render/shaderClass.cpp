@@ -164,10 +164,35 @@ void Shader::set_float1(const std::string uniformName, float x)
     glUniform1f(glGetUniformLocation(programID, uniformName.c_str()), x);
 }
 
+void Shader::set_float2(const std::string uniformName, float x, float y)
+{
+    glUniform2f(glGetUniformLocation(programID, uniformName.c_str()), x, y);
+}
+
+void Shader::set_float2(const std::string uniformName, glm::vec2 vector)
+{
+    glUniform2f(glGetUniformLocation(programID, uniformName.c_str()), vector.x, vector.y);
+}
+
+void Shader::set_float3(const std::string uniformName, float x, float y, float z)
+{
+    glUniform3f(glGetUniformLocation(programID, uniformName.c_str()), x, y, z);
+}
+
+void Shader::set_float3(const std::string uniformName, glm::vec3 vector)
+{
+    glUniform3f(glGetUniformLocation(programID, uniformName.c_str()), vector.x, vector.y, vector.z);
+}
+
 // creates a 4-float vector uniform for the shader program
 void Shader::set_float4(const std::string uniformName, float x, float y, float z, float w)
 {   
     glUniform4f(glGetUniformLocation(programID, uniformName.c_str()), x, y, z, w);
+}
+
+void Shader::set_float4(const std::string uniformName, glm::vec4 vector)
+{
+    glUniform4f(glGetUniformLocation(programID, uniformName.c_str()), vector.x, vector.y, vector.z, vector.w);
 }
 
 // creates a 4x4 float matrix uniform for the shader program

@@ -58,7 +58,7 @@ void setUniforms_vertex(Object* object, uint version)
 		case(0):
 		{
 			// vertex shader uniforms
-			object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
+			object -> mesh.objectShader.set_model(object -> uniform.vert.uDisplacement, object -> uniform.vert.uRotate, object -> uniform.vert.uScale);
 			object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
 			object -> mesh.objectShader.set_view(object -> drawInfo.camera);
 			break;
@@ -84,7 +84,12 @@ void setUniforms_fragment(Object* object, uint version)
 		}
 		case(1):
 		{
-			object -> mesh.objectShader.set_float4("uColor", object -> uniform.uColor.x, object -> uniform.uColor.y, object -> uniform.uColor.z, object -> uniform.uColor.w);
+			object -> mesh.objectShader.set_float4("uColor", object -> uniform.frag.uColor);
+			break;
+		}
+		case(2):
+		{
+
 			break;
 		}
 	}
@@ -145,7 +150,7 @@ void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
 	// move location of cylinder to centre of space between points
     glm::vec3 direction = position2 - position1;        // AB = B - A
     glm::vec3 location = position1 + (0.5f * direction);        // R = AB + (l * (AB))
-    uniform.uDisplacement = location;
+    uniform.vert.uDisplacement = location;
 
     // rotate cylinder accordingly
     float rotationAbout_x = std::acosf(direction.y / glm::length(direction));   // latitude
@@ -167,19 +172,19 @@ void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
     }
        
     glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
-    uniform.uRotate = totalRotation;
+    uniform.vert.uRotate = totalRotation;
 
     // set the cylinder's scale correctly
     float scale = glm::length(position2 - position1);
-    uniform.uScale.y = scale;
+    uniform.vert.uScale.y = scale;
 
     // draw
     draw();
 
     // reset object position
-    uniform.uDisplacement = glm::vec3(0.0f);
-    uniform.uRotate = glm::vec3(0.0f);
-    uniform.uScale.y = 1.0f;
+    uniform.vert.uDisplacement = glm::vec3(0.0f);
+    uniform.vert.uRotate = glm::vec3(0.0f);
+    uniform.vert.uScale.y = 1.0f;
 }
 
 
@@ -348,9 +353,9 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.uDisplacement = initLocation;
-	uniform.uScale = glm::vec3(initScale);
-	uniform.uColor = glm::vec4(initColor, 1.0f);
+	uniform.vert.uDisplacement = initLocation;
+	uniform.vert.uScale = glm::vec3(initScale);
+	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -417,9 +422,9 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
-	uniform.uScale = glm::vec3(5.0f);
-	uniform.uColor = glm::vec4(initColor, 1.0f);
+	uniform.vert.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
+	uniform.vert.uScale = glm::vec3(5.0f);
+	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -543,10 +548,10 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.uDisplacement = initLocation;
-	uniform.uRotate = initRotation;
-	uniform.uScale = initScale;
-	uniform.uColor = glm::vec4(initColor, 1.0f);
+	uniform.vert.uDisplacement = initLocation;
+	uniform.vert.uRotate = initRotation;
+	uniform.vert.uScale = initScale;
+	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
 
@@ -647,8 +652,8 @@ Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocati
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.uDisplacement = initLocation;
-	uniform.uRotate = initRotation;
-	uniform.uScale = initScale;
-	uniform.uColor = glm::vec4(initColor, 1.0f);
+	uniform.vert.uDisplacement = initLocation;
+	uniform.vert.uRotate = initRotation;
+	uniform.vert.uScale = initScale;
+	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }

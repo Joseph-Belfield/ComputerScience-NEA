@@ -33,7 +33,12 @@ public:
     void compile_and_link();    // compile and link shader programs to shader program
 
     void set_float1(const std::string uniformName, float x);
+    void set_float2(const std::string uniformName, float x, float y);
+    void set_float2(const std::string uniformName, glm::vec2 vector);
+    void set_float3(const std::string uniformName, float x, float y, float z);
+    void set_float3(const std::string uniformName, glm::vec3 vector);
     void set_float4(const std::string uniformName, float x, float y, float z, float w);
+    void set_float4(const std::string uniformName, glm::vec4 vector);
     void set_mat4(const std::string uniformName, int amount, bool enableTranspose, glm::mat4 matrix);
 
     void set_model(glm::vec3 displacement, glm::vec3 rotation, glm::vec3 scale);

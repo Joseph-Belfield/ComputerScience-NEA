@@ -25,9 +25,9 @@ void Molecule::init_drawInfo(Camera* camera, float width, float height)
 
 void draw_atom(Object* atom, glm::vec3 position)
 {
-    atom -> uniform.uDisplacement = position;
+    atom -> uniform.vert.uDisplacement = position;
     atom -> draw();
-    atom -> uniform.uDisplacement = glm::vec3(0.0f);
+    atom -> uniform.vert.uDisplacement = glm::vec3(0.0f);
 }
 
 void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
@@ -38,8 +38,8 @@ void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 void draw_doubleBond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 {
     // make the bond half as thick
-    bond -> uniform.uScale.x *= (2.0f / 5);
-    bond -> uniform.uScale.z *= (2.0f / 5);
+    bond -> uniform.vert.uScale.x *= (2.0f / 5);
+    bond -> uniform.vert.uScale.z *= (2.0f / 5);
 
     for (int i = 0; i < 2; i++)
     {
@@ -53,33 +53,33 @@ void Molecule::set_atomElement(Element element)
     switch(element)
     {
         case(HYDROGEN):
-            atomObject.uniform.uScale = glm::vec3(0.69f);
-            atomObject.uniform.uColor = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(0.69f);
+            atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
             break;
 
         case(CARBON):
-            atomObject.uniform.uScale = glm::vec3(1.0f);
-            atomObject.uniform.uColor = glm::vec4(0.9f, 0.0f, 0.0f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(1.0f);
+            atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.0f, 0.0f, 1.0f);
             break;
 
         case(NITROGEN):
-            atomObject.uniform.uScale = glm::vec3(0.70f);
-            atomObject.uniform.uColor = glm::vec4(0.0f, 0.9f, 0.9f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(0.70f);
+            atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.9f, 0.9f, 1.0f);
             break;
 
         case(OXYGEN):
-            atomObject.uniform.uScale = glm::vec3(0.66f);
-            atomObject.uniform.uColor = glm::vec4(0.0f, 0.0f, 0.9f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(0.66f);
+            atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.0f, 0.9f, 1.0f);
             break;
         
         case(FLUORINE):
-            atomObject.uniform.uScale = glm::vec3(0.64f);
-            atomObject.uniform.uColor = glm::vec4(1.0f, 0.02f, 0.44f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(0.64f);
+            atomObject.uniform.frag.uColor = glm::vec4(1.0f, 0.02f, 0.44f, 1.0f);
             break;
 
         case(CHLORINE):
-            atomObject.uniform.uScale = glm::vec3(1.41f);
-            atomObject.uniform.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
+            atomObject.uniform.vert.uScale = glm::vec3(1.41f);
+            atomObject.uniform.frag.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
             break;
     }
 }
@@ -106,7 +106,7 @@ void Molecule::draw(Compound compound)
     glm::vec3 currentPos = glm::vec3(0.0f);
     glm::vec3 nextPos;
 
-    bondObject.uniform.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+    bondObject.uniform.frag.uColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
     switch(compound)
     {
