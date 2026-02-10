@@ -50,16 +50,54 @@ void draw_lines(Object* object)
     );  
 }
 
+// Set the uniforms needed per vertex shader version.
+void setUniforms_vertex(Object* object, uint version)
+{
+	switch(version)
+	{
+		case(0):
+		{
+			// vertex shader uniforms
+			object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
+			object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
+			object -> mesh.objectShader.set_view(object -> drawInfo.camera);
+			break;
+		}
+		case(1):
+		{
+			// recursively call case 0!
+			setUniforms_vertex(object, 0);
+			break;
+		}
+	}
+}
+
+// Sets the uniforms needed per fragment shader version.
+void setUniforms_fragment(Object* object, uint version)
+{
+	switch(version)
+	{
+		case(0):
+		{
+			// no uniforms needed!
+			break;
+		}
+		case(1):
+		{
+			object -> mesh.objectShader.set_float4("uColor", object -> uniform.uColor.x, object -> uniform.uColor.y, object -> uniform.uColor.z, object -> uniform.uColor.w);
+			break;
+		}
+	}
+}
+
 void setup_draw(Object* object)
 {
 	// using this object's shader (inefficient in large projects, but doesn't matter at this scale)
 	object -> mesh.objectShader.use();
 
 	// sets the uniforms for the shader program (must be set each time new program is called!)
-	object -> mesh.objectShader.set_model(object -> uniform.uDisplacement, object -> uniform.uRotate, object -> uniform.uScale);
-	object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
-	object -> mesh.objectShader.set_view(object -> drawInfo.camera);
-	object -> mesh.objectShader.set_float4("uColor", object -> uniform.uColor.x, object -> uniform.uColor.y, object -> uniform.uColor.z, object -> uniform.uColor.w);
+	setUniforms_vertex(object, 1);
+	setUniforms_fragment(object, 1);
 
 	// choose VAO and VBO
     glBindVertexArray(object -> mesh.vertexArrayObject);

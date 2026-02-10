@@ -35,6 +35,19 @@ void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
     bond -> draw_between(position1, position2);
 }
 
+void draw_doubleBond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
+{
+    // make the bond half as thick
+    bond -> uniform.uScale.x *= (2.0f / 5);
+    bond -> uniform.uScale.z *= (2.0f / 5);
+
+    for (int i = 0; i < 2; i++)
+    {
+        break;
+        // maybe do this later please
+    }
+}
+
 void Molecule::set_atomElement(Element element)
 {
     switch(element)
