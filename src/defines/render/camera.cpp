@@ -74,13 +74,8 @@ void Camera::mouseLook(int mousePositionX, int mousePositionY, float sensitivity
     glm::vec3 localAxisZ = glm::vec3(viewDirection.x, 0.0f, viewDirection.z);
     glm::vec3 localAxisX = glm::rotate(localAxisZ, glm::radians(90.0f), upVector);
 
-
-    // prevents view moving camera more than 90 degrees up or down (no gimbal lock)
-    if ((glm::radians(totalPositionDelta.y) > glm::radians(-90.0f)) && (glm::radians(totalPositionDelta.y) < glm::radians(90.0f)))
-    {
-        // changes view direction by rotating camera around x-axis
-        viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.y), -localAxisX); 
-    }
+    // changes view direction by rotating camera around x-axis
+    viewDirection = glm::rotate(viewDirection, glm::radians(positionDelta.y), -localAxisX); 
 
     // TODO make it so that mouse delta y does not change when the user exceeds 90
 

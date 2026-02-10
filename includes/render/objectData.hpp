@@ -41,20 +41,26 @@ public:
 
 struct VertexUniforms
 {
-    // object's displacement from origin (effectively coords on world axis)
-	glm::vec3 uDisplacement = glm::vec3(0.0f, 0.0f, 0.0f);
+    // version 0
+	glm::vec3 location = glm::vec3(0.0f, 0.0f, 0.0f);   // object's displacement from origin (effectively coords on world axis)
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);         // object's rotation around each axis
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);          // growth of the object in each direction
 
-	// object's rotation around each axis
-	glm::vec3 uRotate = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	// growth of the object in each direction
-	glm::vec3 uScale = glm::vec3(1.0f, 1.0f, 1.0f);
+    // version 2
+    glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.0f);
 };
 
 struct FragmentUniforms
 {
-    // change in color values of object
-    glm::vec4 uColor = glm::vec4(1.0f);
+    // version1
+    glm::vec4 uColor = glm::vec4(1.0f);     // sets color of object as one value
+
+    // version 2
+    glm::vec3 objectColor = glm::vec3(1.0f);    // color of the object (defaults to white)
+    glm::vec3 lightColor = glm::vec3(1.0f);     // color of the light (defaults to white)
+
+    float ambience = 0.1f;  // amount of ambient light
+
 };
 
 struct uniformData
@@ -96,21 +102,21 @@ public:
 class ReferencePlane: public Object
 {
 public:
-    ReferencePlane(GLfloat initHeight = -1.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 20, std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");
+    ReferencePlane(GLfloat initHeight = -1.0f, glm::vec3 initColor = glm::vec3(1.0f, 1.0f, 1.0f), GLfloat initScale = 1.0f, const GLuint stripCount = 20, std::string source_vertexShader = "version1", std::string source_fragmentShader = "version1");
 };
 
 class Sphere: public Object
 {
 public:
     // constructor
-	Sphere(const GLfloat radius = (1.0f), const GLuint stacks = (50), const GLuint sectors = (25), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f, std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");  
+	Sphere(std::string source_vertexShader = "version1.vs", std::string source_fragmentShader = "version1.fs", const GLfloat radius = (1.0f), const GLuint stacks = (50), const GLuint sectors = (25), const glm::vec3 initColor = glm::vec3(1.0f, 0.0f, 0.0f), const glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const GLfloat initScale = 1.0f);  
 };
 
 class Cylinder: public Object
 {
 public:
     // constructor 
-    Cylinder(const GLfloat radius = (0.25f), const GLfloat height = (1.0f), const GLuint sectors = (50), const glm::vec3 initColor = glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f), std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");
+    Cylinder(std::string source_vertexShader = "version1.vs", std::string source_fragmentShader = "version1.fs", const GLfloat radius = (0.25f), const GLfloat height = (1.0f), const GLuint sectors = (50), const glm::vec3 initColor = glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3 initLocation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initRotation = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3 initScale = glm::vec3(1.0f));
 
     void draw_between(glm::vec3 position1, glm::vec3 position2);
 };
@@ -119,5 +125,5 @@ class Cube: public Object
 {
 public:
     // constructor
-    Cube(const GLfloat height = (1.0f), const glm::vec3 initColor = glm::vec3(1.0f), glm::vec3 initLocation = glm::vec3(0.0f), glm::vec3 initRotation = glm::vec3(0.0f), glm::vec3 initScale = glm::vec3(1.0f), std::string source_vertexShader = "NULL", std::string source_fragmentShader = "NULL");
+    Cube(std::string source_vertexShader = "version1.vs", std::string source_fragmentShader = "version1.fs", const GLfloat height = (1.0f), const glm::vec3 initColor = glm::vec3(1.0f), glm::vec3 initLocation = glm::vec3(0.0f), glm::vec3 initRotation = glm::vec3(0.0f), glm::vec3 initScale = glm::vec3(1.0f));
 };

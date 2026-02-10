@@ -25,9 +25,9 @@ void Molecule::init_drawInfo(Camera* camera, float width, float height)
 
 void draw_atom(Object* atom, glm::vec3 position)
 {
-    atom -> uniform.vert.uDisplacement = position;
+    atom -> uniform.vert.location = position;
     atom -> draw();
-    atom -> uniform.vert.uDisplacement = glm::vec3(0.0f);
+    atom -> uniform.vert.location = glm::vec3(0.0f);
 }
 
 void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
@@ -38,8 +38,8 @@ void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 void draw_doubleBond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 {
     // make the bond half as thick
-    bond -> uniform.vert.uScale.x *= (2.0f / 5);
-    bond -> uniform.vert.uScale.z *= (2.0f / 5);
+    bond -> uniform.vert.scale.x *= (2.0f / 5);
+    bond -> uniform.vert.scale.z *= (2.0f / 5);
 
     for (int i = 0; i < 2; i++)
     {
@@ -53,32 +53,32 @@ void Molecule::set_atomElement(Element element)
     switch(element)
     {
         case(HYDROGEN):
-            atomObject.uniform.vert.uScale = glm::vec3(0.69f);
+            atomObject.uniform.vert.scale = glm::vec3(0.69f);
             atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
             break;
 
         case(CARBON):
-            atomObject.uniform.vert.uScale = glm::vec3(1.0f);
+            atomObject.uniform.vert.scale = glm::vec3(1.0f);
             atomObject.uniform.frag.uColor = glm::vec4(0.9f, 0.0f, 0.0f, 1.0f);
             break;
 
         case(NITROGEN):
-            atomObject.uniform.vert.uScale = glm::vec3(0.70f);
+            atomObject.uniform.vert.scale = glm::vec3(0.70f);
             atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.9f, 0.9f, 1.0f);
             break;
 
         case(OXYGEN):
-            atomObject.uniform.vert.uScale = glm::vec3(0.66f);
+            atomObject.uniform.vert.scale = glm::vec3(0.66f);
             atomObject.uniform.frag.uColor = glm::vec4(0.0f, 0.0f, 0.9f, 1.0f);
             break;
         
         case(FLUORINE):
-            atomObject.uniform.vert.uScale = glm::vec3(0.64f);
+            atomObject.uniform.vert.scale = glm::vec3(0.64f);
             atomObject.uniform.frag.uColor = glm::vec4(1.0f, 0.02f, 0.44f, 1.0f);
             break;
 
         case(CHLORINE):
-            atomObject.uniform.vert.uScale = glm::vec3(1.41f);
+            atomObject.uniform.vert.scale = glm::vec3(1.41f);
             atomObject.uniform.frag.uColor = glm::vec4(0.35f, 0.9f, 0.1f, 1.0f);
             break;
     }

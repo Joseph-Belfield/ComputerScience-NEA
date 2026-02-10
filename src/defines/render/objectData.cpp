@@ -58,7 +58,7 @@ void setUniforms_vertex(Object* object, uint version)
 		case(0):
 		{
 			// vertex shader uniforms
-			object -> mesh.objectShader.set_model(object -> uniform.vert.uDisplacement, object -> uniform.vert.uRotate, object -> uniform.vert.uScale);
+			object -> mesh.objectShader.set_model(object -> uniform.vert.location, object -> uniform.vert.rotation, object -> uniform.vert.scale);
 			object -> mesh.objectShader.set_perspective(object -> drawInfo.width, object -> drawInfo.height);
 			object -> mesh.objectShader.set_view(object -> drawInfo.camera);
 			break;
@@ -67,6 +67,13 @@ void setUniforms_vertex(Object* object, uint version)
 		{
 			// recursively call case 0!
 			setUniforms_vertex(object, 0);
+			break;
+		}
+		case(2):
+		{
+			setUniforms_vertex(object, 0);
+
+			object -> mesh.objectShader.set_float3("uLightPos", object -> uniform.vert.lightPos);
 			break;
 		}
 	}
@@ -89,7 +96,10 @@ void setUniforms_fragment(Object* object, uint version)
 		}
 		case(2):
 		{
+			object -> mesh.objectShader.set_float3("uObjectColor", object -> uniform.frag.objectColor);
+			object -> mesh.objectShader.set_float3("uLightColor", object -> uniform.frag.lightColor);
 
+			object -> mesh.objectShader.set_float1("uAmbience", object -> uniform.frag.ambience);
 			break;
 		}
 	}
@@ -150,7 +160,7 @@ void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
 	// move location of cylinder to centre of space between points
     glm::vec3 direction = position2 - position1;        // AB = B - A
     glm::vec3 location = position1 + (0.5f * direction);        // R = AB + (l * (AB))
-    uniform.vert.uDisplacement = location;
+    uniform.vert.location = location;
 
     // rotate cylinder accordingly
     float rotationAbout_x = std::acosf(direction.y / glm::length(direction));   // latitude
@@ -172,39 +182,69 @@ void Cylinder::draw_between(glm::vec3 position1, glm::vec3 position2)
     }
        
     glm::vec3 totalRotation = glm::vec3(rotationAbout_x, rotationAbout_y, 0.0f);
-    uniform.vert.uRotate = totalRotation;
+    uniform.vert.rotation = totalRotation;
 
     // set the cylinder's scale correctly
     float scale = glm::length(position2 - position1);
-    uniform.vert.uScale.y = scale;
+    uniform.vert.scale.y = scale;
 
     // draw
     draw();
 
     // reset object position
-    uniform.vert.uDisplacement = glm::vec3(0.0f);
-    uniform.vert.uRotate = glm::vec3(0.0f);
-    uniform.vert.uScale.y = 1.0f;
+    uniform.vert.location = glm::vec3(0.0f);
+    uniform.vert.rotation = glm::vec3(0.0f);
+    uniform.vert.scale.y = 1.0f;
 }
 
 
 void init_shaders(Shader& shaderObject,std::string source_vertexShader, std::string source_fragmentShader)
 {
-	if (source_vertexShader != "NULL")
-	{
-		shaderObject.set_vertexSource(source_vertexShader);
-	}
+	// attatches shaders (defaults to preset default values)
+	shaderObject.set_vertexSource(source_vertexShader);
+	shaderObject.set_fragmentSource(source_fragmentShader);
 
-	if (source_fragmentShader != "NULL")
-	{
-		shaderObject.set_fragmentSource(source_fragmentShader);
-	}
-
+	// compiles attatched shaders
 	shaderObject.compile_and_link();
 }
 
-void vertex_specification(meshData &mesh)
+void vertex_specification(meshData &mesh, bool color = false, bool normals = false, bool textures = false)
 {
+	// stride between data types
+	uint stride = 0;
+
+	uint position_VAO = 0;
+
+	// all offsets begin after vertex data
+	uint colorOffset = 3;	
+	uint normalOffset = 3;
+	uint textureOffset = 3;
+
+	// adds stride for each of the possible catagories
+	if (color)
+	{
+		stride += 4;
+		normalOffset += 4;
+		textureOffset += 4;
+	}
+	if (normals)
+	{
+		stride += 3;
+		textureOffset += 3;
+	}
+	if (textures)
+	{
+		stride += 2;
+	}
+
+	if (color || normals || textures)
+	{
+		// for the stride added by vertices
+		stride += 3;
+	}
+
+
+
 	// generate Vertex Array Objects 
 	glGenVertexArrays(1, &(mesh.vertexArrayObject));           // creates an array to hold vertex data (called vertexArrayObject)
 	glBindVertexArray(mesh.vertexArrayObject);                 // selects the array as current
@@ -234,16 +274,60 @@ void vertex_specification(meshData &mesh)
 
 	
 	// setup position VAO
-	glEnableVertexAttribArray(0); // enables the 0th attribute - AKA. this is the first VAO
+	glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
 	glVertexAttribPointer
 	(
-		0,                        // index into vector of VAOs
+		position_VAO++,           // index into vector of VAOs
 		3,                        // pieces of data (per vertex: x, y, z)
 		GL_FLOAT,                 // data type
 		GL_FALSE,                 // normalized?
 		0,      				  // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
 		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
 	);
+
+	// if object color is also held in the VAO (as opposed to uniforms)
+	if (color)
+	{
+		// setup position VAO
+		glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
+		glVertexAttribPointer
+		(
+			position_VAO++,                        		// index into vector of VAOs
+			4,                        					// pieces of data (per vertex: r, g, b, a)
+			GL_FLOAT,                 
+			GL_FALSE,                 
+			stride,      		  	  					
+			(GLvoid*)(sizeof(GLfloat) * colorOffset)               
+		);
+	}
+	if (normals)
+	{
+		// setup position VAO
+		glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
+		glVertexAttribPointer
+		(
+			position_VAO++,                        		// index into vector of VAOs
+			3,                        					// pieces of data (per vertex: nx, ny, nz)
+			GL_FLOAT,                 
+			GL_FALSE,                 
+			stride,      		  	  					
+			(GLvoid*)(sizeof(GLfloat) * normalOffset)               
+		);
+	}
+	if (textures)
+	{
+		// setup position VAO
+		glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
+		glVertexAttribPointer
+		(
+			position_VAO,                        		// index into vector of VAOs
+			2,                        					// pieces of data (per vertex: s, t)
+			GL_FLOAT,                 
+			GL_FALSE,                 
+			stride,      		  	  					
+			(GLvoid*)(sizeof(GLfloat) * textureOffset)               
+		);
+	}
 
 
 	// cleanup
@@ -327,7 +411,7 @@ void calculateSphereIndexData(std::vector<GLuint>& indexData, const GLuint stack
 // - initColor is the starting color of the object in RGBA values (from 0 -> 1)
 // - initLocation is the starting position of the sphere in world space (X, Y, Z)
 // - initScale is the initial scale of the sphere (defaults to 1)
-Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale, std::string source_vertexShader, std::string source_fragmentShader)
+Sphere::Sphere(std::string source_vertexShader, std::string source_fragmentShader, const GLfloat radius, const GLuint stacks, const GLuint sectors, const glm::vec3 initColor, glm::vec3 initLocation, GLfloat initScale)
 {
 	subclass = SPHERE;
 	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
@@ -353,8 +437,8 @@ Sphere::Sphere(const GLfloat radius, const GLuint stacks, const GLuint sectors, 
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.vert.uDisplacement = initLocation;
-	uniform.vert.uScale = glm::vec3(initScale);
+	uniform.vert.location = initLocation;
+	uniform.vert.scale = glm::vec3(initScale);
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
@@ -422,8 +506,8 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.vert.uDisplacement = glm::vec3(0.0f, initHeight, 0.0f);
-	uniform.vert.uScale = glm::vec3(5.0f);
+	uniform.vert.location = glm::vec3(0.0f, initHeight, 0.0f);
+	uniform.vert.scale = glm::vec3(5.0f);
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
@@ -523,7 +607,7 @@ void calculateCylinderIndexData(std::vector<GLuint>& indexData, GLuint sectorCou
 // - radius is the radius of the cylinder
 // - length is the length of the cylinder
 // - sectors is the number of triangles the circle of the cylinder is made up of (and hence the detail)
-Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale, std::string source_vertexShader, std::string source_fragmentShader)
+Cylinder::Cylinder(std::string source_vertexShader, std::string source_fragmentShader, const GLfloat radius, const GLfloat height, const GLuint sectorCount, const glm::vec3 initColor, glm::vec3 initLocation, const glm::vec3 initRotation, const glm::vec3 initScale)
 {
 	subclass = CYLINDER;
 	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
@@ -548,9 +632,9 @@ Cylinder::Cylinder(const GLfloat radius, const GLfloat height, const GLuint sect
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.vert.uDisplacement = initLocation;
-	uniform.vert.uRotate = initRotation;
-	uniform.vert.uScale = initScale;
+	uniform.vert.location = initLocation;
+	uniform.vert.rotation = initRotation;
+	uniform.vert.scale = initScale;
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
 
@@ -630,7 +714,7 @@ void calculateCubeIndexData(std::vector<GLuint> &indexData)
 	indexData.push_back(3);
 }
 
-Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocation, glm::vec3 initRotation, glm::vec3 initScale, std::string source_vertexShader, std::string source_fragmentShader)
+Cube::Cube(std::string source_vertexShader, std::string source_fragmentShader, const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocation, glm::vec3 initRotation, glm::vec3 initScale)
 {
 	subclass = CUBE;
 	init_shaders(mesh.objectShader, source_vertexShader, source_fragmentShader);
@@ -652,8 +736,8 @@ Cube::Cube(const GLfloat height, const glm::vec3 initColor, glm::vec3 initLocati
 	vertex_specification(mesh);
 
 	// set up uniforms
-	uniform.vert.uDisplacement = initLocation;
-	uniform.vert.uRotate = initRotation;
-	uniform.vert.uScale = initScale;
+	uniform.vert.location = initLocation;
+	uniform.vert.rotation = initRotation;
+	uniform.vert.scale = initScale;
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }

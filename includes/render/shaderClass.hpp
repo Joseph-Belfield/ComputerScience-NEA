@@ -12,8 +12,8 @@ class Camera;
 class Shader
 {
 public:
-    // shader program ID
-    GLuint programID;
+    // shader program ID - defaults to 0 (empty)
+    GLuint programID = 0;
 
     std::string source_vertexShader;
     std::string source_fragmentShader;
