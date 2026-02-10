@@ -18,6 +18,9 @@ public:
     std::string source_vertexShader;
     std::string source_fragmentShader;
 
+    int versionVertex;
+    int versionFragment;
+
     // stores whether the shader has been compiled or not
     bool compiled = false;
 

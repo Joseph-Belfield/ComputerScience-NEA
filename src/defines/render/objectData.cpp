@@ -72,8 +72,6 @@ void setUniforms_vertex(Object* object, uint version)
 		case(2):
 		{
 			setUniforms_vertex(object, 0);
-
-			object -> mesh.objectShader.set_float3("uLightPos", object -> uniform.vert.lightPos);
 			break;
 		}
 	}
@@ -99,7 +97,9 @@ void setUniforms_fragment(Object* object, uint version)
 			object -> mesh.objectShader.set_float3("uObjectColor", object -> uniform.frag.objectColor);
 			object -> mesh.objectShader.set_float3("uLightColor", object -> uniform.frag.lightColor);
 
-			object -> mesh.objectShader.set_float1("uAmbience", object -> uniform.frag.ambience);
+			object -> mesh.objectShader.set_float1("uAmbience", object -> uniform.frag.ambienceStrength);
+			object -> mesh.objectShader.set_float3("uLightPos", object -> uniform.frag.lightPos);
+			object -> mesh.objectShader.set_float1("uSpecularStrength", object -> uniform.frag.specularStrength);
 			break;
 		}
 	}
@@ -111,8 +111,8 @@ void setup_draw(Object* object)
 	object -> mesh.objectShader.use();
 
 	// sets the uniforms for the shader program (must be set each time new program is called!)
-	setUniforms_vertex(object, 1);
-	setUniforms_fragment(object, 1);
+	setUniforms_vertex(object, object -> mesh.objectShader.versionVertex);
+	setUniforms_fragment(object, object -> mesh.objectShader.versionFragment);
 
 	// choose VAO and VBO
     glBindVertexArray(object -> mesh.vertexArrayObject);
@@ -123,7 +123,6 @@ void cleanup_draw()
 	// unbind VAO after shape drawn
     glBindVertexArray(0);
 }
-
 
 void Object::draw()
 {
@@ -281,7 +280,7 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 		3,                        // pieces of data (per vertex: x, y, z)
 		GL_FLOAT,                 // data type
 		GL_FALSE,                 // normalized?
-		0,      				  // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
+		stride * sizeof(GLfloat), // stride (no. of bytes) to jump from first (type) data of v1 to first (type) data of v2, etc         
 		(GLvoid*)0                // pointer for offset - irrelivent as position data is in first slot
 	);
 
@@ -296,12 +295,14 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 			4,                        					// pieces of data (per vertex: r, g, b, a)
 			GL_FLOAT,                 
 			GL_FALSE,                 
-			stride,      		  	  					
+			stride * sizeof(GLfloat),      		  	  					
 			(GLvoid*)(sizeof(GLfloat) * colorOffset)               
 		);
 	}
 	if (normals)
 	{
+		std::cout << normalOffset << std::endl;
+
 		// setup position VAO
 		glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
 		glVertexAttribPointer
@@ -310,7 +311,7 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 			3,                        					// pieces of data (per vertex: nx, ny, nz)
 			GL_FLOAT,                 
 			GL_FALSE,                 
-			stride,      		  	  					
+			stride * sizeof(GLfloat),      		  	  					
 			(GLvoid*)(sizeof(GLfloat) * normalOffset)               
 		);
 	}
@@ -324,7 +325,7 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 			2,                        					// pieces of data (per vertex: s, t)
 			GL_FLOAT,                 
 			GL_FALSE,                 
-			stride,      		  	  					
+			stride * sizeof(GLfloat),      		  	  					
 			(GLvoid*)(sizeof(GLfloat) * textureOffset)               
 		);
 	}

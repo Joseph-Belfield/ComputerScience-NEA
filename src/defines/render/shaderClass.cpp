@@ -93,6 +93,10 @@ std::string add_shaderFilepath(std::string fileName)
 
 Shader::Shader(std::string vertexFilename, std::string fragmentFilename)
 {
+    // stores the version of the shaders used
+    versionVertex = vertexFilename[vertexFilename.length() - 4] - '0';
+    versionFragment = fragmentFilename[fragmentFilename.length() - 4] - '0';
+
     // finds the full filepath from the file names for the shaders
     std::string vertexFilepath = add_shaderFilepath(vertexFilename);
     std::string fragmentFilepath = add_shaderFilepath(fragmentFilename);
@@ -113,6 +117,7 @@ void Shader::set_vertexSource(std::string vertexFilename)
 {
     if (programID == 0)
     {
+        versionVertex = vertexFilename[vertexFilename.length() - 4] - '0';
         std::string vertexFilepath = add_shaderFilepath(vertexFilename);
         source_vertexShader = load_shader_from_file(vertexFilepath);
     }
@@ -128,6 +133,7 @@ void Shader::set_fragmentSource(std::string fragmentFilename)
 {
     if (programID == 0)
     {
+        versionFragment = fragmentFilename[fragmentFilename.length() - 4] - '0';
         std::string fragmentFilepath = add_shaderFilepath(fragmentFilename);
         source_fragmentShader = load_shader_from_file(fragmentFilepath);
     }

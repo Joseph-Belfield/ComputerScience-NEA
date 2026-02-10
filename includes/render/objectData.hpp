@@ -46,8 +46,6 @@ struct VertexUniforms
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);         // object's rotation around each axis
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);          // growth of the object in each direction
 
-    // version 2
-    glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.0f);
 };
 
 struct FragmentUniforms
@@ -56,10 +54,11 @@ struct FragmentUniforms
     glm::vec4 uColor = glm::vec4(1.0f);     // sets color of object as one value
 
     // version 2
-    glm::vec3 objectColor = glm::vec3(1.0f);    // color of the object (defaults to white)
-    glm::vec3 lightColor = glm::vec3(1.0f);     // color of the light (defaults to white)
-
-    float ambience = 0.1f;  // amount of ambient light
+    glm::vec3 objectColor = glm::vec3(1.0f);             // color of the object (defaults to white)
+    glm::vec3 lightColor = glm::vec3(1.0f);              // color of the light (defaults to white)
+    float ambienceStrength = 0.1f;                       // amount of ambient light
+    glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.0f);    // position of the light source
+    float specularStrength = 0.5f;                       // strength of specular lighting
 
 };
 
