@@ -37,15 +37,52 @@ void draw_bond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 
 void draw_doubleBond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
 {
-    // make the bond half as thick
+    const float originalThickness = bond -> uniform.vert.scale.x;
+    float init_pos1 = position1.y;
+    float init_pos2 = position2.y;
+
+    // make the bond 2/5 as thick
     bond -> uniform.vert.scale.x *= (2.0f / 5);
     bond -> uniform.vert.scale.z *= (2.0f / 5);
 
-    for (int i = 0; i < 2; i++)
-    {
-        break;
-        // maybe do this later please
+    // if the vectors aren't directly above each other
+    if (glm::length(position1 - position2) != abs(position1.y - position2.y) && (position1.y - position2.y) != 0)
+    {   
+        float changed_y = -(0.5 * originalThickness);
+        changed_y += 0.3 * originalThickness;
+
+        position1.y += changed_y;
+        position2.y += changed_y;
+        
+        bond -> draw_between(position1, position2);
+
+        position1.y += 0.4 * originalThickness;
+        position2.y += 0.4 * originalThickness;
+
+        bond -> draw_between(position1, position2);
     }
+    else
+    {
+        float changed_z = -(0.5 * originalThickness);
+        changed_z += 0.3 * originalThickness;
+
+        position1.z += changed_z;
+        position2.z += changed_z;
+        
+        bond -> draw_between(position1, position2);
+
+        position1.z += 0.4 * originalThickness;
+        position2.z += 0.4 * originalThickness;
+
+        bond -> draw_between(position1, position2);
+    }
+
+    // reset to initial
+    position1.y = init_pos1;
+    position2.y = init_pos2;
+
+    bond -> uniform.vert.scale.x = originalThickness;
+    bond -> uniform.vert.scale.z = originalThickness;
 }
 
 void Molecule::set_atomElement(Element element)
@@ -157,7 +194,7 @@ void Molecule::draw(Compound compound)
 
                 nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
 
-                draw_bond(&bondObject, currentPos, nextPos);        
+                draw_doubleBond(&bondObject, currentPos, nextPos);        
                 draw_atom(&atomObject, nextPos);
             }
 
