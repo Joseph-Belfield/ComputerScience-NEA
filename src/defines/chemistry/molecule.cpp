@@ -194,7 +194,7 @@ void Molecule::draw(Compound compound)
 
                 nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[i]));
 
-                draw_doubleBond(&bondObject, currentPos, nextPos);        
+                draw_bond(&bondObject, currentPos, nextPos);        
                 draw_atom(&atomObject, nextPos);
             }
 
@@ -435,4 +435,32 @@ void Molecule::draw(Compound compound)
 
     centre /= majorCount;
     atomObject.uniform.frag.lightPos = glm::vec3(centre.x, 5.0f, centre.z);
+}
+
+
+
+
+
+
+void Molecule::pseudo(glm::vec3 pos, glm::vec3 dir, Atom* current)
+{
+    float lambda = 0.5;
+
+    // edge case -> first atom
+    if (current == nullptr)
+    {
+        draw_atom(&atomObject, pos);
+    }
+
+    // only draws the amount of bonds an atomc an at max    
+    // -> prevents more bonds being drawn if the atom bond vector has too many entries
+    for (int i = 0; i < current -> maxBonds; i++)
+    {
+        // draws the next atom
+        glm::vec3 nextPos = pos + (lambda * dir);
+        draw_atom(&atomObject, nextPos);
+        draw_bond(&bondObject, pos, nextPos);
+
+        // now rotate dir 104.45 degrees (if tetrahedral like carbon) to the next vector and repeat if needed
+    }
 }
