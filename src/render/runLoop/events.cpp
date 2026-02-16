@@ -37,20 +37,20 @@ void check_events(appData &appData)
             if (appData.event.event.type == SDL_EVENT_KEY_DOWN && appData.event.event.key.key == SDLK_TAB)
             {
                 // pressing tab flips the bool state, either revealing or hiding it
-                appData.ImGui.show_mainWindow = !appData.ImGui.show_mainWindow;
-
-                if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
+                if (appData.ImGui.show_mainWindow == true)
                 {
-                    SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
-                    SDL_SetWindowRelativeMouseMode(appData.program.window, true);
+                    // if the main window WAS open, now set all windows as false
+                    appData.ImGui.set_false();
                 }
-                else
+                else 
                 {
-                    SDL_SetWindowRelativeMouseMode(appData.program.window, false);
+                    // open the main window
+                    appData.ImGui.show_mainWindow = true;
                 }
             }
 
-            if (!(appData.ImGui.show_mainWindow || appData.ImGui.show_colorPicker))
+            // checks if any windows are open
+            if (appData.ImGui.check_false())
             {
                 // view direction
                 if (appData.event.event.type == SDL_EVENT_MOUSE_MOTION)
@@ -64,6 +64,9 @@ void check_events(appData &appData)
         }
 
         // movement
+        // as long as no windows are open
+        if (appData.ImGui.check_false())
+        {
             if (appData.event.keyState[SDL_SCANCODE_W])
             {
                 appData.camera.camera1.move_forward(appData.camera.speed);
@@ -88,4 +91,5 @@ void check_events(appData &appData)
             {
                 appData.camera.camera1.move_down(appData.camera.speed);
             }
+        }
     }

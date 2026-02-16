@@ -58,7 +58,7 @@ struct FragmentUniforms
     glm::vec3 lightColor = glm::vec3(1.0f);              // color of the light (defaults to white)
     float ambienceStrength = 0.5f;                       // amount of ambient light
     glm::vec3 lightPos = glm::vec3(0.0f, 5.0f, 0.0f);    // position of the light source
-    float specularStrength = 0.5f;                       // strength of specular lighting
+    float specularStrength = 0.3f;                       // strength of specular lighting
 
 };
 

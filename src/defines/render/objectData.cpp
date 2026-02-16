@@ -271,7 +271,6 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 		GL_STATIC_DRAW                                			// usage
 	);
 
-	
 	// setup position VAO
 	glEnableVertexAttribArray(position_VAO); // enables the 0th attribute - AKA. this is the first VAO
 	glVertexAttribPointer
@@ -329,7 +328,6 @@ void vertex_specification(meshData &mesh, bool color = false, bool normals = fal
 			(GLvoid*)(sizeof(GLfloat) * textureOffset)               
 		);
 	}
-
 
 	// cleanup
 	glBindVertexArray(0);                		// unbind currently bound VAO
@@ -541,9 +539,6 @@ ReferencePlane::ReferencePlane(GLfloat initHeight, const glm::vec3 initColor, GL
 	uniform.vert.scale = glm::vec3(5.0f);
 	uniform.frag.uColor = glm::vec4(initColor, 1.0f);
 }
-
-
-
 
 std::vector<glm::vec3> calculateCylinderVertices(const GLfloat radius, const GLfloat height, const GLuint sectorCount)
 {

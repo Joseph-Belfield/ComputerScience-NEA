@@ -20,9 +20,6 @@ namespace render
         // start program with mouse in centre of window
         SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
 
-        // hides cursor, mouse position is constrained to window
-        SDL_SetWindowRelativeMouseMode(appData.program.window, true);
-
         // allows to check if multiple keys are pressed at once, faster refresh
         appData.event.keyState = SDL_GetKeyboardState(nullptr);
 
@@ -46,6 +43,16 @@ namespace render
             appData.molecule -> init_drawInfo(&appData.camera.camera1, appData.window.window_width, appData.window.window_height);
             appData.molecule -> draw(appData.displayedMolecule);
             draw_ImGui(appData);
+
+            if (appData.ImGui.check_false())
+            {
+                SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
+                SDL_SetWindowRelativeMouseMode(appData.program.window, true);
+            }
+            else
+            {
+                SDL_SetWindowRelativeMouseMode(appData.program.window, false);
+            }
 
             // render
             ImGui::Render();                                               // renders ImGui instructions 

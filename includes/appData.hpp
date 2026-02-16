@@ -57,12 +57,51 @@ class ImGuiData
 public:
 
   bool show_mainWindow = false;
-  bool show_helloWorld = false;
   bool show_colorPicker = false;
-  bool show_sineGraph = false;
-  bool show_scrolling = false;
+  bool show_controls = true;
+  bool show_settings = false;
 
   Window demo;
+
+  void set_false()
+  {
+    show_mainWindow = false;
+    show_colorPicker = false;
+    show_controls = false;
+    show_settings = false;
+  }
+
+  void set_true()
+  {
+    show_mainWindow = true;
+    show_colorPicker = true;
+    show_controls = true;
+    show_settings = true;
+  }
+
+  bool check_false()
+  {
+    if (!show_mainWindow && !show_colorPicker && !show_controls && !show_settings)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  bool check_true()
+  {
+    if (show_mainWindow && show_colorPicker && show_controls && show_settings)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
 };
 
 struct cameraData
