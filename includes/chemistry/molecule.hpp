@@ -10,6 +10,7 @@ struct Atom;
 struct bondAngles
 {
     glm::vec3 tetrahedral[4] = {glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(2.0f, -1.0f, 0.0f), glm::vec3(-1.0f, -1.0f, -sqrt(3.0f)), glm::vec3(-1.0f, -1.0f, sqrt(3.0f))};
+    glm::vec3 triagonalPlanar[3] = {glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(-1.0f, sqrt(3.0f), 0.0f), glm::vec3(-1.0f, -sqrt(3.0f), 0.0f)};
 };
 
 enum Compound
@@ -19,6 +20,8 @@ enum Compound
     ETHANE,
     PROPANE,
     CYCLOHEXANE,
+    OPTICAL_ISOMER,
+    ETHENE_ISOMER
 };
 
 // A class for effectively anything rendered - functional groups will be a subclass

@@ -37,7 +37,7 @@ void check_events(appData &appData)
             if (appData.event.event.type == SDL_EVENT_KEY_DOWN && appData.event.event.key.key == SDLK_TAB)
             {
                 // pressing tab flips the bool state, either revealing or hiding it
-                if (appData.ImGui.show_mainWindow == true)
+                if (!appData.ImGui.check_false())
                 {
                     // if the main window WAS open, now set all windows as false
                     appData.ImGui.set_false();

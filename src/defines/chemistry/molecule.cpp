@@ -46,7 +46,7 @@ void draw_doubleBond(Cylinder* bond, glm::vec3 position1, glm::vec3 position2)
     bond -> uniform.vert.scale.z *= (2.0f / 5);
 
     // if the vectors aren't directly above each other
-    if (glm::length(position1 - position2) != abs(position1.y - position2.y) && (position1.y - position2.y) != 0)
+    if ((glm::length(position1 - position2) != abs(position1.y - position2.y)) && (position1 != position2))
     {   
         float changed_y = -(0.5 * originalThickness);
         changed_y += 0.3 * originalThickness;
@@ -429,6 +429,192 @@ void Molecule::draw(Compound compound)
             bondLength = 3.0f;
             nextPos = currentPos - (bondLength * glm::normalize(angles.tetrahedral[2]));
             draw_bond(&bondObject, currentPos, nextPos);
+            break;
+        }
+        case(OPTICAL_ISOMER):
+        {
+            majorCount = 8; // 8 big atoms
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (i == 1)
+                {
+                    currentPos.x += 10.0f;
+                }
+
+                // draw the central carbon
+                set_atomElement(CARBON);
+                bondLength = 2.5f;
+                draw_atom(&atomObject, currentPos);
+                centre += currentPos;
+
+                // OH group
+                set_atomElement(OXYGEN);
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[0]));
+                draw_atom(&atomObject, nextPos);
+                draw_bond(&bondObject, currentPos, nextPos);
+                centre += nextPos;
+
+                set_atomElement(HYDROGEN);
+                glm::vec3 tempVec = nextPos + (bondLength * glm::vec3(glm::vec4(-angles.tetrahedral[0], 0.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(104.5f), glm::vec3(0.0f, 0.0f, 1.0f))));
+                draw_atom(&atomObject, tempVec);
+                draw_bond(&bondObject, tempVec, nextPos);
+
+                // draw COOH group
+                set_atomElement(CARBON);
+                nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[1]));
+                draw_atom(&atomObject, nextPos);
+                draw_bond(&bondObject, currentPos, nextPos);
+                centre += nextPos;
+                
+                set_atomElement(OXYGEN);
+                tempVec = nextPos + glm::vec3(glm::vec4(-angles.tetrahedral[1], 0.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(120.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+                draw_atom(&atomObject, tempVec);
+                draw_doubleBond(&bondObject, tempVec, nextPos);
+
+                set_atomElement(OXYGEN);
+                tempVec = nextPos + glm::vec3(glm::vec4(-angles.tetrahedral[1], 0.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(240.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+                draw_atom(&atomObject, tempVec);
+                draw_bond(&bondObject, tempVec, nextPos);
+
+                set_atomElement(HYDROGEN);
+                glm::vec3 temperVec = tempVec;
+                tempVec += (bondLength * glm::normalize(glm::vec3(glm::vec4(-(tempVec - nextPos), 0.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(104.5f), glm::vec3(0.0f, 0.0f, 1.0f)))));
+                draw_atom(&atomObject, tempVec);
+                draw_bond(&bondObject, tempVec, temperVec);
+
+                if (i == 0)
+                {
+                    // hydrogen!!!
+                    set_atomElement(HYDROGEN);
+                    nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+
+                    // CH3 group
+                    set_atomElement(CARBON);
+                    nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+
+                    set_atomElement(HYDROGEN);
+                    for (int j = 0; j < 3; j++)
+                    {
+                        tempVec = nextPos - (bondLength * glm::normalize(angles.tetrahedral[j]));
+                        draw_atom(&atomObject, tempVec);
+                        draw_bond(&bondObject, tempVec, nextPos);
+                    }
+                }
+                else if (i == 1) 
+                {
+                    // CH3 group
+                    set_atomElement(CARBON);
+                    nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[2]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+
+                    set_atomElement(HYDROGEN);
+                    for (int j = 0; j < 3; j++)
+                    {   
+                        tempVec = nextPos - (bondLength * glm::normalize(angles.tetrahedral[j]));
+                        if (j == 2)
+                        {
+                            tempVec = nextPos - (bondLength * glm::normalize(angles.tetrahedral[3]));
+                        }
+                        draw_atom(&atomObject, tempVec);
+                        draw_bond(&bondObject, tempVec, nextPos);
+                    }
+
+                    // hydrogen!!!
+                    set_atomElement(HYDROGEN);
+                    nextPos = currentPos + (bondLength * glm::normalize(angles.tetrahedral[3]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+                }
+
+            }
+
+            break;
+        }
+        case(ETHENE_ISOMER):
+        {
+            majorCount = 4; // 1 carbon
+
+            for (int k = 0; k < 2; k++)
+            {
+                if (k == 1)
+                {
+                    currentPos.x += 10.0f;
+                }
+
+                // draw the first carbon
+                set_atomElement(CARBON);
+                bondLength = 3.0f;
+                draw_atom(&atomObject, currentPos);
+
+                centre += currentPos;
+
+                nextPos = currentPos + (bondLength * glm::normalize(angles.triagonalPlanar[0]));
+
+                centre += nextPos;
+
+                // draw the second carbon
+                draw_doubleBond(&bondObject, currentPos, nextPos);
+                draw_atom(&atomObject, nextPos);
+
+                // hard coding functional groups because why not
+                bondLength = 2.0f;
+
+                set_atomElement(HYDROGEN);
+                nextPos = currentPos + (bondLength * glm::normalize(angles.triagonalPlanar[1]));
+                draw_atom(&atomObject, nextPos);
+                draw_bond(&bondObject, currentPos, nextPos);
+
+                set_atomElement(OXYGEN);
+                nextPos = currentPos + (bondLength * glm::normalize(angles.triagonalPlanar[2]));
+                draw_atom(&atomObject, nextPos);
+                draw_bond(&bondObject, currentPos, nextPos);
+                set_atomElement(HYDROGEN);
+                glm::vec3 tempPos = nextPos - glm::vec3(1.0f, 0.0f, 0.0f) * bondLength;
+                draw_atom(&atomObject, tempPos);
+                draw_bond(&bondObject, tempPos, nextPos);
+
+
+                currentPos += 3.0f * glm::normalize(angles.triagonalPlanar[0]);
+                if (k == 0)
+                {
+                    set_atomElement(HYDROGEN);
+                    nextPos = currentPos - (bondLength * glm::normalize(angles.triagonalPlanar[1]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+
+                    set_atomElement(OXYGEN);
+                    nextPos = currentPos - (bondLength * glm::normalize(angles.triagonalPlanar[2]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+                    set_atomElement(HYDROGEN);
+                    tempPos = nextPos + glm::vec3(1.0f, 0.0f, 0.0f) * bondLength;
+                    draw_atom(&atomObject, tempPos);
+                    draw_bond(&bondObject, tempPos, nextPos);
+                }
+                else
+                {
+                    set_atomElement(OXYGEN);
+                    nextPos = currentPos - (bondLength * glm::normalize(angles.triagonalPlanar[1]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+                    set_atomElement(HYDROGEN);
+                    tempPos = nextPos + glm::vec3(1.0f, 0.0f, 0.0f) * bondLength;
+                    draw_atom(&atomObject, tempPos);
+                    draw_bond(&bondObject, tempPos, nextPos);
+
+                    set_atomElement(HYDROGEN);
+                    nextPos = currentPos - (bondLength * glm::normalize(angles.triagonalPlanar[2]));
+                    draw_atom(&atomObject, nextPos);
+                    draw_bond(&bondObject, currentPos, nextPos);
+                }
+
+            }
             break;
         }
     }   

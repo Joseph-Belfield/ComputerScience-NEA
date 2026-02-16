@@ -18,7 +18,7 @@ namespace render
     {
 
         // start program with mouse in centre of window
-        SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
+        SDL_WarpMouseInWindow(appData.program.window, 400.0f, 300.0f);
 
         // allows to check if multiple keys are pressed at once, faster refresh
         appData.event.keyState = SDL_GetKeyboardState(nullptr);
@@ -46,7 +46,7 @@ namespace render
 
             if (appData.ImGui.check_false())
             {
-                SDL_WarpMouseInWindow(appData.program.window, (appData.window.window_width / 2), (appData.window.window_height / 2));
+                SDL_WarpMouseInWindow(appData.program.window, 400.0f, 300.0f);
                 SDL_SetWindowRelativeMouseMode(appData.program.window, true);
             }
             else

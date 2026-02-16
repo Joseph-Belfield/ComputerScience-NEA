@@ -39,6 +39,16 @@ void update_molecule(Compound& compound, int molecule)
             compound = CYCLOHEXANE;
             break;
         }
+        case(5):
+        {
+            compound = OPTICAL_ISOMER;
+            break;
+        }
+        case(6):
+        {
+            compound = ETHENE_ISOMER;
+            break;
+        }
     }
 }
 
@@ -65,7 +75,7 @@ void draw_ImGui(appData &appData)
             appData.ImGui.show_settings = !appData.ImGui.show_settings;
         }
 
-        const char* items[] = {"WATER", "METHANE", "ETHANE", "PROPANE", "CYCLOHEXANE"};
+        const char* items[] = {"WATER", "METHANE", "ETHANE", "PROPANE", "CYCLOHEXANE", "OPTICAL ISOMER", "STEREOISOMER"};
         const char* combo_preview_value = items[currentItem];
         if (ImGui::BeginCombo("Molecules", combo_preview_value))
         {
