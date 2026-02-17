@@ -19,15 +19,10 @@ int main()
   // 1. initialize libraries
   render::init_graphics(app);
 
-  Atom atom1(CARBON);
-  Atom atom2(OXYGEN);
-  atom1.bonds.push_back(&atom2);
-  atom2.bonds.push_back(&atom1);
-
-  std::vector<Atom*> atoms = {&atom1, &atom2};
+  Atom atom1(OXYGEN);
+  std::vector<Atom*> atoms = {&atom1};
   Molecule molecule(atoms);
   app.molecule = &molecule;
-
 
   // 3. main run loop
   render::run_loop(app);
